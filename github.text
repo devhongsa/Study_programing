@@ -1,0 +1,33 @@
+403에러 해결 : https://beagle-dev.tistory.com/244
+=) git remote set-url origin https://devhongsa@github.com/devhongsa/Study_programing.git 를 입력해주세요
+
+=) 터미널에서 git push -u origin main 를 입력합니다
+=) 깃헙 패스워드 입력을 하라는 창이 나오고 입력을 하시면 본인의 깃주소에 소스코드가 올라갑니다.
+=) 인증이 끝난 후부터는 git push만 하면 기존의 세팅한 주소로 바로 푸쉬가 됩니다. 변경을 원하시면 git remote "set-url" "any_name" "git_reposit_주소"를 사용하시면 되요
+
+git 명령어 모음 
+
+git commit 
+git branch version2        //version2 branch 생성
+git checkout version2      // version2로 이동
+git merge version2         // main branch에서 실행하면 version2 와 버전병합. 
+
+
+레포지토리가 이미 만들어져 있고 내 작업폴더를 레포지토리에 push하고 싶을때
+작업 폴더에서 terminal 
+git init 
+//git config --global init.defaultBranch main         default branch로 main 설정
+git remote add origin (repository 주소)                 작업폴더와 레포지토리 연결
+git remote -v      작업폴더의 레포지토리 연결확인
+git branch        branch 이름 확인 master면 
+git branch -m master main      main branch로 변경 
+git pull origin main --allow-unrelated-histories     깃허브 저장소에 있는 내용 한번 pull 해줘야 local 자료 push 할수 있음.
+git push -u origin main 
+
+
+github settings 들어가서 pages 클릭 
+Source none에서 main으로 변경 save 
+url 만들어짐.  https://devhonglion.github.io/10000hours_web/
+
+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
+

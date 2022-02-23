@@ -1,0 +1,34 @@
+VScode extenstion에서 live server, python, beautify 설치 
+test.py 파일 만들고 실행해보기 ctrl + F5  
+ctrl + shift + p 누르고 jupyter 검색 create new jupyter 열고 실행해보기 .   ctrl + enter 
+
+live server 이용 
+test.html 만들고 alt + L -> alt + O 누르면 html 파일 웹으로 실행
+
+
+
+단축기 모음.
+alt + 위아래 방향키  : 현재 줄 이동 
+ctrl + shift + L : 현재커서가 위치한 단어 모두 선택. 
+ctrl + D : 현재커서가 위치한 단어 순차적으로 선택. 
+shift + alt + 위아래 방향키 : 현재커서가 있는 줄 복사 
+shift + alt + 드래깅 : 박스 드래깅 
+shift + del : 현재 있는 줄 삭제 
+ctrl + shift + ` : terminal 열기 
+
+
+
+자동 줄바꿈 설정 : File >> Preferences >> Settings 에 들어가 줍니다.
+
+검색영역이 확인 되는데 검색 부분에 다음과 같이 작성해 줍니다.
+"wordwrap"
+위 검색어 입력시 하단에 셋팅에 바로 검색되어 나오는데
+Editor: Word Wrap 이 부분을 수정하셔야 합니다.
+
+off >>>on 으로 수정하고 
+다시 소스 코드를 확인해 봅니다.
+
+
+vscode에서 github clone하기 
+1. vscode에서 F1 누르고 git clone 검색 
+2. github 주소 입력하고 가져오기 .

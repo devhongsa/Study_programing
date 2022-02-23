@@ -1,0 +1,282 @@
+링크비 테스트넷 테스트이더 받는곳.
+https://faucets.chain.link/rinkeby  
+ethereum converter  :  wei, ether, gwei 단위 
+
+deny extend thought blood debris bundle barely point business nut produce conduct
+링크비!
+
+Transaction의 구조
+nonce : 코인을 보내는사람이 여태동안 몇번의 트랜잭션을 했는지.
+to : 코인을 받는사람의 주소.
+value : 전송하는 코인의 개수. 
+gasPrice :
+startGas/gasLimit :
+
+
+블록체인 mining 
+mining이란 POW 방식
+새로 생성될 블록에 있는 데이터 + 노드가 찾아야할 데이터값(nonce) = 해시값 
+어떤 nonce값을 대입해야 특정 해시값이 나오는지 계속 컴퓨터로 돌려보면서 찾는다. 
+마치 금을 찾는 인부가 계속 mining을 하는 것처럼. 
+
+인부(node)가 많을 수록 금을 찾는데 걸리는 시간이 짧아짐. 
+만약 금을 찾기 어렵게 만든다면(마이닝 난이도 올리기)
+
+
+Calling function vs Sending a Transaction function 
+
+Calling function 
+1. 컨트랙트 데이터 수정 안함 
+2. 데이터 리턴 가능 
+3. 즉각 실행
+4. 가스비 없음
+
+Transaction function 
+1. 컨트랙트 데이터 수정 가능 
+2. 실행하려면 시간 걸림
+3. 트랜잭션 해쉬값 리턴 (returns 펑션이라하더라도. 블록체인상에 기록 안된다는 뜻. event로는 기록가능.)
+4. 가스비 소모 
+
+
+
+local network에서 Deploy contracts 
+1. 디렉토리만들기 Inbox
+2. npm init -> package 파일 생성 . 
+3. npm install solc@0.4.17  버전 컴파일러 설치 
+4. compile.js 파일작성 (truffle이 있으면 truffle compile 기능 있어서 이파일 필요없음.)
+const path = require("path");
+const fs = require("fs");
+const solc = require("solc");
+
+const inboxPath = path.resolve(__dirname, "contracts", "Inbox.sol");
+const source = fs.readFileSync(inboxPath, "utf8");
+
+module.exports = solc.compile(source, 1).contracts[":Inbox"];           // 여기서 숫자 1은 컴파일할 sol파일 개수를 말하는거
+///////////////////////////////////////////
+최신버전 compile.js 
+///////////////////////////////////////////
+const path = require('path');
+const fs = require('fs');
+const solc = require('solc');
+
+const inboxPath = path.resolve(__dirname, 'contracts', 'Inbox.sol');
+const source = fs.readFileSync(inboxPath, 'utf8');
+
+const input = {
+  language: 'Solidity',
+  sources: {
+    'Inbox.sol': {
+      content: source,
+    },
+  },
+  settings: {
+    outputSelection: {
+      '*': {
+        '*': ['*'],
+      },
+    },
+  },
+};
+
+console.log(JSON.parse(solc.compile(JSON.stringify(input))).contracts);
+
+module.exports = JSON.parse(solc.compile(JSON.stringify(input))).contracts[
+  'Inbox.sol'
+].Inbox;
+
+
+5. npm compile.js 실행 . ABI json, bytecode 추출.
+6. npm install mocha ganache-cli web3    
+
+web3 provider는 특정 네트워크(이더리움, 롭스텐, 링크비 등)와 소통하기 위한 통역가(?)라고 생각하면됨.
+그래서 네트워크가 달라지면 provider도 달라져야함. 
+
+7. test폴더에서 inbox.test.js 파일 생성.
+////////////////////////////////////////////
+const assert = require('assert');
+const ganache = require('ganache-cli');
+const Web3 = require('web3');
+const web3 = new Web3(ganache.provider());
+const { interface, bytecode } = require("../compile");       //interface에는 compile이 실행되면서 리턴되는 ABI(JSON)이 들어가고
+                                                            //bytecode에는 bytecode로 변환된 contract가 들어간다.
+//////////
+// beforeEach(() => {
+//   // Get a list of all accounts
+//   web3.eth.getAccounts().then((fetchedAccounts) => {
+//     console.log(fetchedAccounts);
+//   });
+// });
+
+// describe("Inbox", () => {
+//   it("deploys a contract", () => {});
+// });
+//////////
+
+let accounts;
+let inbox;
+
+beforeEach(async () => {
+  // Get a list of all accounts
+  accounts = await web3.eth.getAccounts();
+  inbox = await new web3.eth.Contract(JSON.parse(interface))        //inbox객체에서 주목해야될 부분은 options, methods 키
+    .deploy({
+      data: bytecode,
+      arguments: ["Hi there!"],                     //처음 배포할때 필요한 파라미터 값
+    })
+    .send({ from: accounts[0], gas: "1000000" });
+});
+
+describe("Inbox", () => {
+  it("deploys a contract", () => {
+    console.log(inbox);
+    assert.ok(inbox.options.address);   //inbox의 option키에서 address가 있으면 패스, 이 address는 스마트컨트랙트 주소이다.
+  });
+
+  it('has a default message', async ()=>{                           //async인 이유는 call은 즉각적으로 실행되어야하기때문.
+    const message = await inbox.methods.message().call();           //methods 안에는 컨트랙트가 가지고있는 public변수, 함수가 들어있다.
+    assert.equal(message, 'Hi there!');
+  });
+
+  it('can change the message', async() =>{
+    await inbox.methods.setMessage('bye').send({from: accounts[0]});            //setMessage는 트랜잭션이 일어나는 함수이기때문에 send를 넣어줘야함.
+    const message = await inbox.methods.message().call();
+    assert.equal(message,'bye');
+  });
+
+});
+////////////////////////////////////////////
+최신버전 inbox.test.js
+////////////////////////////////////////////
+const assert = require('assert');                   //test를 위한 nodejs module
+const ganache = require('ganache-cli');
+const Web3 = require('web3');
+const web3 = new Web3(ganache.provider());
+
+const { abi, evm } = require('../compile');
+
+let accounts;
+let inbox;
+
+beforeEach(async () => {
+  // Get a list of all accounts
+  accounts = await web3.eth.getAccounts();
+  inbox = await new web3.eth.Contract(abi)
+    .deploy({
+      data: evm.bytecode.object,
+      arguments: ['Hi there!'],
+    })
+    .send({ from: accounts[0], gas: '1000000' });
+});
+
+describe('Inbox', () => {
+  it('deploys a contract', () => {
+    assert.ok(inbox.options.address);
+  });
+  it('has a default message', async () => {
+    const message = await inbox.methods.message().call();
+    assert.equal(message, 'Hi there!');
+  });
+  it('can change the message', async () => {
+    await inbox.methods.setMessage('bye').send({ from: accounts[0] });
+    const message = await inbox.methods.message().call();
+    assert.equal(message, 'bye');
+  });
+});
+
+////////////////////////////////////////////
+//여기서 beforeEach는 describe안에 있는 각각의 it()이 실행되기전에 매번 실행된다.
+// 그래서 이코드를 test하면 결과가 ( Car -> before it -> can park -> before it -> can drive)  이 순으로 실행됨.
+// beforeEach외에 before, after, afterEach 도 있다.
+
+8. package.json 파일에서 script : test 부분 mocha로 변경.  
+9. npm run test 
+
+
+
+
+
+
+
+///public 네트워크에서 배포하기 
+1. infura.io 에서 new project 만들기. 네트워크 선택해서 url 받기
+2. inbox-Dapp에서 npm install -s @truffle/hdwallet-provider 명령어 실행.
+3. deploy.js 코드 작성
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const Web3 = require('web3');
+const { interface, bytecode } = require("./compile");
+
+const provider = new HDWalletProvider(                      //링크비 월렛지갑주소 형성.
+  'deny extend thought blood debris bundle barely point business nut produce conduct',      //링크비네트워크에서 만들 어카운트 니모닉 
+  'https://rinkeby.infura.io/v3/def9b0ef220042c592f5d1a78c526be1'                           //링크비네트워크에 있는 노드에 연결하기위한 url.
+)
+const web3 = new Web3(provider);                //원래 ganache.provider(로컬네트워크)로 했었는데, 지금은 링크비네트워크로 해야되니까
+                                                // 링크비 web3 연결                                                 
+
+const deploy = async()=>{
+  const accounts = await web3.eth.getAccounts();
+  console.log('Attempting to deploy from accout', accounts[0]);
+  const result = await new web3.eth.Contract(JSON.parse(interface))  //Contract(JSON ABI)를 deploy하는 과정.
+  .deploy({ data : bytecode, arguments : ['Hi there!']})
+  .send({from : accounts[0], gas : 1000000});
+  console.log('Contract deployed to', result.options.address);      //options.address 는 배포한 smart contract 주소임.
+  provider.engine.stop();
+
+};
+deploy();
+////////////////////////////////////////////////
+최신버전 deploy.js 
+////////////////////////////////////////////////
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const Web3 = require('web3');
+
+const { abi, evm } = require('./compile');
+
+provider = new HDWalletProvider(
+  'REPLACE_WITH_YOUR_MNEMONIC',
+  'REPLACE_WITH_YOUR_INFURA_URL'
+);
+
+const web3 = new Web3(provider);
+
+const deploy = async () => {
+  const accounts = await web3.eth.getAccounts();
+
+  console.log('Attempting to deploy from account', accounts[0]);
+
+  const result = await new web3.eth.Contract(abi)
+    .deploy({ data: evm.bytecode.object, arguments: ['Hi there!'] })
+    .send({ gas: '1000000', from: accounts[0] });
+
+  console.log('Contract deployed to', result.options.address);
+  provider.engine.stop();
+};
+deploy();
+
+
+10. node deploy.js 명령어 실행
+
+
+
+
+
+
+
+
+
+Remix에서 내가 배포한 스마트컨트랙트와 interact 하기 
+1. 스마트컨트랙트 코드 불러오기.
+2. environment를 Injected Web3로 설정해서 메타마스크와 연결하기. Rinkeby network.
+3. At Address 부분에 내가 배포한 스마트컨트랙트 주소 붙여넣고 버튼 누르기
+4. 컨트랙트 코드 실행시켜보면서 interact 가능하게됨. 
+
+
+
+
+
+
+
+
+msg.data
+msg.gas 
+msg.sender 
+msg.value   

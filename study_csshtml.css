@@ -1,0 +1,146 @@
+/**/
+/* 
+developer.mozilla.org    
+*/
+
+/* adobe color 검색 스타일리쉬한 색깔 찾을 수 있음  */
+/* 눈누 글씨 무료폰트 */
+/* html color 검색. 컬러코드 알수있음. */
+
+/* https://html-css-js.com/html/character-codes/icons/   무료 이모지  */
+/* pixabay.com/ko/   무료 배경화면 */
+/* 윈도우키 + ;     이모지 단축키  */
+/* https://openweathermap.org/    날씨 API  */
+
+
+
+body {      
+    background: linear-gradient(to right, white, black);        
+}
+/* 색깔 그라데이션 */
+
+
+h1 {                    /*h1 태그를 가진 요소에 적용*/
+    color: red;
+    font-size: 32px;
+}
+h1 px size 구글에 검색하면 적절한 사이즈 나옴.
+
+
+*{                      /*모든 요소에 적용*/
+    color: red;  
+}
+
+#idname {               
+    color : blue;
+}
+
+.classname {
+    color : green;
+}
+
+
+h1, #idname, .classname {
+    color : black;
+}
+
+
+.classname h1 {         /*특정 클래스 안에 있는 요소들 중에 h1태그를 가진 자식,손자 요소에 적용*/
+    color: yellow;
+}
+
+.classname > h1 {         /*특정 클래스 안에 있는 요소들 중에 h1태그를 가진 "자식"요소에만 적용, 손자까지 적용x*/
+    color: yellow;
+}
+
+p {
+    color : darkgreen;
+    text-align : center;    /*정렬*/
+    line-height : 200%;     /*줄간격*/
+    font-size : 20px;       /*글씨크기*/
+    font-weight: bold;      /*글씨굵기*/
+    font-family :'Times New Roman', Times, serif;    /*마지막 폰트 serif는 폰트가 없으면 적용되는 폰트*/
+    background-color: darkmagenta;
+}
+
+/* html에서 구글폰트적용하기
+google fonts로 가서 link 태그 복사 head안에 넣기
+css언어 복사 style 태그 안에 넣기 */
+
+a {
+    text-decoration: none;     /*none:언더라인 없애기, 언더라인 색깔정하기*/
+}
+
+a :hover{
+    background-color : green;
+}
+/* link : 기본상태
+hover : 마우스오버상태
+active : 마우스 클릭상태
+visited : 방문했던 링크 
+focus : 포커스를 가진 상태  */
+
+
+/* 리스트앞에오는 문양 설정하기 */
+ul {
+    list-style:none;        
+}
+
+
+/* display : flex */
+#maincontents {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+justify-content는 가로방향 정렬 flex-direction이 default(row)일때 화면 중앙으로 정렬함.
+align-items는 세로방향 정렬 flex-direction이 column일때 화면 중앙으로 정렬함.
+display: flex는 레이아웃을 만들어주는거라 생각하면 됨. flex적용된 태그의 자식태그들은 default 값으로 가로정렬이 됨.
+이때 flex-direction: column 으로 하면 세로정렬로 바꿔줌. 
+
+p {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+}
+
+포지션 엡쏠을 하고 left top right bottom을 조정하면 포지션 relative가 적용된 가장가까운 부모 태그를 기준으로 적용이된다. 
+
+input {
+    padding: 15px 20px;
+    margin: 0 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 20px;
+    font-family: 'GmarketSansMedium';
+    width: 200px;
+}
+padding은 input 박스안의 상하좌우 여백을 설정함. 2개만 쓰면 상하 좌우 각각 15px 20px 여백, 4개쓰면 순서대로 상 우 하 좌 여백 설정.
+margin은 input 박스 밖의 상화좌우 여백 설정.
+border은 경계선 설정. 
+border-radius는 모서리 둥글게 
+
+button {
+    display: flex;
+    align-items: center;
+    font-family: 'GmarketSansBold';
+    font-size: 20px;
+    color: #5b2386;
+    background-color: #fcee21;
+    border: none;
+    border-radius: 30px;
+    padding: 10px 40px;
+    cursor: pointer;
+    word-break: keep-all;
+}
+
+cursor는 버튼위에 마우스 올렸을때 손모양으로 바뀜. 
+word-break는 줄바꿈할 때 어떤 기준으로 줄바꿈할 지 정하는 속성. keep-all은 단어 단위로 줄바꿈 
+
+
+#modal .close_btn {
+    box-shadow: 0px 5px 20px 1px rgba(0, 0, 0, 15%);
+}
+/* google에 box shadow 쳐서 mdn 들어가 
+1.값높을수록 오른쪽으로감. 2.높을수록 아래로감. 3.높을수록 그림자 투명 4.높을수록 그림자 크기커짐 (색깔, 색깔투명도 조절)*/
