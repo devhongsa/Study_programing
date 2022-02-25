@@ -117,3 +117,128 @@ math.floor()
 math.ceil()
 round()
 math.factorial()
+
+import random
+random 
+
+random.random() 
+random.randrange(1,11,2)        #1부터 10까지 숫자 랜덤 추출, 증가값 2  1,3,5,7,9 중에 랜덤 추출
+random.randint(1,11)            #1부터 11까지 숫자 랜덤 추출
+random.choice(list_tuple)       #리스트, 튜플을 넣으면 그중에 한 요소 랜덤 추출.
+random.shuffle(list_tuple)      #리스트, 튜플을 넣으면 요소 순서 무작위로 바꿈.
+
+
+datetime 
+from datetime import datetime 
+
+today = datetime.now() 
+
+today.year
+today.month 
+today.day 
+today.hour 
+today.minute 
+today.second 
+
+today.strftime('%Y/%m/%d %H:%M:%S')
+
+%Y #4자리 연도 
+%y #2자리 연도  
+%m #월
+%d #일
+%A #요일
+%a #간단 요일
+%H #시(24시 기준)
+%I #시(12시 기준)
+%p #AM 또는 PM 
+%M #분
+%S #초
+
+
+클래스 속성 
+
+class MyClass:
+    number = 100
+
+    def inc_10(self):
+        MyClass.number += 10        ## 클래스명.변수명 이렇게 하면 클래스 속성
+
+    def inc_20(self):
+        MyClass.number += 20 
+
+obj1 = MyClass() 
+obj2 = MyClass() 
+
+## 클래스 속성은 어떤 객체든 간에 number가 공유가 됨.  
+
+인스턴스 속성 
+
+class MyClass :
+    def __init__(self, number):
+        self.number = number        ##self.변수명 이렇게 하면 인스턴스 속성
+
+    def inc_10(self):
+        self.number += 10 
+
+    def inc_20(self):
+        self.number += 20 
+
+## 이때는 객체마다 number가 공유되지 않음. 
+
+상속 
+
+class Person:
+    def __init__(self, name, age):
+        self.name = name 
+        self.age = age 
+    
+    def printInfo(self):
+        print()
+
+    def getInfo(self):
+        return self.name + ',' + str(self.age)
+
+class Student(Person):
+    def __init__(self, name, age, department, id):
+        super().__init__(name, age)
+        self.department = department 
+        self.id = id 
+
+    def printStudentInfo(self):
+        name_age = super().getInfo()
+        print(name_age)
+        print()
+
+
+##super().__init__() 은 부모클래스의 생성자를 그대로 사용하겠다는 뜻 
+##super().getInfo() 부모클래스의 메소드를 사용
+
+
+Numpy 
+
+import numpy as np 
+
+np.array([1,2,3])
+data = np.random.randn(2,3)    #2행 3열로 리스트 생성  요소 3개짜리 리스트 2개 생성 
+data.dtype 
+data.shape 
+
+np.zeros(10)            # 요소 10개인 리스트 생성 값은 0으로 
+np.zeros((2,3), dtype=np.int32)  #int타입으로 생성 2행 3열
+np.ones                 #요소값 1로 생성
+
+data = np.arange(10,121,10)        #10부터 10씩 증가시킨 값을 리스트로 생성
+data.reshape(2,6)               #2행 6열 구조로 다시 생성
+
+data.sum()
+data.mean()
+data.max()
+data.min()
+
+data.max(axis=0)        #세로 방향으로 max
+data.max(axis=1)        #가로 방향으로 max
+np.argmax(data,axis=0)  #index 리턴 
+np.argmax(data,axis=1)
+
+np.where(data>0,1,-1)  #data가 양수이면 1, 아니면 -1인 np 리턴 
+np.where(data>0,5,data)  #data의 값이 양수일경우 5, 아니면 data값인 np 리턴
