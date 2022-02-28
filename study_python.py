@@ -128,31 +128,7 @@ random.choice(list_tuple)       #리스트, 튜플을 넣으면 그중에 한 �
 random.shuffle(list_tuple)      #리스트, 튜플을 넣으면 요소 순서 무작위로 바꿈.
 
 
-datetime 
-from datetime import datetime 
 
-today = datetime.now() 
-
-today.year
-today.month 
-today.day 
-today.hour 
-today.minute 
-today.second 
-
-today.strftime('%Y/%m/%d %H:%M:%S')
-
-%Y #4자리 연도 
-%y #2자리 연도  
-%m #월
-%d #일
-%A #요일
-%a #간단 요일
-%H #시(24시 기준)
-%I #시(12시 기준)
-%p #AM 또는 PM 
-%M #분
-%S #초
 
 
 클래스 속성 
@@ -242,3 +218,103 @@ np.argmax(data,axis=1)
 
 np.where(data>0,1,-1)  #data가 양수이면 1, 아니면 -1인 np 리턴 
 np.where(data>0,5,data)  #data의 값이 양수일경우 5, 아니면 data값인 np 리턴
+
+
+
+
+############ API requests ##############
+import requests
+
+url = ""
+
+response = requests.get(url).json()   #.json()으로 받아오기/// .text  // .content
+
+############ datetime ##############
+import time
+from datetime import datetime, timedelta 
+
+today = datetime.now() 
+
+today.year
+today.month 
+today.day 
+today.hour 
+today.minute 
+today.second 
+
+today.strftime('%Y/%m/%d %H:%M:%S')
+
+%Y #4자리 연도 
+%y #2자리 연도  
+%m #월
+%d #일
+%A #요일
+%a #간단 요일
+%H #시(24시 기준)
+%I #시(12시 기준)
+%p #AM 또는 PM 
+%M #분
+%S #초
+
+
+#현재 unix time 
+unixTime = time.time()
+#unix time을 datetime으로 
+date = datetime.fromtimestamp(unixTime)
+#time delta 
+date = date + timedelta(hours=3)  #days, seconds... 
+
+#string시간을 datetime으로 
+date = datetime.strptime(stringTime, '%Y-%m-%d %H:%M:%S')  #2번째 인자는 stringTime의 시간 포맷이 어떻게 되있나 알려주는 역할.
+
+#datetime을 unixtime으로 
+unixTime = datetime.timestamp(date)
+
+#datetime을 string으로 
+stringTime = time.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것인지.
+
+
+############## dataframe ##############
+import pandas as pd
+
+#loop 돌때 빠른 at
+df.at[index, 'timestamp']
+
+#지수표기법 변경
+pd.options.display.float_format = '{:.2f}'.format
+pd.reset_option('display.float_format')
+
+
+#inplace
+데이터프레임에서 inplace=True 값을 주면 원본객체를 함께 변경한다는 뜻임.
+즉 df = df.sort_value() 이런식으로 원본 변수에 다시 지정안해줘도 된다는 뜻.
+
+#조건으로 데이터프레임 행 추출하기 
+timestamp = datetime.now()
+df = df[timestamp<=df['timestamp']]
+
+df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기 
+
+df_index = df[df['name']=='hongsa'].index
+df.drop([df_index])            #index로 행 삭제하기.
+
+
+#정렬하기 
+df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬 
+
+df.reset_index(drop=True)   #index 다시 설정 
+
+
+#중복값 제거하기 
+df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timestamp 값중에 중복되는 것을 찾고 첫번째놈 남기고 지워, 그리고 인덱스 다시 설정.
+                                                                        #first, last ,False(중복값 모두 제거)
+
+
+##############  ##############
+##############  ##############
+##############  ##############
+##############  ##############
+##############  ##############
+##############  ##############
+##############  ##############
+##############  ##############
