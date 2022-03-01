@@ -513,7 +513,7 @@ useEffect(()=>{
 
 //App.js
 import {
-    BrowserRouter as Router,
+    BrowserRouter as Router,                //BrowserRouter, hashrouter가 있는데 브라우저 라우터는 url에 /movie 이런식으로 덧붙여서 이동하는것.
     Routes,
     Route,
 } from "react-router-dom";
@@ -523,12 +523,13 @@ import Detail from './routes/Detail';       //page
 function App(){
     return <Router>
         <Routes>
-            <Route path="/movie" element={<Detail />} />
+            <Route path="/movie/:id" element={<Detail />} />        
             <Route path="/" element={<Home />} />
         </Routes>
     </Router>;
 }
 //Router로 각 route들 (page) 경로설정해놓는다.
+// /:id  를 통해 id를 이용한 url를 만들 수 있다. 
 export default App;
 
 //Router의 Link 는 하이퍼링크를 통해 다른 페이지로 갈때 새로고침을 하지않고 넘겨줌.
