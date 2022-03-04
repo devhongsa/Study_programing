@@ -912,6 +912,8 @@ fetch(url).then(response=>response.json()).then(data=> {        //then은 fetch�
 
 
 
+//string.slice(0,25)   string의 index 0부터25까지만 
+
 
 //////////////////1만 시간 법칙 js 코드 ///////////////////////
 
