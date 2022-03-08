@@ -33,3 +33,9 @@ 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
 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
 
 소스트리 저장소 -> 저장소 설정 -> 편집 -> https://tokenkey@github.com/devhongsa/Study_programing.git
+
+
+private 저장소 clone하기 
+
+작업폴더가 만들어질 위치로 가서 terminal로 
+git clone https://devhongsa@github.com/devhongsa/Spread_python.git
