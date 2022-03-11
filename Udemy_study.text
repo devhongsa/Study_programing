@@ -199,6 +199,7 @@ describe('Inbox', () => {
 
 ///public 네트워크에서 배포하기 
 1. infura.io 에서 new project 만들기. 네트워크 선택해서 url 받기
+  seungmin.hong // eksrnr23IF
 2. inbox-Dapp에서 npm install -s @truffle/hdwallet-provider 명령어 실행.
 3. deploy.js 코드 작성
 const HDWalletProvider = require('@truffle/hdwallet-provider');
@@ -206,7 +207,7 @@ const Web3 = require('web3');
 const { interface, bytecode } = require("./compile");
 
 const provider = new HDWalletProvider(                      //링크비 월렛지갑주소 형성.
-  'deny extend thought blood debris bundle barely point business nut produce conduct',      //링크비네트워크에서 만들 어카운트 니모닉 
+  'deny extend thought blood debris bundle barely point business nut produce conduct',      //링크비네트워크에서 만든 어카운트 니모닉 
   'https://rinkeby.infura.io/v3/def9b0ef220042c592f5d1a78c526be1'                           //링크비네트워크에 있는 노드에 연결하기위한 url.
 )
 const web3 = new Web3(provider);                //원래 ganache.provider(로컬네트워크)로 했었는데, 지금은 링크비네트워크로 해야되니까

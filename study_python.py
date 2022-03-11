@@ -1,3 +1,6 @@
+#pip install 패키지명 --upgrade
+
+
 x = []
 
 x[0:3]   #index 0부터 2까지 
@@ -281,6 +284,7 @@ import pandas as pd
 #dataframe 만들기
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
+df = pd.DataFrame({'timestamp' : timestamp, 'price' : price})
 
 #loop 돌때 빠른 at
 df.at[index, 'timestamp']

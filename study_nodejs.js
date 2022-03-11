@@ -825,3 +825,11 @@ app.listen(3000);
 
 const path = require('path');
 path.resolve("path","path2","path3");     //패스경로를 합쳐서 스트링으로 만들어줌. join도 같은역할
+
+
+
+// util // 
+
+const util = require('util')
+
+console.log(util.inspect(objectname,{depth:5}));      //nodejs에서 출력할때, object가 생략되는것을 보이게 할 수 있음.
