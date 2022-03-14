@@ -258,12 +258,6 @@ deploy();
 
 
 
-
-
-
-
-
-
 Remix에서 내가 배포한 스마트컨트랙트와 interact 하기 
 1. 스마트컨트랙트 코드 불러오기.
 2. environment를 Injected Web3로 설정해서 메타마스크와 연결하기. Rinkeby network.
@@ -273,8 +267,31 @@ Remix에서 내가 배포한 스마트컨트랙트와 interact 하기
 
 
 
+스마트컨트랙트와 웹페이지 코드 연결하기 
+1. 스마트컨트랙트 node deploy.js 명령어 실행 (이때 util 모듈 써서 object 생략된거 보이게끔 코드 수정)
+  console.log(util.inspect(abi,{depth:5}))    //이때 abi는 내가 보려고하는 객체, depth는 어느 깊이까지 다 보여줄건지.
 
+2. 배포된 스마트컨트랙트 주소, 그리고 abi 통으로 복사 
+3. 웹페이지 쪽 작업폴더에서 web3.js 파일생성
+import Web3 from "web3";
+window.ethereum.request({ method: "eth_requestAccounts" });
 
+const web3 = new Web3(window.ethereum);
+
+export default web3;
+
+4. 추가로 lottery.js 파일생성 
+import web3 from './web3';      //여기서 import한거는 위에서 만든 web3.js 
+
+const address = '0xBf2deb794A1F6c2c634e54a22Ca3D303AD5Ab5f9';     //스마트컨트랙트 주소 
+const abi = []   //abi 복사한거 붙여넣기 
+
+export default new web3.eth.Contract(abi, address);
+
+5. 웹페이지 App.js 에서 
+import web3 from "./web3";
+import lottery from "./lottery";
+이후 웹페이지 제작.
 
 
 msg.data
