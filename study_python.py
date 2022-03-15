@@ -300,8 +300,8 @@ pd.reset_option('display.float_format')
 df = pd.concat([df1, df2])
 
 #데이트프레임 열 평균
-df['buy'].iloc[:2].mean()       # 인덱스 0부터 2까지 평균
-(df['buy'].iloc[:2]*df['sell'].iloc[:2]).mean()
+df['buy'].iloc[:2].mean()       # 인덱스 0부터 1까지 평균
+(df['buy'].iloc[:2]*df['sell'].iloc[:2]).mean()  #.sum()
 
 #데이터프레임 nan 확인
 pd.isna(df.at[i,'timestamp'])   #nan이면 True 반환

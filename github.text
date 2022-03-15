@@ -18,9 +18,10 @@ git merge version2         // main branch에서 실행하면 version2 와 버전
 git init 
 //git config --global init.defaultBranch main         default branch로 main 설정
 git remote add origin (repository 주소)                 작업폴더와 레포지토리 연결
+git remote set-url origin https://devhongsa@github.com/devhongsa/Study_programing.git
 git remote -v      작업폴더의 레포지토리 연결확인
-git branch        branch 이름 확인 master면 
-git branch -m master main      main branch로 변경 
+//git branch        branch 이름 확인 master면 
+//git branch -m master main      main branch로 변경 
 git pull origin main --allow-unrelated-histories     깃허브 저장소에 있는 내용 한번 pull 해줘야 local 자료 push 할수 있음.
 git push -u origin main 
 
@@ -32,7 +33,7 @@ url 만들어짐.  https://devhonglion.github.io/10000hours_web/
 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
 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
 
-소스트리 저장소 -> 저장소 설정 -> 편집 -> https://tokenkey@github.com/devhongsa/Study_programing.git
+소스트리 저장소 -> 저장소 설정 -> 편집 -> https://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@github.com/devhongsa/Testing_code.git
 
 
 private 저장소 clone하기 

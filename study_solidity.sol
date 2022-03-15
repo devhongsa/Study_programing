@@ -231,7 +231,7 @@ contract Son2 is Father2
 
 contract lec17
 {
-    mapping(uint256 => uint256) private ageList;   // key값과 value 값의 데이터타입 명시,  //mappinp은 length의 기능이 없음.
+    mapping(uint256 => uint256) private ageList;   // key값과 value 값의 데이터타입 명시,  //mapping은 length의 기능이 없음.
     
     function setAgeList(uint256 _index, uint256 _age) public
     {
