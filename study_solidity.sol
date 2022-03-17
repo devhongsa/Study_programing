@@ -786,6 +786,9 @@ contract lec38{
 }
 
 //interface?
+//1. interface 안에 정의된 함수는 external로 표시
+//2. enum, structs 가능 
+//3. 변수, 생성자 불가 
 
 interface ItemInfo{
     struct item{
@@ -806,6 +809,8 @@ contract lec39 is ItemInfo{
         return itemList[_index];
     }
 }
+//leg39에는 ItemInfo에 정의된 함수 addItemInfo, getItemInfo 함수가 무조건 정의되어 있어야한다. 이때 override도 붙여야함.
+//정의가 안되어있으면 에러가 뜸. 
 
 //library?
 // 장점 : 재사용성, 가스소비 절약, 데이터타입 적용
@@ -832,6 +837,11 @@ contract lec40{
 //import "./lec41_1.sol"  저장위치가 같을때  ./
 //import "../"
 
+string(abi.encodePacked(n,n2,n3);)     //string 여러개를 합쳐주는
+
+
+
+
 
 //// 블록체인 인 액션 ////
 
@@ -843,6 +853,7 @@ contract lec40{
 
 
 함수안에서 로컬 변수로 구조체를 정의할 때, memory 타입인지 storage 타입인지 명시적으로 선언해주어야한다.
+
 
 
 
