@@ -18,6 +18,7 @@ console.log(1+1);   //2
 //pm2 stop main             // main.js 종료  
 //pm2 start main.js --watch  // main.js를 수정할때마다 자동으로 껐다 켜줌.
 //pm2 log                   //error 사항들 보여줌.
+//touch main.js             // main.js 파일 만들기.
 
 //writehead 200: 성공했다 , 403: 이페이지는 없다. 302: 다른페이지로 가라 301: 이페이지는 다른페이지로 바뀌었다.
 

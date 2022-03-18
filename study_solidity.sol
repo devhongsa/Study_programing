@@ -787,6 +787,7 @@ contract lec38{
 
 //interface?
 //1. interface 안에 정의된 함수는 external로 표시
+// interface 안에 정의된 함수는 아직 body가 없고 함수이름만 구현된 상태임.
 //2. enum, structs 가능 
 //3. 변수, 생성자 불가 
 
@@ -831,6 +832,7 @@ contract lec40{
         a = _num1.add(_num2);
     }
 }
+//using SafeMath for uint8 이거는 SafeMath에 구현된 함수를 사용할때   a.add(b) 이런식으로 uint8에 .add()를 붙여서 사용할 수 있게 해줌.
 
 //import?
 
