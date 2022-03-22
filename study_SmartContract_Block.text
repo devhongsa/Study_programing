@@ -1,4 +1,5 @@
 iancoleman.io/bip39  니모닉12단어 만드는곳
+12단어받고 복구구문 이용해서 새계정 만들 수 있음.
 링크비 테스트넷 테스트이더 받는곳.
 https://faucets.chain.link/rinkeby  
 
@@ -43,8 +44,13 @@ truffle-config.js : 트러플 설정파일. 블록체인 네트워크 ID, IP, RP
 * 이 json 파일은 ABI(Application Binary Interface)라고도 불리며, 웹 애플리케이션에서 스마트 컨트랙트로 보내는 호출과 모듈간의 데이터 송신에
 사용될 인터페이스다.
 
-10. truffle-config.js 에서 블록체인 네트워크 설정값 수정하기.
+10. truffle-config.js 에서 블록체인 네트워크 설정값 수정하기. development 부분 port랑 network_id 설정. ganache network 설정 참고.
+**다른 public 블록체인일 경우에는 package.json 있는 폴더위치에서 npm install -s @tru@truffle/hdwallet-provider 설치후에 
+truffle-config.js 파일에서 const HDWalletProvider = require('@truffle/hdwallet-provider'); 코드 삽입하고 
+network: {rinkeby : { 이 부분 수정.}} infura.io 에서 프로젝트 형성하고, 니모닉문자는 계정 복구구문 써넣기.
+
 11. migrations 디렉토리에 2_deploy_contracts.js 파일 추가하기. -> Ballot.sol 배포를 위한 파일
+// 1_initial_migration.js 에서 migration 지우고 내 스마트컨트랙트 depoly 해도됨.
 var Ballot = artifacts.require("Ballot");       // 배포해야할 컨트랙트파일 이름 Ballot 
 
 module.exports = function (deployer) {
@@ -56,7 +62,7 @@ module.exports = function (deployer) {
 
 12. ballot-contract 디렉토리로 가서 명령어 truffle migrate --reset 실행하여 스마트컨트랙트 배포.
 * reset 옵션을 빼고 하면 이미 배포한 스마트컨트랙트는 배포하지 않음. --reset 기능은 테스트환경에서만 가능함.
-
+** public 네트워크인 경우에는 truffle migrate --network rinkeby 실행. 
 
 
 // 여기까지 스마트컨트랙 만들고 배포하는 단계

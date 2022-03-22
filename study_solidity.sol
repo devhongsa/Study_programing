@@ -150,7 +150,7 @@ contract Father
         return money;
     }
 }
-
+//여기서 virtual은 자식컨트랙트에서 이 함수를 override 할 것이라는 뜻. 
 contract Mother
 {
     uint256 money2 = 200;
