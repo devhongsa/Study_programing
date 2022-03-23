@@ -1,3 +1,6 @@
+https://kimsfamily.kr/328     블록체인 교육 블로그 , erc20 토큰만들기 등.
+
+
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >= 0.7.0 < 0.9.0;
 
@@ -44,9 +47,9 @@ function changeA3(uint256 _value) public returns(uint256) {
 // public으로 지정한 변수들은 remix에서 콜함수로 저절로 만들어지는데 call 함수들은 트랜잭션이 없고 즉시 호출되기 때문에 gas 소비도 없다.
 // 그래서 public으로 지정한 변수들을 굳이 get function을 만들어서 호출안해도 됨. 저절로 호출함수 만들어짐.
 
-// external : public 처럼 모든곳에서 접근 가능하나, external이 정의된 자기자신 컨트랙 내에서는 접근 불가
+// external : public 처럼 모든곳에서 접근 가능하나, external함수가 정의된 스마트컨트랙 내에서는 다른 함수에서 external함수 호출불가
 // private : 오직 private이 정의된 자기 컨트랙에서만 가능(private이 정의된 컨트랙을 상속 받은 자식도 불가능)
-// internal : private 처럼 오직 internal 이 정의된 자기 컨트랙에서만 접근가능하고, internal이 정의된 컨트랙을 상속 
+// internal : private 처럼 오직 internal로 정의된 함수의 스마트컨트랙 내에서만 접근가능하고, 이 스마트컨트랙을 상속 
 // 받은 자식도 접근 가능
 
 uint256 public v = 5;

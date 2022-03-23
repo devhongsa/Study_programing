@@ -51,7 +51,7 @@ network: {rinkeby : { 이 부분 수정.}} infura.io 에서 프로젝트 형성�
 
 11. migrations 디렉토리에 2_deploy_contracts.js 파일 추가하기. -> Ballot.sol 배포를 위한 파일
 // 1_initial_migration.js 에서 migration 지우고 내 스마트컨트랙트 depoly 해도됨.
-var Ballot = artifacts.require("Ballot");       // 배포해야할 컨트랙트파일 이름 Ballot 
+const Ballot = artifacts.require("Ballot");       // 배포해야할 스마트컨트랙트 이름 Ballot 
 
 module.exports = function (deployer) {
     deployer.deploy(Ballot, 4);                 // Ballot의 constructor의 파라미터값으로 4 

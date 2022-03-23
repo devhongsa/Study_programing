@@ -70,3 +70,14 @@ tokenOfOwnerByIndex(address _owner, uint256 _index) : 소유 계정이 가진 �
 
 5.library SafeMath, Address 
 Address 라이브러리는 safeTransferFrom() 함수에서 어떤 주소가 컨트랙트 주소일 때 이를 구분하기 위해서 쓰는 라이브러리임.
+
+
+
+
+ERC721 openzzeplin
+
+approve(address _approve, uint256 _tokenId) : 소유권 이전 승인 계정 지정(한 토큰만)
+_tokenApprovals[tokenId] = address              //한 토큰의 소유권 이전 권한이 승인된 계정  
+
+setApproveForAll(address _operator, bool _approved) : 소유권 이전 승인 계정 지정(토큰 모두)
+_operatorApprovals[owner][msg.sender]           //owner가 msg.sender에게 소유권 이전권한을 승인했는지 true false 리턴 
