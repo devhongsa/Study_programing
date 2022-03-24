@@ -266,6 +266,7 @@ contract lec18
     function AgePush(uint256 _age) public{
         ageArray.push(_age);
     }
+    // 솔리디티에서 push는 array에 요소 추가하는 기능이 있고, ageArray.push(_age) 자체를 출력하면 array의 length가 출력됨.
 
     function AgeGet(uint256 _index) public view returns(uint256) {
         return ageArray[_index];

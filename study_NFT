@@ -47,9 +47,16 @@ balanceOf(address _owner) : 계정의 토큰 소유 수.
 ownerOf(uint256 _tokenId) : 토큰을 소유한 계정 
 
 safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes data)
+* _to 가 스마트컨트랙트 주소인지 판별. _to.isContract() 
 safeTransferFrom(address _from, address _to, uint256 _tokenId)   : 유저가 토큰을 스마트컨트랙트 주소로 보낼때 한번 검증해주는 펑션. 
 
 transferFrom(address _from, address _to, uint256 _tokenId) : 소유권 이전 // 안전하지 않을 수 있음.
+*require(_from과 현재 토큰owner이 같은지)
+*require(_to 주소가 address(0) 인지 판별)
+*require(현재 이함수를 호출한 msg.sender가 owner인지, 이토큰에 대해 소유권 이전 승인을 받은 계정인지, operator인지 판별) 
+*owner 바꾸는 코드, aprrove 계정 초기화 
+*transfer 이벤트 발생 
+
 
 approve(address _approve, uint256 _tokenId) : 소유권 이전 승인 계정 지정(한 토큰만)
 setApproveForAll(address _operator, bool _approved) : 소유권 이전 승인 계정 지정(토큰 모두)
@@ -76,8 +83,13 @@ Address 라이브러리는 safeTransferFrom() 함수에서 어떤 주소가 컨�
 
 ERC721 openzzeplin
 
-approve(address _approve, uint256 _tokenId) : 소유권 이전 승인 계정 지정(한 토큰만)
 _tokenApprovals[tokenId] = address              //한 토큰의 소유권 이전 권한이 승인된 계정  
-
-setApproveForAll(address _operator, bool _approved) : 소유권 이전 승인 계정 지정(토큰 모두)
 _operatorApprovals[owner][msg.sender]           //owner가 msg.sender에게 소유권 이전권한을 승인했는지 true false 리턴 
+
+
+_mint(address to, uint256 tokenId) 
+* require(to가 address(0)은 아닌지 판별)
+* require(tokenId가 실제 있는지(소유자가 있는지) 판별)
+* to 계정 balance 늘리기 
+* to 계정을 token owner로 만들기 .
+* emit Transfer(address(0), to, tokenId)        //mint할때는 0x0000..주소로부터 민트를 해줌.
