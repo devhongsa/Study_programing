@@ -15,6 +15,7 @@ figma.com       이미지 제작 툴
 https://github.com/HashLips/hashlips_art_engine         이미지 자동 조합 모듈
 vsCode에서 command prompt 터미널 열고 hashlips 폴더로 가서 모듈 설치 npm install 
 
+https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721  오픈제플린 ERC721,ERC20 표준
 https://github.com/syl-codes/nft-minting-contract   이두희 nft 스마트컨트랙트 오픈소스 
 https://github.com/infotrex/bulk-upload-to-opensea   opensea 대량 자동 민팅 
 https://github.com/JoCoding-Blockchain/kbirdz-contract  kip-17 스마트컨트랙트코드 
@@ -92,4 +93,4 @@ _mint(address to, uint256 tokenId)
 * require(tokenId가 실제 있는지(소유자가 있는지) 판별)
 * to 계정 balance 늘리기 
 * to 계정을 token owner로 만들기 .
-* emit Transfer(address(0), to, tokenId)        //mint할때는 0x0000..주소로부터 민트를 해줌.
+* emit Transfer(address(0), to, tokenId)        //mint할때는 처음 소유자가 없으니까 0x0000..주소로부터 민트를 해주는것으로 emit 

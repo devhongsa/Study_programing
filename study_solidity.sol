@@ -48,9 +48,8 @@ function changeA3(uint256 _value) public returns(uint256) {
 // 그래서 public으로 지정한 변수들을 굳이 get function을 만들어서 호출안해도 됨. 저절로 호출함수 만들어짐.
 
 // external : public 처럼 모든곳에서 접근 가능하나, external함수가 정의된 스마트컨트랙 내에서는 다른 함수에서 external함수 호출불가
-// private : 오직 private이 정의된 자기 컨트랙에서만 가능(private이 정의된 컨트랙을 상속 받은 자식도 불가능)
-// internal : private 처럼 오직 internal로 정의된 함수의 스마트컨트랙 내에서만 접근가능하고, 이 스마트컨트랙을 상속 
-// 받은 자식도 접근 가능
+// private : private이 정의된 함수가 있는 스마트컨트랙에서만 접근가능(이 스마트컨트랙을 상속 받은 자식이라도 접근 불가능)
+// internal : internal로 정의된 함수가 있는 스마트컨트랙 내에서만 접근가능하고, 이 스마트컨트랙을 상속 받은 자식은 접근 가능
 
 uint256 public v = 5;
 uint256 private v2 = 10;            // private으로 하면 배포했을때 v2는 접근하지못함. 여기 컨트랙안에서만 접근가능

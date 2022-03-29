@@ -1,3 +1,6 @@
+https://senticoding.tistory.com/49      ##docker 개념 
+
+
 #pip install 패키지명 --upgrade
 
 
@@ -222,6 +225,20 @@ np.argmax(data,axis=1)
 np.where(data>0,1,-1)  #data가 양수이면 1, 아니면 -1인 np 리턴 
 np.where(data>0,5,data)  #data의 값이 양수일경우 5, 아니면 data값인 np 리턴
 
+
+
+## with문 ##
+
+with Hello() as h :
+    h.sayHello('obama')
+    h.sayHello('trump')
+
+
+# 클래스의 객체를 바로 만들고 
+# 만든 객체를 이용하여 인사를 하고
+# 만든 객체를 소멸시킵니다.
+
+## 객체의 라이프사이클(생성 >> 사용 >> 소멸)을 설계할 수 있습니다.
 
 
 
