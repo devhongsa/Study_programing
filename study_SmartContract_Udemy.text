@@ -270,6 +270,37 @@ Remix에서 내가 배포한 스마트컨트랙트와 interact 하기
 스마트컨트랙트와 웹페이지 코드 연결하기 
 1. 스마트컨트랙트 node deploy.js 명령어 실행 (이때 util 모듈 써서 object 생략된거 보이게끔 코드 수정)
   console.log(util.inspect(abi,{depth:5}))    //이때 abi는 내가 보려고하는 객체, depth는 어느 깊이까지 다 보여줄건지.
+deploy.js 
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const Web3 = require('web3');
+const { abi, evm } = require('./compile');
+const util = require('util');
+
+const provider = new HDWalletProvider(
+  'deny extend thought blood debris bundle barely point business nut produce conduct',
+  // remember to change this to your own phrase!
+  'https://rinkeby.infura.io/v3/b1e030dae573453a89be502acb0b8785'
+  // remember to change this to your own endpoint!
+);
+
+const web3 = new Web3(provider);
+
+const deploy = async () => {
+  const accounts = await web3.eth.getAccounts();
+
+  console.log('Attempting to deploy from account', accounts[0]);
+
+  const result = await new web3.eth.Contract(abi)
+    .deploy({ data: evm.bytecode.object })
+    .send({ gas: '1000000', from: accounts[0] });
+
+  console.log(util.inspect(abi,{depth:5}));
+  //console.log(JSON.stringify(abi));
+  console.log('Contract deployed to', result.options.address);
+  provider.engine.stop();
+};
+deploy();
+
 
 2. 배포된 스마트컨트랙트 주소, 그리고 abi 통으로 복사 
 3. 웹페이지 쪽 작업폴더에서 web3.js 파일생성
@@ -284,7 +315,7 @@ export default web3;
 import web3 from './web3';      //여기서 import한거는 위에서 만든 web3.js 
 
 const address = '0xBf2deb794A1F6c2c634e54a22Ca3D303AD5Ab5f9';     //스마트컨트랙트 주소 
-const abi = []   //abi 복사한거 붙여넣기 
+const abi = []   //abi json 복사한거 붙여넣기 
 
 export default new web3.eth.Contract(abi, address);
 

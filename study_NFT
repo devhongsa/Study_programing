@@ -39,13 +39,16 @@ https://github.com/JoCoding-Blockchain/nft-json-maker   nft json 생성기.
 ERC-721 표준 interface 
 1.ERC721 메인 인터페이스
 ERC165 : 어떤 스마트컨트랙트가 ERC721표준을 구현했다면 ERC165 인터페이스는 ERC721를 구현했다는 것을 증명해주는 역할.
+
 3개의 이벤트 :
 Transfer : 소유권 이전시 발생
 Approval : 소유권 이전 승인시 발생 
 ApprovalForAll : 소유권 이전 승인시 발생(모든 토큰)
+
 9개의 함수 :
-balanceOf(address _owner) : 계정의 토큰 소유 수.
-ownerOf(uint256 _tokenId) : 토큰을 소유한 계정 
+balanceOf(address _owner) : 계정의 토큰 소유 수 리턴
+
+ownerOf(uint256 _tokenId) : 토큰을 소유한 계정 리턴
 
 safeTransferFrom(address _from, address _to, uint256 _tokenId, bytes data)
 * _to 가 스마트컨트랙트 주소인지 판별. _to.isContract() 
@@ -58,23 +61,58 @@ transferFrom(address _from, address _to, uint256 _tokenId) : 소유권 이전 //
 *owner 바꾸는 코드, aprrove 계정 초기화 
 *transfer 이벤트 발생 
 
+approve(address to, uint256 _tokenId) : 소유권 이전 승인 계정 지정(한 토큰만)
+*토큰 owner 호출
+* require(owner와 to가 같지않아야함)
+* require(함수호출자가 owner이거나, owner가 승인한 계정이여야함.isApprovedForAll)
+* _approve(to, tokenId) 함수 호출
+ _approve(to, tokenId)
+ *_tokenApprovals[tokenId] = to;
 
-approve(address _approve, uint256 _tokenId) : 소유권 이전 승인 계정 지정(한 토큰만)
-setApproveForAll(address _operator, bool _approved) : 소유권 이전 승인 계정 지정(토큰 모두)
+setApprovalForAll(address _operator, bool _approved) : 소유권 이전 승인 계정 지정(토큰 모두)
+*_setApprovalForAll(_msgSender(), operator, approved) 호출
+_setApprovalForAll(owner, operator, approved)
+*require(owner와 operator가 같지 않아야함)
+_operatorApprovals[owner][operator] = approved;
+
 getApproved(uint256 _tokenId) : 소유권 이전 승인 계정 조회
+*require(_exists(tokenId))  토큰이 실제 있는지 조회 
+* _tokenApprovals[tokenId] 리턴 
+
 isApprovedForAll(address _owner, address _operator) : 소유권 이전 승인 여부 조회 
+* _operatorApprovals[owner,operator] 리턴 True or False 
 
 2.ERC721 TokenReceiver
+
 3.ERC721 Metadata
 name() : 토큰 이름
 symbol() : 토큰 심볼 
 tokenURI(uint256 _tokenId) : 토큰 ID가 가리키는 리소스 정보(json)
 
 4.ERC721 Enumerable 
+_ownedTokens[address][index] = tokenId  토큰보유자의 보유토큰 리스트에서 인덱스넘버에 따른 토큰id 
+_ownedTokensIndex[tokenId] = index      토큰보유자의 보유토큰 리스트에서 토큰id에 따른 index 넘버
+_allTokens[index] = tokenId             모든토큰인덱스에 따른 ID 리스트
+_allTokensIndex[tokenId] = index        모든토큰의 토큰id에 따른 인덱스넘버
+
 totalSupply() : 발행된 유효한 토큰 수 
 tokenByIndex(uint256 _index) : _index에 해당하는 토큰ID ,  인덱스는 _index < totalSupply() 이여야한다. 
-tokenOfOwnerByIndex(address _owner, uint256 _index) : 소유 계정이 가진 토큰 중 인덱스에 해당하는 토큰ID 
+tokenOfOwnerByIndex(address _owner, uint256 _index) : 소유 계정이 가진 토큰 중 인덱스에 따른 토큰ID 
 
+_beforeTokenTransfer(from, to, tokenId)
+
+_addTokenToOwnerEnumeration(to, tokenId)
+_addTokenToAllTokensEnumeration(tokenId)
+
+_removeTokenFromOwnerEnumeration(from, tokenId)
+_removeTokenFromAllTokensEnumeratio(tokenId)
+*마지막인덱스넘버 구하기 lastTokenIndex
+*burn할 토큰 id의 인덱스 넘버 구하기 tokenIndex
+*마지막인덱스에 해당하는 토큰id 구하기 lastTokenId 
+*삭제될 토큰의 인덱스 넘버에 lastTokenId 넣기 
+*lastTokenId의 인덱스 넘버를 tokenIndex로 바꾸기 
+*삭제될 토큰id에 해당하는 인덱스 넘버 지우기 
+*_allTokens.pop()으로 마지막 인덱스 삭제해주기 
 
 5.library SafeMath, Address 
 Address 라이브러리는 safeTransferFrom() 함수에서 어떤 주소가 컨트랙트 주소일 때 이를 구분하기 위해서 쓰는 라이브러리임.
@@ -83,9 +121,12 @@ Address 라이브러리는 safeTransferFrom() 함수에서 어떤 주소가 컨�
 
 
 ERC721 openzzeplin
-
-_tokenApprovals[tokenId] = address              //한 토큰의 소유권 이전 권한이 승인된 계정  
-_operatorApprovals[owner][msg.sender]           //owner가 msg.sender에게 소유권 이전권한을 승인했는지 true false 리턴 
+_name 
+_symbol
+_balances[owner] += 1                           //owner 밸런스 늘리기
+_owners[tokenId] = address                      //토큰 소유계정 설정하기 
+_tokenApprovals[tokenId] = address              //특정 계정에게 한 토큰의 소유권 이전 권한 승인하기
+_operatorApprovals[owner][operator] = True      //owner가 operator에게 소유권 이전권한을 승인하기  
 
 
 _mint(address to, uint256 tokenId) 
@@ -94,3 +135,12 @@ _mint(address to, uint256 tokenId)
 * to 계정 balance 늘리기 
 * to 계정을 token owner로 만들기 .
 * emit Transfer(address(0), to, tokenId)        //mint할때는 처음 소유자가 없으니까 0x0000..주소로부터 민트를 해주는것으로 emit 
+
+
+_burn(uint256 tokenId)
+* token의 owener 호출
+* _beforeTokenTransfer(owner, address(0), tokenId)  //ERC721 Enumerable 확장판에서 실행. 
+* _approve(address(0), tokenId)  승인된 계정 초기화 
+* owner nft밸런스 개수 1개 줄이기
+* delete _owners[tokenId]  토큰 owner정보 지우기 
+* emit Transfer(owner, address(0), tokenId) 

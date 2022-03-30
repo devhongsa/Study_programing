@@ -64,6 +64,10 @@ module.exports = function (deployer) {
 * reset 옵션을 빼고 하면 이미 배포한 스마트컨트랙트는 배포하지 않음. --reset 기능은 테스트환경에서만 가능함.
 ** public 네트워크인 경우에는 truffle migrate --network rinkeby 실행. 
 
+13. 작업폴더에서 truffle networks 입력. 내가 배포한 스마트컨트랙트 목록과 주소가 나옴. 
+14. truffle console 입력후 const contract_name = await Ballot.at("스마트컨트랙트 주소") 
+15. contract_name.함수()    // 내가 짠 스마트컨트랙트 코드에 있는 함수들 실행 가능.
+
 
 // 여기까지 스마트컨트랙 만들고 배포하는 단계
 // 이제부터 배포된 스마트컨트랙에 접근할 웹 애플리케이션 만들기.

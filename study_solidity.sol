@@ -272,7 +272,7 @@ contract lec18
     }
 
     function AgePop() public {
-        ageArray.pop();                  // 가장 최신 인덱스 값 삭제  length도 줄어듬
+        ageArray.pop();                  // 가장 최신(마지막) 인덱스 값 삭제  length도 줄어듬
     }
 
     function AgeDelete(uint256 _index) public {
