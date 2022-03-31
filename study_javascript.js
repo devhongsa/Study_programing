@@ -22,9 +22,11 @@ typeof "abc"
 //null은 변수도 있고 안에 값이 있는데 그 값이 '아무것도 없음'임 
 
 
-//데이터 변환
+//데이터 형변환
 parseInt('13');
 parseInt('assdf');  // NaN 
+parseFloat('avc');
+Number('abced')     //float이나 int로 형변환 해줌 
 
 isNaN('string');   //true 
 isNaN(15);          //false 
@@ -998,3 +1000,9 @@ closeButton.addEventListener('click', closeModal);
 startButton.addEventListener('click', calculator);
 
 //////////////////////////////////////////////////////////////////////
+
+import web3 from "web3"         //최근규격
+const web3 = require("web3")
+
+export default a;               //최근규격 
+module.exports = a;

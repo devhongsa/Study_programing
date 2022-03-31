@@ -45,7 +45,7 @@ truffle-config.js : 트러플 설정파일. 블록체인 네트워크 ID, IP, RP
 사용될 인터페이스다.
 
 10. truffle-config.js 에서 블록체인 네트워크 설정값 수정하기. development 부분 port랑 network_id 설정. ganache network 설정 참고.
-**다른 public 블록체인일 경우에는 package.json 있는 폴더위치에서 npm install -s @tru@truffle/hdwallet-provider 설치후에 
+**다른 public 블록체인일 경우에는 package.json 있는 폴더위치에서 npm install -s @truffle/hdwallet-provider 설치후에 
 truffle-config.js 파일에서 const HDWalletProvider = require('@truffle/hdwallet-provider'); 코드 삽입하고 
 network: {rinkeby : { 이 부분 수정.}} infura.io 에서 프로젝트 형성하고, 니모닉문자는 계정 복구구문 써넣기.
 
@@ -70,7 +70,13 @@ module.exports = function (deployer) {
 
 
 // 여기까지 스마트컨트랙 만들고 배포하는 단계
+
+
+
+
+
 // 이제부터 배포된 스마트컨트랙에 접근할 웹 애플리케이션 만들기.
+// 이 방법은 존나 구림. 
 Frontend 부분 p.104
 
 13.ballot-app 디렉토리에서 npm init 명령어 실행.

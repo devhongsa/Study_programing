@@ -85,7 +85,7 @@ module.exports = JSON.parse(solc.compile(JSON.stringify(input))).contracts[
 ].Inbox;
 
 
-5. npm compile.js 실행 . ABI json, bytecode 추출.
+5. node compile.js 실행 . ABI json, bytecode 추출.
 6. npm install mocha ganache-cli web3    
 
 web3 provider는 특정 네트워크(이더리움, 롭스텐, 링크비 등)와 소통하기 위한 통역가(?)라고 생각하면됨.
