@@ -408,7 +408,7 @@ function Hello(){
         return ()=>console.log("Bye");
     },[]);
     //보통 useEffect 함수안에 다 넣는 경향이 있음.
-    //중요한건 return (함수) 이여야함. 
+    //중요한건 return (함수) 이여야함. 그래야 Hello 컴포넌트가 사라질때 return 쪽 함수가 실행됨.
 
 
     return <h1>Hello!</h1>;
