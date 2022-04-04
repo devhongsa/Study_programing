@@ -1,3 +1,9 @@
+https://velog.io/@velopert/react-hooks    리액트 주요 hooks 정리 
+
+
+
+
+
 //html 코드에 아래 library import 해줘야함.
 //<script src="https://unpkg.com/react@17.0.2/umd/react.production.min.js"></script>
 //<script src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.production.min.js"></script>
@@ -342,6 +348,11 @@ function App() {
   const onClick = ()=>setValue((prev)=>prev +1);
 
   console.log("i run all the time");
+
+  useEffect(()=>{
+    console.log("Call the api...");
+  });
+  //렌더링할때마다 실행됨. 
   
   useEffect(()=>{
     console.log("Call the api...");
@@ -536,7 +547,92 @@ export default App;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
+useCallback
+이는 최적화를 위한 훅입니다. React에서 이벤트를 핸들링 할 때 보통 다음 코드처럼 컴포넌트 내부에 함수를 선언해서 사용합니다.
+
+function Component() {
+  const handleClick = () => console.log('clicked!')
+
+  return (
+    <button onClick={handleClick}>클릭해보세요!</button>
+  )
+}
+위 코드는 별 문제가 되지 않습니다. 하지만 컴포넌트가 렌더링 될 때 마다 함수를 새로 생성한다는 단점이 있습니다. 부모 컴포넌트가 렌더링되거나, 상태(state)가 변경되는 경우, React 컴포넌트는 렌더링을 유발합니다. 다음 코드를 살펴봅시다.
+
+
+function Component() {
+  const [count, setCount] = React.useState(0)
+  const handleClick = React.useCallback(
+    () => console.log('clicked!'),
+  []) // useCallback 사용
+
+  return (
+    <>
+      <button onClick={() => setCount(count + 1)}>카운트 올리기</button>
+      <button onClick={handleClick}>클릭해보세요!</button>
+    </>
+  )
+}
+위 코드에선 useCallback으로 감싸기만 했을 뿐인데, 이전에 생성한 함수를 저장해두고 재사용합니다. 함수의 동작은 똑같지만 좀 더 최적화가 좋습니다. 이는 메모제이션 패턴을 이용한 것입니다. 잠깐, 그런데 두번째 인자로 넘긴 [] 은 무엇일까요?
+
+useCallback의 두번째 인자?
+두번째 인자의 배열은 의존성을 의미합니다. 여태 작성한 handleClick 함수는 아무런 의존성이 없기에 문제가 되지 않습니다. 코드를 조금 변경해서 handleClick 함수가 count값을 출력하게 해보겠습니다.
+
+const handleClick = React.useCallback(
+  () => console.log('current count :' + count),
+[])
+다음과 같은 순서로 이벤트를 발생시켜보겠습니다.
+
+handleClick()
+setCount(count + 1)
+handleClick()
+출력 결과
+
+handleClick() // 실제 count 값: 0, 출력 결과: current count :0
+setCount(count + 1) // 실제 count 값: 1
+handleClick() // 실제 count 값: 1, 출력 결과: current count :0
+두번째 호출에서 실제 count 값이 1증가해서 변경되었음에도 최초값인 0을 출력합니다. useCallback 내부에서 count값을 의존하지만, 이를 제대로 인지하지 못하고 이전 값을 출력하는 것입니다.
+
+따라서 다음과 같이 useCallback의 두번째 인자 배열에 의존하는 상태값을 명시해야 제대로 동작합니다.
+
+const handleClick = React.useCallback(
+  () => console.log('current count :' + count),
+[count]) // 의존하는 상태 명시
+출력 결과
+
+handleClick() // 실제 count 값: 0, 출력 결과: current count :0
+setCount(count + 1) // 실제 count 값: 1
+handleClick() // 실제 count 값: 1, 출력 결과: current count :1
+이처럼 useCallback 함수 내부에서 의존하는 상태값이 있다면, 반드시 두번째 인자 배열에 명시해야합니다.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
+useMemo
+useMemo 또한 useCallback과 매우 유사하게 최적화에 사용됩니다. useCallback이 함수를 반환하는 반면, 이것은 값을 반환합니다. count값의 두배를 계산한 상태를 예시로 들어보겠습니다.
+
+function Component() {
+  const [count, setCount] = React.useState(0)
+  const doubleCount = count * 2
+
+  console.log(doubleCount) // 두배로 계산한 값 출력
+
+  return (
+    <>
+      <button onClick={() => setCount(count + 1)}>카운트 올리기</button>
+    </>
+  )
+}
+버튼을 클릭할 때 마다 두배로 계산한 값을 출력합니다. 하지만 count값과 무관하게 컴포넌트가 재렌더링 되었을 경우, 불필요한 연산을 하게 됩니다. 컴포넌트의 상태값이 많고 복잡한 연산의 경우 최적화가 좋지 않습니다.
+
+const doubleCount = React.useMemo(() => count * 2, [count])
+위처럼 useMemo를 사용하면 의존하는 값이 변경될 때에만 연산하므로 최적화가 개선됩니다. useCallback과 마찬가지로 두번째 인자 배열에 의존하는 값을 반드시 명시해야합니다.
+
+참고로 이전에 useCallback으로 작성한 handleClick 함수를 useMemo를 사용해서 똑같이 구현할 수 있습니다. 내부에서 함수만 반환하게 하면 됩니다.
+
+const handleClick = React.useMemo(
+  () => () => console.log('current count :' + count),
+[count]) // useMemo로 useCallback 구현
+useMemo는 상태값을 반환하고, useCallback은 함수를 반환하는 차이를 제외하곤 없습니다. 이를 적절히 사용하면 컴포넌트 렌더링 최적화에 큰 도움이 될 수 있다고 생각합니다. 한가지 주의할 점은 useCallback과 useMemo를 무분별하게 사용한다면, 이를 사용하는 코드와 메모제이션용 메모리가 추가로 필요하게 되므로 적절하게 사용해야합니다.
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////
