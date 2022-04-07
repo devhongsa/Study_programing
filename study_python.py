@@ -293,8 +293,14 @@ unixTime = datetime.timestamp(date)
 #datetime을 string으로 
 stringTime = time.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것인지.
 
+#datatime 형식 바꾸기
+df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으로 변경 
 
 ######################################### dataframe #########################################
+
+#단일 인덱싱에서는 at, iat이 작업 시간 상 유리하고, 여러 row/column을 인덱싱해야하는 상황에서는 loc, iloc을 사용해야한다. 
+# at, iat은 df.at[3:100, 'column'] 이런게 안된다. 
+
 
 import pandas as pd
 
@@ -302,6 +308,10 @@ import pandas as pd
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
 df = pd.DataFrame({'timestamp' : timestamp, 'price' : price})
+
+#index값 추출
+df.index   # return index list
+df.index[i]
 
 #loop 돌때 빠른 at
 df.at[index, 'timestamp']
@@ -338,22 +348,66 @@ df_index = df[df['name']=='hongsa'].index
 df.drop([df_index])            #index로 행 삭제하기.
 
 #데이터프레임 행 추가하기 
-df.loc[len(df)] = ['2022',3,4] 
+df.loc[len(df)] = ['2022',3,4] #행 전체를 추가하기 
+
+for key,value in 딕셔너리.items() 
+    df.loc[key] = value
+
+#필요한 column만 추출하기 
+df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bids[0].price','bids[0].amount']]
+
 
 #정렬하기 
-df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬 
+df.sort_values('timestamp', ascending=True)   #timestamp값으로 올림차순 정렬  최근시간이 뒤로 오는 정렬 
 
-df.reset_index(drop=True)   #index 다시 설정 
+df.reset_index(drop=True)   #index 다시 설정 drop=true는 이전의 index열 삭제함. 
 
 
 #중복값 제거하기 
 df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timestamp 값중에 중복되는 것을 찾고 첫번째놈 남기고 지워, 그리고 인덱스 다시 설정.
                                                                         #first, last ,False(중복값 모두 제거)
 
+#groupby 
+https://ponyozzang.tistory.com/291
+df = df.groupby('local_timestamp').tail(1)                  ##timestamp컬럼 데이터들 중 똑같은애들끼리 묶어서 그룹화하고 마지막행만 모아서 리턴
+
+
 
 #########################################  #########################################
+mlflow 
+pip install mlflow 
+mlflow ui 
+
+mlflow.set_tracking_uri('http://127.0.0.1:5000')
+mlflow.create_experiment('Test')
+mlflow.set_experiment('Test')
+
+param = {'spreadIn':spreadFrom, 'spreadOut':outSpread}
+mlflow.log_params(param)
+
+log_metric("profitRate", round(pnlDf['총수익률'].iloc[-1],4))
+log_metric("tradingCount", len(pnlDf))
 #########################################  #########################################
+asyncio 비동기함수 
+
+비동기함수란 함수 완료 여부와 상관 없이 호출자에게 리턴하며, 작업이 완료되면 호출자에게 완료를 통보한다. 
+
 #########################################  #########################################
+
+try:
+    print('hi')
+except:
+    pass            #어떤 오류든 그냥 pass 
+
+except Exception as e:
+    print(e)        #오류 내용을 출력해줌
+
+except 오류이름:
+    특정오류가 발생하면 실행 .
+finally:
+    오류가 발생해서 코드 진행이 멈추기 직전에 마지막으로 실행하는 함수. 
+
+
 #########################################  #########################################
 #########################################  #########################################
 #########################################  #########################################
