@@ -1,5 +1,8 @@
 //명령어모음.
 
+//Cannot use import statement outside a module
+//package.json에 "type":"module"  써 넣으면 해결됨.
+
 //cmd에서 node -v 버전확인
 //node 명령어 node 시작
 console.log(1+1);   //2 

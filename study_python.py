@@ -66,6 +66,9 @@ a.count('aaa')   # 요소값이 aaa인 요소 개수
 a.sort()          #올림차순
 a.sort(reverse=True)  #내림차순
 
+a = set(a)          #중복값 제거 
+
+
 튜플
 리스트보다 반복문에서 조금더 빠름 
 요소를 변경할 수 없음 보안 굿
@@ -358,7 +361,7 @@ df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bi
 
 
 #정렬하기 
-df.sort_values('timestamp', ascending=True)   #timestamp값으로 올림차순 정렬  최근시간이 뒤로 오는 정렬 
+df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬  최근시간이 위로 오는 정렬 
 
 df.reset_index(drop=True)   #index 다시 설정 drop=true는 이전의 index열 삭제함. 
 

@@ -999,6 +999,7 @@ openButton.addEventListener('click', openModal);
 closeButton.addEventListener('click', closeModal);
 startButton.addEventListener('click', calculator);
 
+import { string } from "prop-types";
 //////////////////////////////////////////////////////////////////////
 
 import web3 from "web3"         //최근규격
@@ -1006,3 +1007,8 @@ const web3 = require("web3")
 
 export default a;               //최근규격 
 module.exports = a;
+
+//////////////////////////////////////////////////////////////////////
+str='abc,def,ghi'
+str.split(',')
+// 결과 [abc,def,ghi]  리스트 리턴 
