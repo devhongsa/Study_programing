@@ -1,5 +1,8 @@
 https://kimsfamily.kr/328     블록체인 교육 블로그 , erc20 토큰만들기 등.
 
+//metadata: 어떤 데이터가 있으면 그 데이터를 설명해주는 데이터를 metadata라고 한다.
+
+
 
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >= 0.7.0 < 0.9.0;

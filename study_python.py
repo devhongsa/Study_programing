@@ -27,7 +27,7 @@ str.find()
 str.upper()
 str.lower()
 str.replace()
-str.split()    #문자열 분리하기
+str.split(',')    #문자열 분리하기     ','기준으로 스트링을 나누고 리스트로 반환.
 str.isspace()  #문자열에 공백있는지 확인하기
 
 print(year,month,day, sep='/')   #문자열 중간중간 / 삽입
@@ -374,7 +374,9 @@ df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timesta
 https://ponyozzang.tistory.com/291
 df = df.groupby('local_timestamp').tail(1)                  ##timestamp컬럼 데이터들 중 똑같은애들끼리 묶어서 그룹화하고 마지막행만 모아서 리턴
 
-
+#excel로 저장
+df.to_excel('bal.xlsx')    # 실행하는 위치에 저장
+df.to_excel(excel_writer = './Balance/bal.xlsx')  #현재위치에서 폴더만들고 저장 
 
 #########################################  #########################################
 mlflow 
@@ -412,6 +414,9 @@ finally:
 
 
 #########################################  #########################################
+삼항연산자 
+
+[trueValue] if [condition] else [falseValue]
 #########################################  #########################################
 #########################################  #########################################
 #########################################  #########################################
