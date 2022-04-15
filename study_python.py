@@ -327,7 +327,7 @@ pd.options.display.float_format = '{:.2f}'.format
 pd.reset_option('display.float_format')
 
 #데이터프레임 합치기
-df = pd.concat([df1, df2])
+df = pd.concat([df1, df2], axis=1) # axis=1로 하면 옆으로 붙이기, 설정안하면 밑으로 붙이기 
 
 #데이트프레임 열 평균
 df['buy'].iloc[:2].mean()       # 인덱스 0부터 1까지 평균
@@ -359,6 +359,12 @@ for key,value in 딕셔너리.items()
 #필요한 column만 추출하기 
 df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bids[0].price','bids[0].amount']]
 
+#column 이름바꾸기 
+# 전체 열 이름 입력하기
+df.columns = ['col', 'col', 'col']
+# 선택하여 열 이름 변경하기
+df.rename(columns={'Before':'After'})
+
 
 #정렬하기 
 df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬  최근시간이 위로 오는 정렬 
@@ -373,10 +379,19 @@ df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timesta
 #groupby 
 https://ponyozzang.tistory.com/291
 df = df.groupby('local_timestamp').tail(1)                  ##timestamp컬럼 데이터들 중 똑같은애들끼리 묶어서 그룹화하고 마지막행만 모아서 리턴
+df.groupby(['city', 'fruits'],as_index=False).mean()        ##그냥 groupby하면 인덱스가 바뀌는데, 바꾸고싶지않으면 False로
+
 
 #excel로 저장
 df.to_excel('bal.xlsx')    # 실행하는 위치에 저장
 df.to_excel(excel_writer = './Balance/bal.xlsx')  #현재위치에서 폴더만들고 저장 
+
+#리스폰스 바로 데이터프레임으로 만들기 
+#pd.DataFrame() 가로안에 들어간 json 파일이 list로 이루어져있으면 실행되는데, 단일 딕셔너리면 ([requests..]) 리스트로 감싸줘야함.
+pd.DataFrame(requests.get("https://api.opensea.io/api/v1/collections?offset=300&limit=300").json()['collections'])
+
+
+
 
 #########################################  #########################################
 mlflow 
@@ -398,6 +413,9 @@ asyncio 비동기함수
 비동기함수란 함수 완료 여부와 상관 없이 호출자에게 리턴하며, 작업이 완료되면 호출자에게 완료를 통보한다. 
 
 #########################################  #########################################
+##try except는 try 안에 있는 코드 실행중 오류가 발생하면 except로 넘어가서 코드를 실행한뒤 
+##try 안에있는 남아있는 코드를 실행하지않고 밖으로나와 프로그램을 끝까지 끝내는역할을함.
+
 
 try:
     print('hi')
@@ -409,8 +427,10 @@ except Exception as e:
 
 except 오류이름:
     특정오류가 발생하면 실행 .
+else: 
+    오류가 발생하지않으면 else로 와서 코드 실행 , except와 같이 사용해야함.
 finally:
-    오류가 발생해서 코드 진행이 멈추기 직전에 마지막으로 실행하는 함수. 
+    오류가 발생하든 안하든 finally로 넘어오고 코드실행. except 없어도 됨. 단 except가 없으면 오류발생으로 인한 비정상 종료 
 
 
 #########################################  #########################################
@@ -418,6 +438,19 @@ finally:
 
 [trueValue] if [condition] else [falseValue]
 #########################################  #########################################
+크롤링 스크래핑 
+import requests 
+from bs4 import BeautifulSoup
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
+res = requests.get('view-source:https://opensea.io/rankings?sortBy=seven_day_volume',headers=headers)
+print(res.text)
+
+
+soup = BeautifulSoup(res.content, 'html.parser')
+mydata = soup.find('title')
+print(mydata.get_text())
+
+
 #########################################  #########################################
 #########################################  #########################################
 #########################################  #########################################
