@@ -364,6 +364,8 @@ df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bi
 df.columns = ['col', 'col', 'col']
 # 선택하여 열 이름 변경하기
 df.rename(columns={'Before':'After'})
+# 특정 열을 리스트로 바꾸기
+timestampList = df['timestamp'].values.tolist()
 
 
 #정렬하기 
