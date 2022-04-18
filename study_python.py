@@ -358,6 +358,7 @@ for key,value in 딕셔너리.items()
 
 #필요한 column만 추출하기 
 df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bids[0].price','bids[0].amount']]
+df = df[['exchange','local_timestamp']]
 
 #column 이름바꾸기 
 # 전체 열 이름 입력하기
