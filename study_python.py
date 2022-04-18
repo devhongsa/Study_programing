@@ -2,7 +2,7 @@ https://senticoding.tistory.com/49      ##docker 개념
 
 
 #pip install 패키지명 --upgrade
-
+# 현재 경로 pwd
 
 x = []
 
@@ -311,6 +311,7 @@ import pandas as pd
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
 df = pd.DataFrame({'timestamp' : timestamp, 'price' : price})
+df = pd.DataFrame([])
 
 #index값 추출
 df.index   # return index list
