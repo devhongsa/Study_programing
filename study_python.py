@@ -252,6 +252,26 @@ url = ""
 
 response = requests.get(url).json()   #.json()으로 받아오기/// .text  // .content
 
+
+url = "https://restapi.nftscan.com/gw/token?apiKey=IRPq61oB&apiSecret=f486bf85ce78ee0bab6574556cf88677586e7241"
+headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
+headers2 = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*','Access-Token' : "270d55f4adb51bc3969b1d05694dd6d018c5ec4921bf3d4bed6d078adc285776"}
+
+
+url2 = "https://restapi.nftscan.com/api/v1/getAllNftPlatformInformation"
+
+
+#res = requests.get(url, headers=headers)
+
+res = requests.post(url2, headers=headers2, json={'erc':'erc721','page_index':1,'page_size':100,'user_address':"0x98e711f31e49c2e50c1a290b6f2b1e493e43ea76"})
+#post에서 json = 부분은 파라미터라고 보면됨. json형태로 파라미터 작성. 
+#get이면 url에 파라미터 작성. 
+
+print(res.json())
+
+
+
+
 ############ datetime ##############
 import time
 from datetime import datetime, timedelta 

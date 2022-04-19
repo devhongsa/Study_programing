@@ -1,0 +1,26 @@
+mysql community edition download 
+mysql community server download 
+**이거말고 bitnamy wamp 설치하면 mysql 쉽게 설치 가능 . 설치중에 cloud어쩌고 하는거는 체크해제 
+mysql 설치된 경로로 가서 ,  mysql -uroot -p 치면 비밀번호입력하라고 나옴.   -uroot란 root라는 사용자로 접속하겠다는 뜻.
+
+CREATE DATABASE hongsa;
+DROP DATABASE hongsa; 
+
+SHOW DATABASES;
+
+USE hongsa;
+
+구글에 mysql sql cheatsheet 치면 잘나옴.
+
+
+datatype docs https://www.w3schools.com/sql/sql_datatypes.asp
+CREATE TABLE tableName( 
+    id INT(11) NOT NULL AUTO_INCREMENT              // 11자리 정수까지만 출력, 비어있으면안됨, 자동으로 1씩 증가.
+    title VARCHAR(100) NOT NULL,                    // 100글자가 넘어가면 짜름.
+    description TEXT NULL,
+    created DATETIME NOT NULL,                      // DATETIME 데이터타입, 구글에 데이터타입검색하면 다 나옴. 
+    author VARCHAR(15) NULL,
+    profile VARCHAR(200) NULL,
+    PRIMARY KEY(id));                               
+
+    //PRIMARY KEY는 행을 구분하는 식별자 역할을 정해줌. 
