@@ -1,12 +1,21 @@
 mysql community edition download 
 mysql community server download 
 **이거말고 bitnamy wamp 설치하면 mysql 쉽게 설치 가능 . 설치중에 cloud어쩌고 하는거는 체크해제 
-mysql 설치된 경로로 가서 ,  mysql -uroot -p 치면 비밀번호입력하라고 나옴.   -uroot란 root라는 사용자로 접속하겠다는 뜻.
+윈도우 + R 키 cmd 
+mysql 설치된 경로(C/bitnamy/wamp/mariadb/bin)로 가서 ,  mysql -uroot -p 치면 비밀번호입력하라고 나옴.   -uroot란 root라는 사용자로 접속하겠다는 뜻.
 
 CREATE DATABASE hongsa;
 DROP DATABASE hongsa; 
 
+CREATE USER 'hongsa'@'localhost' IDENTIFIED BY 'nfttest2';    유저생성
+DROP USER hongsa@localhost;    유저삭제
+
+SET PASSWORD = PASSWORD('your_password');
+
 SHOW DATABASES;
+SHOW TABLES;
+
+RENAME TABLE topic TO topic_backup;
 
 USE hongsa;
 
@@ -24,3 +33,30 @@ CREATE TABLE tableName(
     PRIMARY KEY(id));                               
 
     //PRIMARY KEY는 행을 구분하는 식별자 역할을 정해줌. 
+
+DESC tablename;         //테이블 구조가 나옴.
+
+
+INSERT INTO tablename (title, description, created,...) VALUES('MYSQL','MYSQL is ...', NOW(),...);
+
+SELECT * FROM tablename;
+SELECT id,title,created,author FROM topic WHERE author='egoing' ORDER BY id DESC LIMIT 2;  
+토픽이라는 테이블로부터 컬럼 id,title,crated,autor 만 뽑을건데 그중에 author가 'egoing'인거 가져와 근데 id값을 기준으로 내림차순으로 2개행만 가져와
+
+구글에 mysql select syntax 검색하면 문법 나옴. FROM WHERE GROUP BY 등등  [] 안에 있는 것들은 생략가능하다는 뜻
+
+
+UPDATE topic SET description='Oracle is...', title='Oracle' WHERE id=2;
+
+DELETE FROM topic WHERE id = 5;
+
+
+SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id;
+
+
+
+/// workbench ///
+
+mysql -uroot -p -hlocalhost          //여기서 -h는 host의 약자를 의미하고 localhost는 내 컴퓨터 서버에 접속하겠다는 뜻. -p까지만 쳐도 됨.
+                                    // 만약 다른 컴퓨터 서버에 접속하려고 하면, 다른 컴퓨터 서버 도메인을 적으면 됨. 
+

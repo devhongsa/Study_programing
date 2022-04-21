@@ -378,7 +378,8 @@ for key,value in 딕셔너리.items()
     df.loc[key] = value
 
 #필요한 column만 추출하기 
-df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bids[0].price','bids[0].amount']]
+df = df.loc[:,['exchange','local_timestamp','asks[0].price','asks[0].amount','bids[0].price','bids[0].amount']] 
+## : 모든행에 대해, [] 안에 있는 컬럼만 추출.
 df = df[['exchange','local_timestamp']]
 
 #column 이름바꾸기 
