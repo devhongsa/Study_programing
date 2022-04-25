@@ -1,0 +1,50 @@
+작업폴더 생성.
+npm install -g yarn 
+
+yarn init -y 
+
+package.json에서 
+{
+  "name": "APIstudy",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server"
+  ],
+
+  "scripts": {
+    "client": "yarn workspace client start",
+    "server": "yarn workspace server start"
+  }
+}
+workspaces 설정하면 yarn intall 할때 여러 프로젝트에서 중복으로 모듈을 설치하는 것을 방지해줌. 
+즉 client 폴더와 server 폴더에서 각각 package.json 에 있는 모듈을 설치할때 중복을 제거해줌. 
+
+
+client, server 폴더 생성 
+
+client에서 yarn init -y
+yarn add react react-dom next sass axios 
+yarn add --dev webpack
+client package.json에서
+"script": {
+  "start": "next"
+}
+추가 
+
+client에서 pages 폴더 생성
+index.js 파일 생성 
+const Home = () => (
+    <>
+        <h1>Simple SNS</h1>
+    </>
+);
+
+export default Home;
+
+
+
+작업폴더에서 yarn run client 하면 정상작동 
