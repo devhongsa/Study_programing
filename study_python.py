@@ -410,6 +410,10 @@ df.groupby(['city', 'fruits'],as_index=False).mean()        ##그냥 groupby하�
 #excel로 저장
 df.to_excel('bal.xlsx')    # 실행하는 위치에 저장
 df.to_excel(excel_writer = './Balance/bal.xlsx')  #현재위치에서 폴더만들고 저장 
+df = pd.read_excel('경로/파일이름.xlsx')
+
+df.to_csv('./경로/bal.csv', columns =['city', 'fruits'], index=True)   #index True면 인덱스도 같이 내보냄.
+df = pd.read_csv('경로/파일이름.csv', encoding='UTF-8'or'cp949', skiprows=(1,2,3))  
 
 #리스폰스 바로 데이터프레임으로 만들기 
 #pd.DataFrame() 가로안에 들어간 json 파일이 list로 이루어져있으면 실행되는데, 단일 딕셔너리면 ([requests..]) 리스트로 감싸줘야함.
