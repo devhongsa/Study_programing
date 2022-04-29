@@ -109,7 +109,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-app.use(express.static("public"));     //파일 경로 설정. public이라는 폴더로 지정.
+app.use(express.static("public"));     //파일 경로 설정. public이라는 폴더로 지정. 이러면 index.html 파일에서 public안에 있는 이미지파일들을 불러올 수 있게됨.
 
 app.get('/', (req,res)=>{
     res.send('Hello World');
@@ -127,7 +127,7 @@ app.get("/test", (req,res)=>{           //  "/test"는 endpoint 설정,   /test 
 app.all('*', (req,res)=>{               // '*' 이거는 모든 경로에 대해서 어떤 응답을 하라는 뜻임. 만약 이 코드 뒤에 또 다른 get 경로를 설정한다면 무시가됨.
     res.status(404).send("찾을 수 없는 페이지입니다!")              //이를 이용해서 맨마지막에 * 경로를 설정해서 404페이지를 만들면됨.
 })
-// all은 get과 post 요청 둘다를 포함한 것임.
+// all은 get과 post , delete 요청 모두를 포함한 것임.
 
 app.listen(port, ()=>{
     console.log(`Example app listening on port ${port}`)
@@ -151,9 +151,9 @@ app.listen(port, ()=>{
 </head>
 
 <body>
-    <form action="/calculator" method="post">
-        <input type="number" name="num1" id="">
-        <br />
+    <form action="/calculator" method="get">               //form의 action은 form이 submit 됐을때, url을 /calculator로 바꾸고 
+        <input type="number" name="num1" id="">             // method get으로 input의 데이터를 url의 쿼리로 바꿈 /calculator?num1=3&num2=5 이런식으로 
+        <br />                                              // 그러면 query정보는 req.query에 전달이되고 {num1:"3", num2:"5"} 이런식으로 보냄.
         +
         <br />
         <input type="number" name="num2" id="">
@@ -178,7 +178,7 @@ app.get("/calculator", (req, res) => {
   console.log(typeof req.query.num1);                       //여기서 query = {num1:"3", num2:"5"} 이런식으로 옴.
   let result = Number(req.query.num1) + Number(req.query.num2);
   res.send(`결과는 = ${result}`)
-  //res.send(String(result));
+  //res.send(String(result));                               // send는 숫자를 보낼수가 없음 , string이나 object를 보낼수 있음.
 });
 
 
@@ -189,12 +189,12 @@ app.get("/calculator", (req, res) => {
 //post에서는 form의 정보들이 req.query에 담기는 것이 아닌 req.body에 담긴다. 
 
 /* ... */
-app.use(express.urlencoded({ extended: false }));           //body parser 없이 이 코드사용하면, express에서 request의 body 부분을 사용할 수 있음.
+app.use(express.urlencoded({ extended: false }));           //body parser 없어도 이 코드사용하면, express에서 request의 body 부분을 사용할 수 있음.
 /* ... */
 app.post("/calculator", (req, res) => {
   console.log(req.body);
   let result = Number(req.body.num1) + Number(req.body.num2);       //req.body = {num1:"3", num2:"5"}
-  res.sendFile(__dirname + "/public/result.html");                 // 여기서 문제점은 result 값을 html파일로 전달할 방법이 없어서 result를 response 할 수 가 없음.
+  res.sendFile(__dirname + "/public/result.html");                 // 여기서 sendFile의 문제점은 result 값을 html파일로 전달할 방법이 없어서 result를 response 할 수 가 없음.
 });
 //그래서 express 템플릿 엔진을 사용해야됨.
 /* ... */
