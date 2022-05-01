@@ -1,7 +1,9 @@
 npm init -y 
-npm install -g nodemon    //서버자동으로 껐다가 켜주는기능.  nodemon index.js 로 서버실행해야함.
+npm install -g nodemon    //서버자동으로 껐다가 켜주는기능.  nodemon index.js 로 서버실행해야함. global로 다운받아줘야 nodemon 인식함.
 npm install express --save 
 npm install ejs pug --save 
+npm install moment --save 
+npm install mongodb --sav
 
 https://expressjs.com/en/api.html    // express 공식 docs 
 
@@ -205,3 +207,50 @@ app.post("/calculator", (req, res) => {
 
 ////////////////////// express 템플릿 : EJS, PUG ///////////////////////////////
 
+//ejs
+
+//index.js
+const express = require('express');
+const app = express();
+const port = 3000;
+
+//app.set("view engine","pug");
+app.set("view engine","ejs");             //ejs 모듈 사용하기
+app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
+
+
+app.get('/', (req,res)=>{
+    //res.sendFile(__dirname+"/public/index.html")
+    res.render("index",{
+      text: "hi hongsa"
+      arrayData : [1,2,3]
+    });
+});
+//index는 views폴더에 있는 index.ejs 파일을 말함.
+// index.ejs에 {} 오브젝트형식으로 데이터를 보낼 수 있음.
+
+
+app.listen(port, ()=>{
+  console.log(`Example app listening on port ${port}`);
+});
+
+
+//index.ejs
+<link rel="stylesheet" href="style.css"></link>
+
+<body>
+    <h1>ejs start</h1>
+    <h3><%= text %></h3>
+    <% if (true) {%>
+        <h4>참입니다!</h4>
+    <%} else {%>
+        <h4>거짓입니다!</h4>
+    <%} %>
+
+    <% for(let i=0; i < arrayData.length; i++){ %>
+        <h2><%= arrayData[i] %></h2>
+    <% } %>
+</body>
+// 이런식으로 <%= text%>  =이 있어야지 text 변수값을 화면상으로 보여줌. 
+// <% %>  =이 없으면 저런식으로 js언어에 있는 if문을 쓸수가 있음.
