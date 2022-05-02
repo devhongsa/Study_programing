@@ -371,6 +371,9 @@ df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기
 df_index = df[df['name']=='hongsa'].index
 df.drop([df_index])            #index로 행 삭제하기.
 
+df.loc[df['def'] == 1,'ghi'] = 100    # def칼럼의 값이 1인 행들에서, ghi 값을 100으로 바꾼다.
+
+
 #데이터프레임 행 추가하기 
 df.loc[len(df)] = ['2022',3,4] #행 전체를 추가하기 
 
