@@ -1,5 +1,6 @@
 https://senticoding.tistory.com/49      ##docker 개념 
-
+https://github.com/amamov/teaching-async-python     ##비동기 async 교육 소스코드
+https://github.com/amamov/teaching-type-python-oop/tree/main/00%20%EC%B2%AB%20%EC%8B%9C%EC%9E%91    # 파이썬 개발환경 설정.
 
 #pip install 패키지명 --upgrade
 # 현재 경로 pwd
@@ -370,9 +371,14 @@ df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기
 
 df_index = df[df['name']=='hongsa'].index
 df.drop([df_index])            #index로 행 삭제하기.
+df.drop('timestamp', axis=1)   # column 삭제하기 
+
+df.loc[df["Salary"] >= 5000]
+df.loc[(df["Salary"] >= 5000)&(df["Salary"] < 7000)]
 
 df.loc[df['def'] == 1,'ghi'] = 100    # def칼럼의 값이 1인 행들에서, ghi 값을 100으로 바꾼다.
-
+#특정 값 바꾸기
+df["Gender"] = df["Gender"].replace({"M": "male", "F": "female"})
 
 #데이터프레임 행 추가하기 
 df.loc[len(df)] = ['2022',3,4] #행 전체를 추가하기 
@@ -392,6 +398,8 @@ df.columns = ['col', 'col', 'col']
 df.rename(columns={'Before':'After'})
 # 특정 열을 리스트로 바꾸기
 timestampList = df['timestamp'].values.tolist()
+
+
 
 
 #정렬하기 
@@ -483,7 +491,13 @@ mydata = soup.find('title')
 print(mydata.get_text())
 
 
-#########################################  #########################################
+######################################### 비동기 async  #########################################
+https://github.com/amamov/teaching-async-python     ##소스코드 
+
+
+
+
+
 #########################################  #########################################
 #########################################  #########################################
 #########################################  #########################################
