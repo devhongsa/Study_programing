@@ -3,6 +3,12 @@ https://github.com/amamov/teaching-async-python     ##비동기 async 교육 소
 https://github.com/amamov/teaching-type-python-oop/tree/main/00%20%EC%B2%AB%20%EC%8B%9C%EC%9E%91    # 파이썬 개발환경 설정.
 
 #pip install 패키지명 --upgrade
+#pip install pip --upgrade
+#pip --version
+#pip freeze    설치된 패키지 확인
+#pip freeze > requirements.txt    내가 설치한 패키지들 txt 파일로 만들어줌.
+#pip install -r requirements.txt   txt파일에 있는 패키지들 install
+
 # 현재 경로 pwd
 
 x = []
@@ -495,8 +501,35 @@ print(mydata.get_text())
 https://github.com/amamov/teaching-async-python     ##소스코드 
 
 
+import asyncio 
+
+async def hello_world():
+    print("hello world")
+    return 123
+    
+    
+if __name__ == "__main__":
+    asyncio.run(hello_world)            
+    
+#async로 선언된 함수 hello_world를 실행시키려면 await hello_world로 실행시켜줘야함
+#근데 await는 async로 선언된 함수내에서만 쓸수있음.
+#async 밖에서 await를 사용하려면 asyncio.run(hello_world) 이렇게 실행시켜주면 됨.
 
 
+def main():
+    url = "https://naver.com"
+    
+    session = requests.Session()
+    session.get(url)
+    session.close()
+    
+    with requests.Session() as session:             #위에 세줄이 이 with 구문과 똑같은 코드임.
+        session.get(url)
+
+
+
+if __name__ == "__main__":
+    main()
 
 #########################################  #########################################
 #########################################  #########################################
