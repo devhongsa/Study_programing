@@ -1,6 +1,7 @@
 https://senticoding.tistory.com/49      ##docker 개념 
 https://github.com/amamov/teaching-async-python     ##비동기 async 교육 소스코드
 https://github.com/amamov/teaching-type-python-oop/tree/main/00%20%EC%B2%AB%20%EC%8B%9C%EC%9E%91    # 파이썬 개발환경 설정.
+https://seong6496.tistory.com/68       ## 가상환경 생성 및 삭제 
 
 #pip install 패키지명 --upgrade
 #pip install pip --upgrade
@@ -500,6 +501,8 @@ print(mydata.get_text())
 ######################################### 비동기 async  #########################################
 https://github.com/amamov/teaching-async-python     ##소스코드 
 
+# pip install aiohttp~=3.7.3     #비동기 http requests
+
 
 import asyncio 
 
@@ -530,8 +533,135 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
+    
+### 기본 버전
+import asyncio
+import requests
+import time
 
-#########################################  #########################################
+
+def fetcher(session, url):
+    with session.get(url) as response:
+        return response.text
+
+
+def main():
+    urls = ["https://naver.com", "https://google.com", "https://instagram.com"] * 10
+     
+    with requests.Session() as session:
+        result = [fetcher(session,url) for url in urls]             #결과값이 리스트로 담김.
+        print(result)
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+
+
+### async 버전
+import aiohttp 
+
+async def fetcher(session, url):
+    async with session.get(url) as response:
+        return await response.text()            #text뒤에 () 붙여줘야함. awaitable 한 함수여야되서.
+        
+async def main():
+    urls = ["https://naver.com", "https://google.com", "https://instagram.com"] * 10
+     
+    async with aiohttp.ClientSession() as session:
+        #result = [fetcher(session,url) for url in urls]             #결과값이 리스트로 담김.
+        #print(result)
+        result = await asyncio.gather(*[fetcher(session,url) for url in urls])
+        #result = await fetcher(session, urls[0])
+        print(result)
+
+if __name__ == "__main__":
+    start = time.time()
+    asyncio.run(main())
+    end = time.time()
+    print(end-start)
+    
+    
+    
+### multithreading 버전
+
+import requests
+import time 
+import os
+import threading 
+from concurrent.futures import ThreadPoolExecutor
+
+
+def fetcher(params):
+    session = params[0]                 ##map으로부터 params가 튜플형태로 전달되서 이런식으로 따로 변수를 만들어줌.
+    url = params[1]
+    print(f"{os.getpid()} process | {threading.get_ident()} url : {url}")
+    with session.get(url) as response:
+        return response.text
+
+
+def main():
+    urls = ["https://naver.com", "https://google.com", "https://instagram.com"] * 10
+     
+    executor = ThreadPoolExecutor(max_worker=10) 
+    
+    with requests.Session() as session:
+        params = [(session,url) for url in urls]                ##
+        result = list(executor.map(fetcher, params))            ## map은 fetcher라는 함수를 multithread로 실행시켜줌 params는 파라미터 전달.
+        print(result)
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+
+
+### multiprocess 버전
+## cpu bound (연산에서 발생하는 bound)에서는 multithread 방식은 효과가 거의없고, multiprocess 방식으로 해야 효과가있음.
+from concurrent.futures import ProcessPoolExecutor
+
+excutor = ProcessPoolExecutor(max_worker=3)
+
+######################################### 웹 스크래핑 #########################################
+#pip install beautifulSoup
+
+from bs4 import BeautifulSoup
+import aiohttp
+import asyncio
+
+# https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+# pip install beautifulsoup4
+
+"""
+웹 크롤링 : 검색 엔진의 구축 등을 위하여 특정한 방법으로 웹 페이지를 수집하는 프로그램
+웹 스크래핑 : 웹에서 데이터를 수집하는 프로그램
+"""
+
+
+async def fetch(session, url, i):
+    print(i + 1)
+    async with session.get(url) as response:
+        html = await response.text()
+        soup = BeautifulSoup(html, "html.parser")
+        cont_thumb = soup.find_all("div", "cont_thumb")             #div 블록안에 cont_thumb 클래스를 가진 모든 태그 리스트로 불러와줌.
+        for cont in cont_thumb:
+            title = cont.find("p", "txt_thumb")
+            if title is not None:
+                print(title.text)
+
+
+async def main():
+    BASE_URL = "https://bjpublic.tistory.com/category/%EC%A0%84%EC%B2%B4%20%EC%B6%9C%EA%B0%84%20%EB%8F%84%EC%84%9C"
+    urls = [f"{BASE_URL}?page={i}" for i in range(1, 10)]
+    async with aiohttp.ClientSession() as session:
+        await asyncio.gather(*[fetch(session, url, i) for i, url in enumerate(urls)])
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
+
+
 #########################################  #########################################
 #########################################  #########################################
 #########################################  #########################################
