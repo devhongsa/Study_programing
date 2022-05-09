@@ -616,12 +616,106 @@ if __name__ == "__main__":
     main()
     end = time.time()
 
+### cpu bound basic 
+import time
+import os
+import threading
+
+# nums = [50, 63, 32]
+nums = [30] * 100
+
+
+def cpu_bound_func(num):
+    print(f"{os.getpid()} process | {threading.get_ident()} thread")
+    numbers = range(1, num)
+    total = 1
+    for i in numbers:
+        for j in numbers:
+            for k in numbers:
+                total *= i * j * k
+    return total
+
+
+def main():
+    results = [cpu_bound_func(num) for num in nums]
+    print(results)
+
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+    print(end - start)  # 49.37, 34
+    
+    
+### cpu bound multithreading 버전 
+# cpu bound 에서는 multithreading의 효과가 없음.
+import time
+import os
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
+nums = [30] * 100
+# nums = [50, 63, 32]
+
+
+def cpu_bound_func(num):
+    print(f"{os.getpid()} process | {threading.get_ident()} thread, {num}")
+    numbers = range(1, num)
+    total = 1
+    for i in numbers:
+        for j in numbers:
+            for k in numbers:
+                total *= i * j * k
+    return total
+
+
+def main():
+    executor = ThreadPoolExecutor(max_workers=10)
+    results = list(executor.map(cpu_bound_func, nums))
+    print(results)
+
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+    print(end - start)  # 50, 36
+
 
 ### multiprocess 버전
 ## cpu bound (연산에서 발생하는 bound)에서는 multithread 방식은 효과가 거의없고, multiprocess 방식으로 해야 효과가있음.
+
+import time
+import os
+import threading
 from concurrent.futures import ProcessPoolExecutor
 
-excutor = ProcessPoolExecutor(max_worker=3)
+nums = [30] * 100
+
+
+def cpu_bound_func(num):
+    print(f"{os.getpid()} process | {threading.get_ident()} thread, {num}")
+    numbers = range(1, num)
+    total = 1
+    for i in numbers:
+        for j in numbers:
+            for k in numbers:
+                total *= i * j * k
+    return total
+
+
+def main():
+    executor = ProcessPoolExecutor(max_workers=10)
+    results = list(executor.map(cpu_bound_func, nums))
+    print(results)
+
+
+if __name__ == "__main__":
+    start = time.time()
+    main()
+    end = time.time()
+    print(end - start)  # 22
 
 ######################################### 웹 스크래핑 #########################################
 #pip install beautifulSoup
