@@ -2,6 +2,10 @@ https://senticoding.tistory.com/49      ##docker 개념
 https://github.com/amamov/teaching-async-python     ##비동기 async 교육 소스코드
 https://github.com/amamov/teaching-type-python-oop/tree/main/00%20%EC%B2%AB%20%EC%8B%9C%EC%9E%91    # 파이썬 개발환경 설정.
 https://seong6496.tistory.com/68       ## 가상환경 생성 및 삭제 
+https://tempdev.tistory.com/26?category=845382     ##멀티프로세싱
+https://tempdev.tistory.com/27?category=845382     ##멀티프로세싱 이게 좋네
+https://wikidocs.net/85603              ##멀티프로세싱 
+https://niceman.tistory.com/145         ##멀티프로세싱
 
 #pip install 패키지명 --upgrade
 #pip install pip --upgrade
