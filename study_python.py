@@ -351,6 +351,8 @@ df.index[i]
 
 #loop 돌때 빠른 at
 df.at[index, 'timestamp']
+#loop 돌때 loc보다 빠른 행 넣기 
+https://dowtech.tistory.com/39          
 
 #인덱스 위치 데이터 추출
 df['timestamp'].iloc[-1]   
