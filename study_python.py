@@ -384,6 +384,7 @@ df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기
 
 df_index = df[df['name']=='hongsa'].index
 df.drop([df_index])            #index로 행 삭제하기.
+df.drop(columns=['name'])       #컬럼 삭제하기
 df.drop('timestamp', axis=1)   # column 삭제하기 
 
 df.loc[df["Salary"] >= 5000]
@@ -757,6 +758,7 @@ async def main():
     async with aiohttp.ClientSession() as session:
         await asyncio.gather(*[fetch(session, url, i) for i, url in enumerate(urls)])
 
+#enumerate(list)  => [(index, value),(index,value), ...]
 
 if __name__ == "__main__":
     asyncio.run(main())

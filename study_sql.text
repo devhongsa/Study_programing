@@ -1,0 +1,3 @@
+
+# 테이블 복사하기 
+CREATE TABLE newtable AS SELECT * FROM oldtable;
