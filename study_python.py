@@ -425,6 +425,8 @@ df.reset_index(drop=True)   #index 다시 설정 drop=true는 이전의 index열
 #중복값 제거하기 
 df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timestamp 값중에 중복되는 것을 찾고 첫번째놈 남기고 지워, 그리고 인덱스 다시 설정.
                                                                         #first, last ,False(중복값 모두 제거)
+#중복값 확인하기
+df.value_counts(normalize=True)   #normalize True로 하면 비율로 보여줌.
 
 #groupby 
 https://ponyozzang.tistory.com/291
