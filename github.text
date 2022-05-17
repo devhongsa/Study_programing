@@ -45,6 +45,6 @@ git clone https://devhongsa@github.com/devhongsa/Spread_python.git
 
 git pull 충돌시 
 git fetch --all
-git reset --hard origin/master
-git pull origin master
+git reset --hard origin/main
+git pull origin main
 
