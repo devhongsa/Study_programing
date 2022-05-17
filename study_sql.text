@@ -1,3 +1,7 @@
 
 # 테이블 복사하기 
 CREATE TABLE newtable AS SELECT * FROM oldtable;
+
+
+#where문 
+select \"walletAddress\", \"timestamp\", \"to\", \"amount\",\"contractAddress\" from txhistory.txshistory1 where \"timestamp\" between {timestamp1} and {timestamp2} and (\"contractAddress\"='{eth}' or \"contractAddress\"='{usdt}' or \"contractAddress\"='{usdc}');
