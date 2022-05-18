@@ -1,7 +1,41 @@
 
+# CREATE TABLE 
+CREATE TABLE Temp_Table (
+field1    char(10)    NOT NULL ,
+field2    char(10)    DEFAULT 'Y' ,
+field3    DECIMAL(8,2)  ,
+field4    varchar(1000) 
+);
+
+#TABLE 변경하기
+ALTER TABLE Temp_Table ADD field5 char(10);
+ALTER TABLE Temp_Table DROP COLUMN field5 ;
+
+UPDATE REG_USER SET U_NAME = '홍길동' WHERE U_ID = 'roqkfwk';
+
+
+#INSERT 
+INSERT INTO Temp_Table
+VALUES('data2','data2-2','data2-3','data2-4','data2-5','data2-6','data2-7','data2-8','data2-9','data2-10');
+
+INSERT INTO Temp_Table(field1, field2, field5, field6, field7, field8, field9, field10)
+VALUES('data5','data5-2','data5-5','data5-6','data5-7','data5-8','data5-9','data5-10');
+
+insert into public."User" ("walletAddress", "contractAddres") values ('address','address2')   값이 숫자면 숫자만 입력 
+
+
 # 테이블 복사하기 
 CREATE TABLE newtable AS SELECT * FROM oldtable;
 
 
 #where문 
 select \"walletAddress\", \"timestamp\", \"to\", \"amount\",\"contractAddress\" from txhistory.txshistory1 where \"timestamp\" between {timestamp1} and {timestamp2} and (\"contractAddress\"='{eth}' or \"contractAddress\"='{usdt}' or \"contractAddress\"='{usdc}');
+
+
+WHERE IN 
+SELECT user_num  ,  user_id , user_mobile , user_gender , user_amount  , user_addr  
+FROM  User_Table
+WHERE user_id  IN ('user1','user3')   /// WHERE NOT user_id  IN ('user1','user3')
+ORDER BY user_num DESC; 
+## IN ()  괄호안에 있는 값들 중 하나라도 만족하면 조건충족. or의 업그레이드 버전임. IN 연산이 OR 연산보다 빠르다 
+## WHERE NOT 이면 user1, user2가 아닌값이면 조건충족함.
