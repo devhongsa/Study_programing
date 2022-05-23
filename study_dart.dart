@@ -140,7 +140,7 @@ int addNumbers(int x, [int y=0, int z=0]){
 //만약 []안에 있는 변수에 디폴트값을 안써주면, 에러가남. null값때문에 
 
 int addNumbers({
-	required int x,				//named parameter 설정
+	required int x,				//named parameter 설정, 나중에 함수 실행할때 파라미터 순서를 바꿔도 되는 방법.
 	required int y,
 	int z=30,
 }) => x+y+z;				//arrow 펑션
@@ -157,7 +157,7 @@ int calculate(int x, int y, int z, Operation operation){
 int result = calculate(4,5,6, subtract);  //이런식으로 typedef 사용 
 
 
-
+//class _Idol				//클래스, 함수, 변수이름 앞에 _ 를 넣으면 private으로 선언한다는 뜻, 이 클래스가 선언된 dart파일외에 외부에서 Idol 클래스를 사용하지못함.
 class Idol {
 	final String name;					//final로 선언을 해줘서 한번 객체를 생성하면 바꾸지 못하게 만드는 것이 버그방지에 좋음.
 	final List<String> members;
@@ -177,7 +177,7 @@ class Idol {
 		return this.members[0];
 	}
 
-	set firstMember(String name){		//set은 현대에와서 거의 안씀 왜냐면 클래스 변수자체를 final로 설정하기때문에 set의 의미가 없음.
+	set firstMember(String name){		//set은 현대에와서 거의 안씀 왜냐면 클래스 변수자체를 대부분 final로 설정하기때문에 set의 의미가 없음.
 		this.members[0] = name;
 	}
 }
@@ -190,4 +190,32 @@ void main(){
 	blackPink.firstMember;
 	blackPink.firstMember = 'hongsa'
 }
+////////////////////////////////////////////////////////////////////
 
+void main(){
+	Idol apink = new Idol(name: '에이핑크', membersCount: 5);
+
+	apink.sayName();
+	apink.sayMembersCount();
+}
+
+class Idol{
+	String name;
+	int membersCount;
+
+	Idol({
+		required this.name,
+		required this.membersCount,
+	});
+
+	void sayName(){
+		print('저는 ${this.name}입니다.')
+	}
+
+	void sayMembersCount(){
+		print('${this.name}은 ${this.membersCount}명의 멤버가 있습니다.')
+	}
+	
+}
+
+class BoyGroup extends Idol
