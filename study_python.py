@@ -21,6 +21,7 @@ x = []
 x[0:3]   #index 0부터 2까지 
 x[5:]    #index 5부터 끝까지 
 x[-1]    #index 맨뒤 
+x[:-1]   #처음부터 끝에서 2번째까지 
 x[-3:]   #index 끝에서 3번째 부터 끝까지 
 x[-4:-2] # index 끝에서 4번째부터 끝에서 3번째 까지 .
 
@@ -344,6 +345,7 @@ pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
 df = pd.DataFrame({'timestamp' : timestamp, 'price' : price})
 df = pd.DataFrame([])
+df = pd.DataFrame(np.random.randint(1,100,size=(100,4)))
 
 #index값 추출
 df.index   # return index list
