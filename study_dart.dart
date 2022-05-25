@@ -24,7 +24,7 @@ void main() {
 	String? name = 'hongsa';
 	// ?를 붙여주면 변수에 null값을 넣어줄 수 있음.
 
-
+  //파이널, 컨스트 
 	final vs const 
 	final String name4 = 'hihi';
 	const Stirng name3 = 'hhhhh';
@@ -191,12 +191,16 @@ void main(){
 	blackPink.firstMember = 'hongsa'
 }
 ////////////////////////////////////////////////////////////////////
+///상속
 
 void main(){
 	Idol apink = new Idol(name: '에이핑크', membersCount: 5);
 
 	apink.sayName();
 	apink.sayMembersCount();
+
+  BoyGroup bts = BoyGroup('BTS', 7);
+  bts.sayName();
 }
 
 class Idol{
@@ -218,4 +222,283 @@ class Idol{
 	
 }
 
-class BoyGroup extends Idol
+class BoyGroup extends Idol{
+  BoyGroup(
+    String name,
+    int membersCount,
+  ): super(        //super는 부모클래스를 말하는것임.
+    name: name,     // name:name 이렇게 하는 이유는 Idol 부모클래스의 생성자에서 required로 선언됐기때문
+    membersCount: membersCount
+  );
+
+  void sayMale(){     //자식클래스에서 따로 만든 함수는 부모클래스에서 사용할 수 없다.
+    print('저는 남자 아이돌입니다.');
+  }
+}
+
+
+////////////////////////////////////////////////////////////////////
+//override
+void main() {
+  TimesTwo tt = TimesTwo(2);
+}
+// method =  function (class안에있는 펑션)
+// override - 덮어쓰다 (우선시하다)
+
+
+class TimesTwo{
+  final int number;
+
+  TimesTwo(
+    this.number,
+  );
+
+  int calculate(){
+    //return number * 2;   만일 class안에 number라는 변수가 이거 하나뿐이라면 this 생략가능. 함수안에 number라는 변수 없을시
+    return this.number * 2;
+  }
+}
+
+class TimesFour extends TimesTwo{
+  TimesFour(
+    int number
+  ) : super(number);
+
+  @override
+  int calculate(){
+    return super.number * 4;
+    //return this.number * 4;
+    //return number * 4;      두가지 경우 다 문제없긴 함.
+    //return super.calculate() * 2 
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+//static 
+void main(){
+  Employee seulgi = Employee('슬기');
+  Employee chorong = Employee('초롱');
+
+  Employee.building = '오투타워';
+  Employee.printBuilding(); 
+
+  //seulgi.building;      이렇게는 안됨 인스턴스는 static으로 선언된 변수나 함수에 접근할 수 없음.
+
+}
+
+class Employee {
+  // static은 instance에 귀속되지 않고 class에 귀속된다.
+  // instance라는거는 이 class로 만들어진 새로운 객체를 말하는거임.
+  static String? building;
+
+  final String name;
+
+  Employee(
+    this.name,
+  );
+
+  void printName(){
+    print('제 이름은 $name 입니다.');
+  }
+
+  static void printBuilding(){
+    print('저는 $building 건물에서 근무합니다.');
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+//interface : 인터페이스의 목적은 어떤 클래스를 만들때 인터페이스 클래스의 변수, 속성을 강제하기 위함이다. 이렇게 만들어라
+void main(){
+
+}
+
+abstract class IdolInterface{     //abstract는 인터페이스 클래스를 실수로 인스턴스화하는걸 방지해줌.
+  String name;
+
+  IdolInterface(this.name);
+
+  void sayName(){}      //상세하게 구현안해줘도 됨. 인터페이스 클래스는 클래스 양식만 써놓은거라고 보면됨 
+}
+//interface class를 하나 만들어준다.
+
+class BoyGroup implements IdolInterface{
+  String name;
+
+  BoyGroup(this.name);
+
+  void sayName(){
+    print('제 이름은 $name 입니다.')
+  }
+}
+//BoyGroup은 IdolInterface라는 class를 인터페이스로 설정하면, IdolInterface클래스에 구성된 변수, 함수, 생성자를 BoyGroup에서도 선언을 해줘야한다.
+
+////////////////////////////////////////////////////////////////////
+// generic : 타입을 외부에서 받을때 사용
+void main(){
+  Lecture<String, String> lecture1 = Lecture('123'. 'lecture1');
+  lecture1.printIdType();   //String
+
+  Lecture<int, String> lecture2 = Lecture(123, 'lecture2');
+  lecture2.printIdType();   //int
+}
+
+class Lecture<T, X>{
+  final T id;
+  final X name;
+
+  Lecture(this.id, this.name);
+
+  void printIdType(){
+    print(id.runtimeType);
+  }
+}
+
+////////////////////////////////////////////////////////////////////
+void main(){
+  List<String> blackPink = ['로제', '지수', '리사', '제니', '제니'];
+
+  print(blackPink);
+  print(blackPink.asMap());
+  print(blackPink.toSet());
+
+  Map blackPinkMap = blackPink.asMap();
+
+  print(blackPinkMap.keys.toList());
+  print(blackPinkMap.values.toList());
+
+  Set blackPinkSet = Set.from(blackPink);
+
+  print(blackPinkSet.toList());
+
+  ////
+
+  final newBlackPink = blackPink.map((x){       //x에 blackPink 요소가 차례대로 들어옴.
+    return '블랙핑크 $x';
+  })
+
+  final newBlackPink = blackPink.map((x) => '블랙핑크 $x');   // 똑같은 의미 
+
+  print(newBlackPink);      //(블랙핑크 로제, 블랙핑크 지수, ..)  iterable 형태로 리턴 .toList()로 형변환 해야됨.
+
+  ////
+  String number = '13579';
+
+  final parsed = number.split('').map((x)=>'$x.jpg').toList();
+
+  print(parsed)  // [1.jpg, 3.jpg, ...]
+
+  ////
+  Map<String, String> harryPotter = {
+    'Harry' : '해리포터',
+    'Ron' : '론 위즐리'
+  };
+
+  final result = harryPotter.map((key, value)=> MapEntry(
+    'character $key',
+    '캐릭터 $value'
+  ));
+
+  print(result);    // {character Harry : 캐릭터 해리포터, ...}
+
+  final keys = harryPotter.keys.map((x)=> 'HPC $x').toList();
+
+  ////
+  List<Map<String, String>> people = [
+    {
+      'name' : '로제',
+      'group' : '블랙핑크'
+    },
+    {
+      'name' : '지수',
+      'group' : '블랙핑크'
+    },
+    {
+      'name' : 'RM',
+      'group' : 'BTS'
+    },
+    {
+      'name' : '뷔',
+      'group' : 'BTS'
+    },
+  ];
+
+  final blackPink = people.where((x)=> x['group'] == '블랙핑크');
+
+  print(blackPink);     //({name : 로제, group: 블랙핑크},{name:지수, group: 블랙핑크})
+
+  ////
+  List<int> numbers = [1,3,5,7,9];
+
+  final result = numbers.reduce((prev,next) => prev + next);
+  //1+3, 4+5, 9+7, 16+9
+  print(result)   //25 
+  // reduce는 list의 데이터타입과 같은 타입만 리턴하기때문에 다른 데이터타입을 리턴하려고 하면 에러가남.
+
+  List<String> words = [
+    '안녕하세요',
+    '저는',
+    '코드팩토리입니다.'
+  ];
+
+  final count = words.fold<int>(''.length,(prev,next)=> prev.length + next.length);
+  // fold는 reduce와 달리 다른 데이터타입을 리턴할 수 있음. 
+
+  ////
+  List<int> even = [1,2,3,4];
+  List<int> odd = [5,6,7,8];
+
+  print([...even,...odd]);   //...은 리스트안에 요소를 다 풀겠다는 뜻.
+}
+
+////////////////////////////////////////////////////////////////////
+void main(){
+  List<Map<String, String>> people = [
+    {
+      'name' : '로제',
+      'group' : '블랙핑크'
+    },
+    {
+      'name' : '지수',
+      'group' : '블랙핑크'
+    },
+    {
+      'name' : 'RM',
+      'group' : 'BTS'
+    },
+    {
+      'name' : '뷔',
+      'group' : 'BTS'
+    },
+  ];
+
+  final parsedPeople = people.map((x) =>
+  Person(
+    name: x['name']!,
+    group: x['group']!
+  )).toList();
+
+  for(Person person in ParsedPeople){
+    print(person.name);
+    print(person.group);
+  }
+  // 이렇게 하면 Person person = Person(name:지수, group:블랙핑크) 이렇게 되는건가?
+
+  final bts = parsedPeople.where((x)=>x.group == 'BTS');
+  print(bts);   // (Person(name:RM, group:BTS), ...)
+}
+
+
+class Person {
+  final String name;
+  final String group; 
+
+  Person({
+    required this.name,
+    required this.group,
+  });
+
+  @override 
+  String toString(){
+    return 'Person(name:$name, group:$group)';
+  }
+}
