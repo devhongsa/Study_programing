@@ -212,34 +212,7 @@ class Student(Person):
 ##super().getInfo() 부모클래스의 메소드를 사용
 
 
-Numpy 
 
-import numpy as np 
-
-np.array([1,2,3])
-data = np.random.randn(2,3)    #2행 3열로 리스트 생성  요소 3개짜리 리스트 2개 생성 
-data.dtype 
-data.shape 
-
-np.zeros(10)            # 요소 10개인 리스트 생성 값은 0으로 
-np.zeros((2,3), dtype=np.int32)  #int타입으로 생성 2행 3열
-np.ones                 #요소값 1로 생성
-
-data = np.arange(10,121,10)        #10부터 10씩 증가시킨 값을 리스트로 생성
-data.reshape(2,6)               #2행 6열 구조로 다시 생성
-
-data.sum()
-data.mean()
-data.max()
-data.min()
-
-data.max(axis=0)        #세로 방향으로 max
-data.max(axis=1)        #가로 방향으로 max
-np.argmax(data,axis=0)  #index 리턴 
-np.argmax(data,axis=1)
-
-np.where(data>0,1,-1)  #data가 양수이면 1, 아니면 -1인 np 리턴 
-np.where(data>0,5,data)  #data의 값이 양수일경우 5, 아니면 data값인 np 리턴
 
 
 
@@ -769,6 +742,86 @@ if __name__ == "__main__":
 
 
 #########################################  #########################################
+## numpy 
+
+Numpy 
+
+import numpy as np 
+
+np.array([1,2,3])
+data = np.random.randn(2,3)    #2행 3열로 리스트 생성  요소 3개짜리 리스트 2개 생성 
+data.dtype 
+data.shape 
+
+np.zeros(10)            # 요소 10개인 리스트 생성 값은 0으로 
+np.zeros((2,3), dtype=np.int32)  #int타입으로 생성 2행 3열
+np.ones                 #요소값 1로 생성
+
+data = np.arange(10,121,10)        #10부터 10씩 증가시킨 값을 리스트로 생성
+data.reshape(2,6)               #2행 6열 구조로 다시 생성
+
+data.sum()
+data.mean()
+data.max()
+data.min()
+
+data.max(axis=0)        #세로 방향으로 max
+data.max(axis=1)        #가로 방향으로 max
+np.argmax(data,axis=0)  #index 리턴 
+np.argmax(data,axis=1)
+
+np.where(data>0,1,-1)  #data가 양수이면 1, 아니면 -1인 np 리턴 
+np.where(data>0,5,data)  #data의 값이 양수일경우 5, 아니면 data값인 np 리턴
+
+
+
+import numpy as np
+
+#1차원 배열
+arr = np.array([1,2,3])
+print(arr)
+
+#2차원 배열 
+arr2 = np.array([[1,2,3],
+                [4,5,6]])
+print(arr)
+
+#shape 몇행몇열 
+arr.shape 
+#ndim 차원
+arr.ndim
+#size 요소몇개 
+arr.size 
+#dtype 요소들의 데이터타입
+arr.dtype 
+
+#요소들 dtype 정해주기 
+arr = np.array([1,2,3], dtype=np.int)
+arr = arr.astype(np.float32)
+#ndarray는 요소들의 데이터타입이 무조건 같아야 함. 다른 데이터타입을 넣어도 
+#알아서 똑같은 데이터형으로 바꿈, 똑같이 바꿀수 없는 경우면 에러가 발생
+
+
+# np.zeros()  가로안에는 shape , shape은 (2,2) [2,2] 아무거나 써도 됨.
+arr = np.zeros([2,2])
+
+# np.ones()
+arr = np.ones([3,5])
+
+# np.full()
+arr = np.full((2,3), 5)
+
+# np.eye()  대각원소가 1이고, 나머지 원소는 0인 행렬생성. k는 대각원소의 시작지점을 정해주는 파라미터
+arr = np.eye(3, 4, k=0)
+
+
+# np.zeros_like()   모든 원소를 0으로 만들어버림
+np.zeros_like(arr)   
+# np.ones_like()    모든 원소 1로 만들어버림.
+
+# np.full_like()
+np.full_like(arr,9)
+
 #########################################  #########################################
 #########################################  #########################################
 

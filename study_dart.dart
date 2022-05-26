@@ -502,3 +502,148 @@ class Person {
     return 'Person(name:$name, group:$group)';
   }
 }
+
+////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
+///async 
+
+void main(){
+  //Future - 미래에 받아올 값
+  Future<String> name = Future.value('코드팩토리');
+  Future<int> number = Future.value(1);
+  Future<bool> isTrue = Future.value(true);
+
+  print('함수 시작')
+
+  //delayed 
+  //1번 파라미터 : 지연할 기간 Duration
+  //2번 파라미터 : 지연 시간이 지난 후 실행할 함수
+  Future.delayed(Duration(seconds:2), (){
+    print('Delay 끝');
+  });
+
+
+  /////
+  addNumbers(1,1);
+  addNumbers(2,2);
+
+  addNumbers2(1,1);
+  addNumbers2(2,2);
+  //이 두가지 경우는 코드진행순서가 다름.
+}
+
+void addNumbers(int number1, int number2){
+  print('계산 시작 : $number1 + $number2');
+
+  Future.delayed(Duration(seconds:2),(){
+    print('계산 완료 : $number1 + $number2 = ${number1 + number2}');
+  });
+  //2초동안 기다리는 것이아닌 다음 코드를 실행하러 넘어감. 2초후에 다시 돌아와서 실행시킴.
+
+  print('함수 완료');
+}
+
+void addNumbers2(int number1, int number2) async {
+  print('계산 시작 : $number1 + $number2');
+
+  await Future.delayed(Duration(seconds:2),(){
+    print('계산 완료 : $number1 + $number2 = ${number1 + number2}');
+  });
+  //2초동안 기다리는 것이아닌 다음 코드를 실행하러 넘어감. 2초후에 다시 돌아와서 실행시킴.
+
+  print('함수 완료');
+}
+
+
+
+//////////////////////////////////////////////////////////////////////////
+void main() async{
+  //Future - 미래에 받아올 값
+  Future<String> name = Future.value('코드팩토리');
+  Future<int> number = Future.value(1);
+  Future<bool> isTrue = Future.value(true);
+
+  await addNumbers(1,1);          //이러면 첫번째 await 함수가 다 끝날때까지 기다렸다가 다음 코드 실행.
+  await addNumbers(2,2);
+
+}
+
+//await를 쓰려면 리턴값이 Future이여야 하기때문에 Future<void>로 함수선언.
+Future<void> addNumbers(int number1, int number2) async {
+  print('계산 시작 : $number1 + $number2');
+
+  await Future.delayed(Duration(seconds:2),(){
+    print('계산 완료 : $number1 + $number2 = ${number1 + number2}');
+  });
+  //2초동안 기다리는 것이아닌 다음 코드를 실행하러 넘어감. 2초후에 다시 돌아와서 실행시킴.
+
+  print('함수 완료');
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+///// stream 
+
+import 'dart:async';
+
+void main(){
+  final controller = StreamController();
+  final stream = controller.stream;
+
+  final streamListener1 = stream.listen((val){
+    print('Listener1 : $val');
+  });
+
+  controller.sink.add(1);
+}
+
+
+
+void main(){
+  final controller = StreamController();
+  final stream = controller.stream.asBroadcastStream();       //여러 listener가 있을때 asBroadcastStream 사용 
+
+  final streamListener1 = stream.where((val)=>val % 2 == 0).listen((val){
+    print('Listener1 : $val');
+  });
+
+  final streamListener2 = stream.where((val)=>val % 2 == 1).listen((val){
+    print('Listener2 : $val');
+  });
+
+  controller.sink.add(1);
+  controller.sink.add(2);
+  controller.sink.add(3);
+
+}
+//////////////////////////////////////////////////////////////////////////
+
+import 'dart:async';
+
+void main(){
+  calculate(1).listen((val){
+    print('calculate(1) : $val');
+  })
+
+  calculate(4).listen((val){
+    print('calculate(4) : $val');
+  })
+
+  playAllStream().listen((val){
+    print(val);
+  });
+
+}
+
+Stream<int> playAllStream()async*{
+  yield* calculate(1);            //yield* 이면 calculate가 모든 값을 리턴할때까지 기다림.
+  yield* calculate(1000);
+}
+
+Stream<int> calculate(int number) async* {
+  for(int i =0; i < 5; i++){
+    yield i * number;
+    await Future.delayed(Duration(seconds:1));
+  }
+}
