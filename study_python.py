@@ -300,7 +300,7 @@ date = datetime.strptime(stringTime, '%Y-%m-%d %H:%M:%S')  #2번째 인자는 st
 unixTime = datetime.timestamp(date)
 
 #datetime을 string으로 
-stringTime = time.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것인지.
+stringTime = dt.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것인지.
 
 #datatime 형식 바꾸기
 df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으로 변경 

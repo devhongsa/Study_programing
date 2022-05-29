@@ -47,4 +47,6 @@ git pull 충돌시
 git fetch --all
 git reset --hard origin/main
 git pull origin main
-
+git fetch --all
+git reset --hard origin/main
+git pull origin main
