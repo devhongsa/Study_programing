@@ -124,6 +124,7 @@ file.close()
 
 import math             #모듈 전체 임포트
 math.sqrt(100)
+math.pow(10,8)      #10의 8승
 
 import math as m        #모듈 별명 정해서 임포트
 m.sqrt(100)
