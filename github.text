@@ -12,6 +12,8 @@ git branch version2        //version2 branch 생성
 git checkout version2      // version2로 이동
 git merge version2         // main branch에서 실행하면 version2 와 버전병합. 
 
+git config --global user.email "bippr0901@gmail.com"
+git config --global user.name "devhongsa"
 
 레포지토리가 이미 만들어져 있고 내 작업폴더를 레포지토리에 push하고 싶을때
 작업 폴더에서 terminal 

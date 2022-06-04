@@ -88,6 +88,9 @@ a.sort(reverse=True)  #내림차순
 
 a = set(a)          #중복값 제거 
 
+if 'aaa' in a:
+    print('aaa exist')
+
 
 튜플
 리스트보다 반복문에서 조금더 빠름 
@@ -320,6 +323,9 @@ df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으�
 
 
 import pandas as pd
+
+#dataframe timestamp 날짜로 변경, dataframe timedelta (DateOffset)
+pd.to_datetime(df['timestamp'], unit='s') + pd.DateOffset(hours=8)
 
 #dataframe 만들기
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
