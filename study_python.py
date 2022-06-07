@@ -88,6 +88,9 @@ a.sort(reverse=True)  #내림차순
 
 a = set(a)          #중복값 제거 
 
+if 'aaa' in a:
+    print('aaa exist')
+
 
 튜플
 리스트보다 반복문에서 조금더 빠름 
@@ -322,6 +325,9 @@ df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으�
 
 import pandas as pd
 
+#dataframe timestamp 날짜로 변경, dataframe timedelta (DateOffset)
+pd.to_datetime(df['timestamp'], unit='s') + pd.DateOffset(hours=8)
+
 #dataframe 만들기
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
 df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
@@ -338,8 +344,11 @@ df.at[index, 'timestamp']
 #loop 돌때 loc보다 빠른 행 넣기 
 https://dowtech.tistory.com/39          
 
-#인덱스 위치 데이터 추출
-df['timestamp'].iloc[-1]   
+#행 위치 데이터 추출
+df['timestamp'].iloc[-1]
+#인덱스 위치 데이터추출   
+df['timestamp'].loc[0]
+
 
 #지수표기법 변경
 pd.options.display.float_format = '{:.2f}'.format
@@ -349,7 +358,7 @@ pd.reset_option('display.float_format')
 df = pd.concat([df1, df2], axis=1) # axis=1로 하면 옆으로 붙이기, 설정안하면 밑으로 붙이기 
 
 #데이트프레임 열 평균
-df['buy'].iloc[:2].mean()       # 인덱스 0부터 1까지 평균
+df['buy'].iloc[:2].mean()       # 행 0부터 1까지 평균
 (df['buy'].iloc[:2]*df['sell'].iloc[:2]).mean()  #.sum()
 
 #데이터프레임 nan 확인

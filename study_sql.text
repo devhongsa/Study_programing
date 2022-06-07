@@ -24,6 +24,11 @@ VALUES('data5','data5-2','data5-5','data5-6','data5-7','data5-8','data5-9','data
 insert into public."User" ("walletAddress", "contractAddres") values ('address','address2')   값이 숫자면 숫자만 입력 
 
 
+#DELETE
+delete from balance.userbalance where btc>0;
+delete from balance.userbalance
+
+
 # 테이블 복사하기 
 CREATE TABLE newtable AS SELECT * FROM oldtable;
 
