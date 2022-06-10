@@ -8,7 +8,7 @@ https://wikidocs.net/85603              ##멀티프로세싱
 https://niceman.tistory.com/145         ##멀티프로세싱
 
 #pip install 패키지명 --upgrade
-#pip install pip --upgrade
+#python -m pip install --upgrade pip
 #pip --version
 #pip freeze    설치된 패키지 확인
 #pip freeze > requirements.txt    내가 설치한 패키지들 txt 파일로 만들어줌.
