@@ -376,8 +376,8 @@ void main(){
     return '블랙핑크 $x';
   })
 
-  final newBlackPink = blackPink.map((x) => '블랙핑크 $x');   // 똑같은 의미 
-
+  final newBlackPink = blackPink.map((x) => '블랙핑크 $x');   // 똑같은 의미
+  
   print(newBlackPink);      //(블랙핑크 로제, 블랙핑크 지수, ..)  iterable 형태로 리턴 .toList()로 형변환 해야됨.
 
   ////
