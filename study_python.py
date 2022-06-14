@@ -13,6 +13,7 @@ https://niceman.tistory.com/145         ##멀티프로세싱
 #pip freeze    설치된 패키지 확인
 #pip freeze > requirements.txt    내가 설치한 패키지들 txt 파일로 만들어줌.
 #pip install -r requirements.txt   txt파일에 있는 패키지들 install
+#/usr/local/bin/python3.7 -m pip install psutil  원하는 interpreter에 패키지 설치 
 
 # 현재 경로 pwd
 
@@ -90,6 +91,8 @@ a = set(a)          #중복값 제거
 
 if 'aaa' in a:
     print('aaa exist')
+    
+*list1 : 리스트 언패킹 
 
 
 튜플
@@ -108,7 +111,7 @@ def hongsa(*names):
     for i in range(len(names)):
         print(names[i])
 
-hongsa('hi','hello','bye')   #이때 매개변수는 튜플형태로 함수안에 들어가게되고 호출할때도 names[i]의 형태로 호출해야함.
+hongsa(('hi','hello','bye'))   #이때 매개변수는 튜플형태로 함수안에 들어가게되고 호출할때도 names[i]의 형태로 호출해야함.
 
 파이썬에서 매개변수에 튜플을 제외한, 리스트나 딕셔너리를 매개변수로 전달하면 레퍼런스(메모리주소)로 전달하게 된다.
 

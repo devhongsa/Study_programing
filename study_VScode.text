@@ -15,6 +15,7 @@ shift + alt + 위아래 방향키 : 현재커서가 있는 줄 복사
 shift + alt + 드래깅 : 박스 드래깅 
 shift + del : 현재 있는 줄 삭제 
 ctrl + shift + ` : terminal 열기 
+ctrl + shift + P : 입력후 python interpreter 
 
 
 

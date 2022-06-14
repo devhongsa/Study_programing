@@ -296,7 +296,7 @@ ReactDOM.render(<App />, root);
 
 
 
-
+https://github.com/citron03/realtime_coin_transaction_history
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -304,6 +304,9 @@ ReactDOM.render(<App />, root);
 
 //nodejs 설치 
 //작업할 위치에 가서 npx create-react-app 작업폴더이름.
+
+//작업폴더내에서 터미널 키고 npm install
+//작업폴더내에서 터미널 키고 npm run start 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 //Css module 사용하기 
 
