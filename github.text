@@ -50,3 +50,5 @@ git fetch --all
 git reset --hard origin/main
 git pull origin main
 
+충돌 상관없이 현재 commit된 내용 밀어넣기 
+git push origin main --force
