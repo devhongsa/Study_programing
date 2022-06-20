@@ -1,0 +1,6 @@
+javascript - 브라우저 스크립트 프로그래밍 언어 
+nodejs - javascript를 브라우저 밖에서도 사용할 수 있게 해주는 프로그램
+express - nodejs backend framework 
+react.js - nodejs frontend framework    
+
+angular, vue - react와 같은 frontend framework 
