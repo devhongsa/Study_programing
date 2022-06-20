@@ -254,9 +254,9 @@ url = ""
 response = requests.get(url).json()   #.json()으로 받아오기/// .text  // .content
 
 
-url = "https://restapi.nftscan.com/gw/token?apiKey=zfd"
+url = "https://restapi.nftscan.com/gw/token?apiKey=gotcha"
 headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}
-headers2 = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*','Access-Token' : ""}
+headers2 = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*','Access-Token' : "gotcha2"}
 
 
 url2 = "https://restapi.nftscan.com/api/v1/getAllNftPlatformInformation"

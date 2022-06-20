@@ -1,0 +1,73 @@
+git과 heroku cli 설치되어있어야함.
+https://programming4myself.tistory.com/5 설명서 
+
+window는 git bash 터미널 열고 heroku login 
+macos는 터미널 열고 heroku login 
+
+heroku에서 코드실행할 프로젝트 폴더 생성. 
+
+Procfile  파일생성 
+worker: python 파일이름.py 
+clock: python clock.py 
+
+
+requirements.txt 파일생성
+패키지이름 작성 (pip freeze > requirements.txt)
+
+
+runtime.txt  파일생성 (없어도 됨)
+python-3.8.13
+
+
+clock.py (일정시간마다 실행시키려면 필요)
+from apscheduler.schedulers.blocking import BlockingScheduler
+import updateDB
+
+sched = BlockingScheduler()
+
+# @sched.scheduled_job('interval', minutes=3)
+# def timed_job():
+#     print('This job is run every three minutes.')
+
+@sched.scheduled_job('cron', day_of_week='mon-sun', hour=20)
+def scheduled_job():
+    updateDB.startUpdate()
+    
+sched.start()
+
+heroku에 프로젝트 배포하는법 
+프로젝트폴더내에서 
+git init 
+heroku create 프로젝트명 
+git add . 
+git commit -m "commit message" 
+git push heroku main 
+
+프로젝트 파일 수정후 재배포하기 
+git add . 
+git commit -m "commit message" 
+git push heroku main 
+
+
+현재 heroku 상태 
+heroku ps 
+
+파이썬 파일 heroku에서 실행하기 
+heroku ps:scale worker=1
+heroku ps:scale worker=0  실행취소 
+
+heroku logs --tail 로그 보기 
+
+heroku open 장고로 배포했을때 홈페이지 열기
+
+
+
+heroku 컴퓨터에 환경변수 설정하기 
+heroku config:set 환경변수_키=환경변수_값   // 환경변수 설정
+heroku config:unset 환경변수_키            // 환경변수 삭제
+heroku config:get 환경변수_키              // 환경변수 가져오기 
+이렇게 설정하고 나서 파이썬 파일안에서 
+
+import os 
+
+변수 = os.environ.get('환경변수_키')  로 사용가능 
