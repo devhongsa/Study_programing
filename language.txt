@@ -4,3 +4,11 @@ express - nodejs backend framework
 react.js - nodejs frontend framework    
 
 angular, vue - react와 같은 frontend framework 
+
+
+java - 객체지향 프로그래밍 언어 
+spring, spring boot - java의 backend framework 
+
+
+python - 인터프리터 프로그래밍 언어
+django, flask - python의 backend framework 
