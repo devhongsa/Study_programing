@@ -141,7 +141,7 @@ int addNumbers(int x, [int y=0, int z=0]){
 
 int addNumbers({
 	required int x,				//named parameter 설정, 나중에 함수 실행할때 파라미터 순서를 바꿔도 되는 방법.
-	required int y,
+	required int y,       //required를 쓸때는 {}로 감싸줘야함.
 	int z=30,
 }) => x+y+z;				//arrow 펑션
 
