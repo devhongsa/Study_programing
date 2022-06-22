@@ -35,6 +35,10 @@ def scheduled_job():
     
 sched.start()
 
+
+
+
+
 heroku에 프로젝트 배포하는법 
 프로젝트폴더내에서 
 git init 
@@ -55,7 +59,9 @@ heroku ps
 파이썬 파일 heroku에서 실행하기 
 heroku ps:scale worker=1
 heroku ps:scale worker=0  실행취소 
+heroku ps:scale clock=1   일정시간마다 실행켜기 
 
+heroku config:add TZ="Asia/Seoul"   히로쿠 타임존 맞춰야 clock 실행가능 
 heroku logs --tail 로그 보기 
 
 heroku open 장고로 배포했을때 홈페이지 열기
