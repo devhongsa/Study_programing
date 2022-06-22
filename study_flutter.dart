@@ -1,5 +1,6 @@
 https://docs.flutter.dev/get-started/install/macos  에서 sdk 다운로드 
 
+/////////////////////flutter 시작을 위한 환경세팅 /////////////////////////
 terminal 열고 
 echo $SHELL  =>  /bin/zsh 
 ls  => 현재 폴더경로에 있는 폴더들 목록
@@ -44,6 +45,15 @@ IOS 실기기 사용위한 작업
 android studio 에서 작업한 프로젝트로 가서 ios/runner/info.plist 가보면 오른쪽 위에 open ios module in Xcode 클릭
 Xcode Runner 클릭후 signing%capabilities 클릭
 add account로 계정 추가하면 내 아이폰으로 테스트가능 
+/////////////////////////////////////////////////////////////////////////
+안드로이드 스튜디오에서 이미지파일 쓰려면
+pubspec.yaml 파일에서 flutter : 부분에 
+asset :    //여기서 asset은 폴더이름
+    - asset/img/  //경로 
+추가해준다.
+
+
+
 
 
 //Widget Tree 
