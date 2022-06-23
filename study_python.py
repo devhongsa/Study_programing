@@ -41,7 +41,7 @@ name = 'hongsa'
 a = '나는 %s 입니다'% name
 a = '이름 : {}'.format(name)
 
-문자열 메소드
+문자열(string) 메소드
 str.format()
 str.count()
 str.find()
@@ -421,6 +421,9 @@ df.reset_index(drop=True)   #index 다시 설정 drop=true는 이전의 index열
 #중복값 제거하기 
 df.drop_duplicates(['timestamp'], keep='first', ignore_index =True)     #timestamp 값중에 중복되는 것을 찾고 첫번째놈 남기고 지워, 그리고 인덱스 다시 설정.
                                                                         #first, last ,False(중복값 모두 제거)
+df.drop_duplicate(keep='first')             ##이렇게하면 모든 컬럼값에대해서 똑같으면 삭제 
+df.drop_duplicate(['timestamp','group'])    ## 두 컬럼값이 똑같은경우에 삭제 
+
 #중복값 확인하기
 df.value_counts(normalize=True)   #normalize True로 하면 비율로 보여줌.
 
