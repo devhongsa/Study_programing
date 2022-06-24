@@ -375,6 +375,7 @@ pd.notna(df.at[i,'timestamp'])  #nan이 아니면 True 반환
 #조건으로 데이터프레임 행 추출하기 
 timestamp = datetime.now()
 df = df[timestamp<=df['timestamp']]
+df = df[df['country'].isin(['한국','대만','일본'])]   ## 조건리스트로 찾기 
 
 df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기 
 
