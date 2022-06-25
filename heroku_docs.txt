@@ -52,6 +52,8 @@ git add .
 git commit -m "commit message" 
 git push heroku main 
 
+만약에 heroku git repository를 못찾는다고 나오면 
+heroku git:remote -a [앱이름] 
 
 현재 heroku 상태 
 heroku ps 
