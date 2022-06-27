@@ -10,6 +10,9 @@ Math.ceil(10.2);   //올림
 Math.floor(10.5);  //내림
 Math.sqrt(9);      //제곱근
 Math.random();     // 0~1 범위 랜덤 숫자
+3.1235.toFixed(3)  // 반올림
+3.12314.toPrecision(4)
+
 
 typeof 1
 typeof "abc"
@@ -27,6 +30,8 @@ parseInt('13');
 parseInt('assdf');  // NaN 
 parseFloat('avc');
 Number('abced')     //float이나 int로 형변환 해줌 
+Number.toString()
+String(number)
 
 isNaN('string');   //true 
 isNaN(15);          //false 
@@ -59,6 +64,11 @@ for(var i = 0; i < 1000; i++){
     document.write("coding everybody" +i+"<br>")        // 숫자랑 스트링 같이 출력가능
 }
 
+end: for(var i = 0; i < 1000; i++){
+    document.write("coding everybody" +i+"<br>")        // 숫자랑 스트링 같이 출력가능
+
+    break end;      //이거는 보통 다중 for문에서 한방에 모든 for문을 끝내고 싶을때 사용한다.
+}
 //함수 function
 
 function numbering(){
@@ -74,14 +84,32 @@ function get_argument(arg, arg2){
 alert(get_argument(1,"min"));
 
 //다른 함수정의
-var numbering = function(){
-    document.write(1);
+const numbering = function(){
+    document.write(1);  
 }
+//arrow 펑션
+const arrowfunc = (x,y) => x+y;
 
 //익명함수 
 (function(){
     document.write(1);
 })();  
+
+const func = function(){
+    console.log(arguments[0] + arguments[1]);
+}
+func(1,2)    //함수에 파라미터를 지정하지않아도 arguments라는 키워드를 통해 넘긴 값을 불러올수있음  
+
+//재귀함수 
+//자기가 자기를 호출하는 함수, 조건문을 통해 재귀를 멈추는 코드 필요 
+
+//callback 함수 
+function add(x,y){
+    return x+y;
+}
+function calculator(callback, x, y){
+    return callback(x,y);
+}
 
 //배열 array
 var member = ['egoing', 'k8805', 'sorialgi'];
@@ -92,8 +120,13 @@ li = member.concat(['e','f']);  //배열과 배열 합치기
 
 member.unshift('z');  // 배열 맨앞에 넣기
 
+member.splice(1)        //member 요소 1부터 쭉 긁어서 리스트 리턴, 기존 member도 짤려있음 
+member.splice(1,1)      // 요소 1만 가져옴 
 member.splice(1, 0, 'd');  //1번 인덱스에 'd' 추가 기존 1에 있던 값은 뒤로 밀림.
 member.splice(1,1,'x','y'); // 1번 인덱스부터 x ,y 추가 기존 1에 있던 값은 삭제됨.
+
+member.slice(1)         // 요소1부터 쭉 출력 
+member.slice(1,3)       // 요소 1부터 2까지 출력 
 
 member.shift();   // 맨앞에 있는 요소 제거
 member.pop();       //맨뒤에 있는 요소 제거
@@ -101,6 +134,7 @@ member.sort();      //요소 정렬
 member.reverse();   //요소 역정렬
 
 member.sort(function);  // 내가 정의한 정렬기준으로 정렬할 수 있음. 생활코딩 javascript 사전에서 참고
+member.join(',')  //각요소 사이사이마다 , 포함되서 스트링으로 리턴 
 
 
 //객체(object)  파이선에서는 딕셔너리
@@ -610,6 +644,18 @@ var str = 'coding';
 str.length;  // str을 마치 객체처럼 쓸수있는 이유는 내부적으로 문자열이라는 원시데이터타입을 String이라는 객체로 잠시 변환시켜주기때문(레퍼객체)
             // str = new String('coding')
 str.charAt(0);
+str.indexOf('c')
+str.toUpperCase()
+str.toLowerCase()
+str.includes('co') //대소문자 구분함
+str.startsWith('c')  //true return 
+str.endsWith('n')   //false return
+str.replace('c', 'j') // 문자치환  처음만나는 c만 바꿈 
+str.replace(/c/g,'i') //정규표현식, 모든 c를 i로 바꿈 
+str.slice(0,3)
+str.slice(4) //4부터 쭉 
+str.slice(-3) // 뒤에서 3번째부터 쭉 
+str.split(' ')  //리스트로 반환 
 
 str.prop = 'everybody'; // 오류 없이 지나감.
 console.log(str.prop);  //undefined  str.prop를 다시 사용하려고 하면 undefinde 뜸 . 그이유는 잠깐동안만 객체화를 하고 다시 원시데이터로 돌려놓기때문.
@@ -720,10 +766,11 @@ console.log(oddArr); // [1, 9]
 
 //map
 const arr = ["there", "are", "you", "are", "how", "hello!"];
-arr.map((item)=>item.toUpperCase());            // ["THERE", "ARE", ...]
+let arr2 = arr.map((item)=>item.toUpperCase());            // ["THERE", "ARE", ...]
 //map은 전체 요소를 다 돌면서 요소값을 변화시킴.
+//forEach 와 차이점은 map은 리턴값이 리스트인것임.
 
-
+arr.find((user)=>(user === 'there'))
 
 
 
@@ -897,6 +944,7 @@ function makeList(item){
 const toDos = [];    // or {} 
 const stringArray = JSON.stringify(toDos);              //array나 object를 string으로 변환시켜줌.
 const parsedArray = JSON.parse(stringArray);             //stringify 된 array나 object를 다시 원래대로 돌려줌.
+                                                        // 깊은복사를 할때 이방법을 씀 문자열화 했다가 다시 json으로 변환해서 깊은복사
 parsedArray.forEach(makeList);                          // 각 요소마다 루프를 돌면서 makeList 함수 실행. makeList함수에 item argument 넣어줘야 돌아감.
                                                         // item에 parsedArray에 각 요소가 차례대로 들어가면서 실행됨
 parsedArray.forEach((item)=>console.log(item));         // 위에랑 똑같은 의미, 익명함수로 함수만들필요없이 바로 작동.                                                        
