@@ -51,6 +51,7 @@ git push heroku main
 git add . 
 git commit -m "commit message" 
 git push heroku main 
+git push heroku main --app ep-updatedb
 
 만약에 heroku git repository를 못찾는다고 나오면 
 heroku git:remote -a [앱이름] 
