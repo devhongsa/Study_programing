@@ -328,6 +328,8 @@ df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으�
 
 import pandas as pd
 
+
+
 #dataframe timestamp 날짜로 변경, dataframe timedelta (DateOffset)
 pd.to_datetime(df['timestamp'], unit='s') + pd.DateOffset(hours=8)
 
@@ -337,6 +339,9 @@ df = pd.DataFrame(columns=['timestamp', 'buy', 'sell'])
 df = pd.DataFrame({'timestamp' : timestamp, 'price' : price})
 df = pd.DataFrame([])
 df = pd.DataFrame(np.random.randint(1,100,size=(100,4)))
+
+#형변환 
+df['buy'].astype('int')
 
 #index값 추출
 df.index   # return index list

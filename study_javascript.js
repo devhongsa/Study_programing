@@ -4,7 +4,12 @@ https://developer.mozilla.org/en-US/docs/Web/JavaScript
 
 
 //연산
-Math.pow(3,2);     //제곱
+nums = [-1,2,6,7,4,23]
+Math.max(1,-1,3,5,6)
+Math.max(...nums)
+Math.min(1,-1) 
+Math.abs()
+Math.pow(3,2);     //제곱   혹은 3**2
 Math.round(10.6);  //반올림
 Math.ceil(10.2);   //올림
 Math.floor(10.5);  //내림
@@ -12,6 +17,11 @@ Math.sqrt(9);      //제곱근
 Math.random();     // 0~1 범위 랜덤 숫자
 3.1235.toFixed(3)  // 반올림
 3.12314.toPrecision(4)
+
+
+% 
+&&  //and
+||  //or
 
 
 typeof 1
@@ -111,7 +121,7 @@ function calculator(callback, x, y){
     return callback(x,y);
 }
 
-//배열 array
+//배열 array 리스트, list
 var member = ['egoing', 'k8805', 'sorialgi'];
 
 member.push('f');           // 배열 맨뒤에 추가
@@ -129,7 +139,7 @@ member.slice(1)         // 요소1부터 쭉 출력
 member.slice(1,3)       // 요소 1부터 2까지 출력 
 
 member.shift();   // 맨앞에 있는 요소 제거
-member.pop();       //맨뒤에 있는 요소 제거
+member.pop();       //member의 맨뒤에 요소 제거되고, 맨뒤에 요소 리턴 
 member.sort();      //요소 정렬
 member.reverse();   //요소 역정렬
 
@@ -464,6 +474,7 @@ document.write(p1.introduce()+"<br />");
 var p2 = new Person('leezche');
 document.write(p2.introduce());
 
+new.target // new를 써서 객체를 형성했는지 확인
 
 // 전역객체
 function func(){
@@ -770,11 +781,47 @@ let arr2 = arr.map((item)=>item.toUpperCase());            // ["THERE", "ARE", .
 //map은 전체 요소를 다 돌면서 요소값을 변화시킴.
 //forEach 와 차이점은 map은 리턴값이 리스트인것임.
 
-arr.find((user)=>(user === 'there'))
+arr.find((user)=>(user === 'there')) // 만족하는 값 하나만 리턴
+arr.filter((user)=> user.length >= 3)// 만족하는 모든 값 배열로 리턴 
+
+let nums = [1,2,3,4,5];
+let call_count = 0;
+
+let sum = nums.reduce(function(accumulator, item, index, array){
+    console.log(accumulator, item, index);
+    call_count++;
+    return accumulator + item;
+}, 0);
 
 
+let map = new Map();
+
+map.set("name", "john");        //key,value 
+map.set(123,456)
+ 
+map.get('name')     // john
+
+map.delte('name')
+map.clear()
+
+for (let item of map.keys()){
+    console.log(item)
+}
+for (let item of map.values()){
+    console.log(item)
+}
+for (let item of map){
+    console.log(item)
+}
 
 
+let set = new Set();
+let num = new Set([1,2,3,4,5]);
+let str = new Set("Hello!");    // {h e l o !} 이거를 다시 리스트로 넣어줘야함.
+
+set.add(1).add(1)    // {1}
+set.has(1)          // true 
+set.delete(1)
 
 
 
@@ -891,14 +938,21 @@ localStorage.removeItem("username");
 
 
 // const date = new Date();
+// const date = new Date(2021,0,1);         //// 1월은 0부터 시작 
+// const date = new Date('2020-01-01');     ////스트링 보내면 date객체로 변환
+// const date_str = Date();    ////스트링으로 출력 
 // 날짜객체 생성.
 
 // date.getDate(); 
-// date.getDay();
 // date.getFullYear();
+// date.getMonth();
+// date.getDay();
 // date.getHours();
 // date.getMinutes();
 // date.getSeconds();
+// date.getTime()  //ms 로 리턴 
+
+
 
 //"1".padStart(2,"0");          //만약 string이 2글자가 아니라면 앞에 "0" 추가 
 
