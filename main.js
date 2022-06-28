@@ -1,39 +1,65 @@
-function solution(N, M, amount, value, stomach) {
-    let items = {};
-  	for(i=0; i<value.length; i++){
-    	items[value[i]] = amount[i];
-    }
-  	let sortList = value.sort(function(a, b)  {
-      if(a > b) return -1;
-      if(a === b) return 0;
-      if(a < b) return 1;
-    });
-  	let sumStomach = 0;
-  	for(i of stomach){
-    	sumStomach += i;
-    }
-  	
-  	let sumAmount = 0;
-  	let result = 0;
-  	
-  	for(v of sortList){
-
-        if((sumAmount+items[v]) < sumStomach){
-      	result += items[v]*v
-        sumAmount += items[v]
-        console.log(result, sumAmount)
-      }
+function solution(answers) {
+    var answer = [];
+    let supo1 = [];
+    let supo2 = [];
+    let supo3 = [];
+    
+    let supo1Num = 1;
+    
+    let supo2Num = 3;
+    const supo2lst = [1,3,4,5];
+    
+    let supo3Num = 0;
+    const supo3lst = [3,1,2,4,5]
+    
+    let correctNum = [0,0,0];
+    
+    for (i=0; i<answers.length; i++){
+        //supo1
+        if (supo1Num == answers[i]) {
+            correctNum[0] += 1
+            supo1Num<5?supo1Num+=1:supo1Num=1
+        }
+        else supo1Num<5?supo1Num+=1:supo1Num=1
+        
+        //supo2
+        if (i==0 || i % 2 == 0){
+            if (answers[i] == 2){
+                correctNum[1] +=1
+                supo2Num<3?supo2Num+=1:supo2Num=0
+            }
+        }
         else{
-            console.log(sumStomach, sumAmount)
-      	    result += (sumStomach-sumAmount)*v;
-            sumAmount = sumStomach 
-            console.log('hi', result)
-            break;
-      }
+            if (answers[i] == supo2lst[supo2Num]){
+                correctNum[1] +=1
+                supo2Num<3?supo2Num+=1:supo2Num=0
+            }
+            else supo2Num<3?supo2Num+=1:supo2Num=0
+        }
+        
+        //supo3
+        if (answers[i] == supo3lst[supo3Num]){
+            correctNum[2] +=1
+            if (supo3Num % 2 == 1) supo3Num<4?supo3Num += 1:supo3Num=0
+        }
+        else {
+            if (supo3Num % 2 == 1) supo3Num<4?supo3Num += 1:supo3Num=0
+        }
     }
-  	
-    return result;
+    console.log(correctNum)
+    let maxNum = Math.max(...correctNum)
+    
+    answer = correctNum.reduce((cur,num,idx) => {
+		console.log(num, maxNum)
+       if (num == maxNum) {
+           cur.push(idx+1)
+       }
+	   console.log(cur)
+        return cur
+    },[])
+    
+	console.log(answer)
+    return answer;
 }
 
-result = solution(4,5,[7,10,4,5],[5,4,3,1],[4,6,2,5,3])
-console.log(result)
+let result = solution([1, 3, 2, 4, 2])
