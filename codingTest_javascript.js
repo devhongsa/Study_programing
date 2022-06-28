@@ -122,7 +122,7 @@ function test9(obj){
 
 function test10(lst){
     let result = [];
-    new Set(lst).forEach((item)=>{
+    new Set(lst).forEach((item)=>{              //forEach
         result.push(item);
     })
 
@@ -131,7 +131,16 @@ function test10(lst){
     return result;
 }
 
-console.log(test9(1,100))
+function test11(lst){
+    let newList = []
+
+    for(item in lst){
+        newList.unshift(lst[item])
+    }
+    return newList
+}
+
+console.log(test11([1,2,3,4]))
 
 
 
@@ -139,3 +148,56 @@ console.log(test9(1,100))
 
 // let date = new Date('2021-01-17')
 // date.getDay()    // 숫자로 리턴 0~6 
+
+
+// // 문자열 
+// str.charAt(0);
+// str.indexOf('c')
+// str.toUpperCase()
+// str.toLowerCase()
+// str.includes('co') //대소문자 구분함
+// str.startsWith('c')  //true return 
+// str.endsWith('n')   //false return
+// str.replace('c', 'j') // 문자치환  처음만나는 c만 바꿈 
+// str.replace(/c/g,'i') //정규표현식, 모든 c를 i로 바꿈 
+// str.slice(0,3)
+// str.slice(4) //4부터 쭉 
+// str.slice(-3) // 뒤에서 3번째부터 쭉 
+// str.split(' ')  //리스트로 반환 
+
+
+// //배열 array 리스트, list
+// var member = ['egoing', 'k8805', 'sorialgi'];
+
+// member.push('f');           // 배열 맨뒤에 추가
+
+// li = member.concat(['e','f']);  //배열과 배열 합치기
+
+// member.unshift('z');  // 배열 맨앞에 넣기
+
+// member.splice(1)        //member 요소 1부터 쭉 긁어서 리스트 리턴, 기존 member도 짤려있음 
+// member.splice(1,1)      // 요소 1만 가져옴 
+// member.splice(1, 0, 'd');  //1번 인덱스에 'd' 추가 기존 1에 있던 값은 뒤로 밀림.
+// member.splice(1,1,'x','y'); // 1번 인덱스부터 x ,y 추가 기존 1에 있던 값은 삭제됨.
+
+// member.slice(1)         // 요소1부터 쭉 출력 
+// member.slice(1,3)       // 요소 1부터 2까지 출력 
+
+// member.shift();   // 맨앞에 있는 요소 제거
+// member.pop();       //member의 맨뒤에 요소 제거되고, 맨뒤에 요소 리턴 
+// member.sort();      //요소 정렬
+// member.reverse();   //요소 역정렬
+
+// member.sort(function);  // 내가 정의한 정렬기준으로 정렬할 수 있음. 생활코딩 javascript 사전에서 참고
+// member.join(',')  //각요소 사이사이마다 , 포함되서 스트링으로 리턴 
+
+// //map
+// const arr = ["there", "are", "you", "are", "how", "hello!"];
+// let arr2 = arr.map((item)=>item.toUpperCase());            // ["THERE", "ARE", ...]
+
+// //reduce
+// let sum = nums.reduce(function(accumulator, item, index, array){
+//     console.log(accumulator, item, index);
+//     call_count++;
+//     return accumulator + item;
+// }, 0);

@@ -79,6 +79,13 @@ end: for(var i = 0; i < 1000; i++){
 
     break end;      //이거는 보통 다중 for문에서 한방에 모든 for문을 끝내고 싶을때 사용한다.
 }
+
+lst = [1,2,3,4]
+for(item in lst){
+    console.log(item);          // for in 구문은 item이 인덱스값이다.  for of 로 하면 item은  lst의 요소값이다. 
+}
+
+
 //함수 function
 
 function numbering(){
