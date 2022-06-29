@@ -90,6 +90,7 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+
 1.MaterialApp 은 꼭 있어야함 html태그라고 생각 
 2.Scaffold 도 꼭 있어야함 body라고 생각
 3.HomeScreen 같은 class 위젯을 만들어서 MaterialApp에 넣어주는 방식으로 해야 됨. 안그러면 나중에 코드가 엄청 보기 힘들어지기 때문
@@ -101,7 +102,7 @@ class HomeScreen extends StatelessWidget {
 
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
-
+//home_screen.dart
 
 import 'package:flutter/material.dart';
 
@@ -112,7 +113,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        bottom: false,            //밑에 Container 에서 wrap with widget 누르고 SafeArea로 변경, 범위침범안하게 해주는기능
+        bottom: false,            //밑에 Container 에서 wrap with widget 누르고 SafeArea로 변경, 핸드폰 화면범위침범안하게 해주는기능
         child: Container(          //Container는 div 라고 생각
           color: Colors.black,
           width: MediaQuery.of(context).size.width,     //size는 핸드폰사이즈 width 핸드폰 너비 사이즈 불러오기

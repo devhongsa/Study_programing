@@ -46,8 +46,7 @@ string1 = "hi hello"
 string1.split()
 string1.isalpha()
 string1.isdigit()
-# 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
-string1.replace('hi', 'hello')
+string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
 ''.join(i for i in letters)  # 리스트 요소 사이사이에 '' 요게 들어감.
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
 string1.strip('h')
