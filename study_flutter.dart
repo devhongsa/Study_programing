@@ -1,4 +1,11 @@
 https://docs.flutter.dev/get-started/install/macos  에서 sdk 다운로드 
+https://blog.codefactory.ai/    //볼만한 강의들 많이 있음 
+
+pub.dev 들어가서 패키지 검색. webview / flutter.dev 팀이 만든 패키지가 신뢰성있음.
+클릭해서 들어간다음에 제목옆에 복사 / project 폴더 pubspec.yaml 에 dependencies 밑쪽에 버전적혀져있는 패키지 밑에 붙여넣기
+버전앞에 ^ 표시는 ^3.0.0 일때 앞에 3을 제외하고 뒷쪽 버전이 업데이트가 되면 자동으로 업데이트하겠다는 뜻임. 맨 앞자리가 바뀌면 크게 바뀌는 업데이트이기 떄문에
+자동으로 업데이트하지 않겠다는 뜻 / 그리고 android/app/build.gradle 로 가서 defaultconfig > minsdkversion 20 으로 변경, webview readme 참고
+그리고 중요한거는 main.dart를 run 중지시키고 terminal에서 flutter clean 입력해준다음에 다시 실행해야함. 그래야 적용완료 
 
 /////////////////////flutter 시작을 위한 환경세팅 /////////////////////////
 terminal 열고 
@@ -62,16 +69,23 @@ asset :    //여기서 asset은 폴더이름
 // Project 1 
 //main.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_project/screen/home_screen.dart';   //이 파일 찾을때 밑에 HomeScreen 오른쪽 클릭 하고 show action 누르면 있음
 
 void main() {
   runApp(
     MaterialApp(
-      debugShowCheckedModeBanner: false,        //debug banner 없애기
+      debugShowCheckedModeBanner: false,
       home: HomeScreen(),
     ),
   );
 }
 
+stless 치고 탭누르면 쉽게 폼생성가능
+stful 이면 stateful widget 생성
+
+///// CircularProgressIndicator? /////
+
+StatelessWidget은 라이프 사이클 동안 단 한번만 build함수를 실행한다.
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -100,8 +114,13 @@ class HomeScreen extends StatelessWidget {
 반대로 위젯을 생성할때는 Wrap with Column 기능이나 다른 위젯기능을 눌러주면 됨.
 
 
+
+
+
+
 /////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////
+//////////////////////////정렬, 화면차지하는 비율 //////////////////////////////
+////// CrossAxisAlignment? MainAxisSize? Expanded?/////////
 //home_screen.dart
 
 import 'package:flutter/material.dart';
@@ -156,5 +175,219 @@ class HomeScreen extends StatelessWidget {
     );
   }
 }
+//만일 Widget의 파라미터가 뭐가 있는 알고 싶으면, 위젯 오른쪽 클릭 > Go to > declaration or Usages
 
-1. 만일 Widget의 파라미터가 뭐가 있는 알고 싶으면, 위젯 오른쪽 클릭 > Go to > declaration or Usages
+
+
+
+
+/////// container 안에 column, row 조합으로 화면 구현하기 /////
+///// SafeArea? MediaQuery? MainAxisAlignment? Column? Row?//////
+////// home_screen.dart   ////// 
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        bottom: false,            //밑에 Container 에서 wrap with widget 누르고 SafeArea로 변경, 범위침범안하게 해주는기능
+        child: Container(          //Container는 div 라고 생각
+          color: Colors.black,
+          width: MediaQuery.of(context).size.width,     //size는 핸드폰사이즈 width 핸드폰 너비 사이즈 불러오기
+          //height: MediaQuery.of(context).size.height,  //Row일때는 이렇게 해줘야함
+          child: Column(            //Row로 바꾸면 가로로
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.red,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.orange,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.yellow,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.green,
+                  ),
+                ],
+              ),
+              Container(
+                height: 50.0,
+                width: 50.0,
+                color: Colors.orange,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.red,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.orange,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.yellow,
+                  ),
+                  Container(
+                    height: 50.0,
+                    width: 50.0,
+                    color: Colors.green,
+                  ),
+                ],
+              ),
+              Container(
+                height: 50.0,
+                width: 50.0,
+                color: Colors.green,
+              ),
+            ]
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+////// 웹페이지 url 을 가져와서 폰화면에 그대로 띄워주는 패키지 사용 ///////
+///// WebViewController? AppBar? IconButton? WebView?///////
+//// WebView /////
+pub.dev 들어가서 패키지 검색. webview / flutter.dev 팀이 만든 패키지가 신뢰성있음.
+클릭해서 들어간다음에 제목옆에 복사 / project 폴더 pubspec.yaml 에 dependencies 밑쪽에 버전적혀져있는 패키지 밑에 붙여넣기
+버전앞에 ^ 표시는 ^3.0.0 일때 앞에 3을 제외하고 뒷쪽 버전이 업데이트가 되면 자동으로 업데이트하겠다는 뜻임. 맨 앞자리가 바뀌면 크게 바뀌는 업데이트이기 떄문에
+자동으로 업데이트하지 않겠다는 뜻 / 그리고 android/app/build.gradle 로 가서 defaultconfig > minsdkversion 20 으로 변경, webview readme 참고
+그리고 중요한거는 main.dart를 run 중지시키고 terminal에서 flutter clean 입력해준다음에 다시 실행해야함. 그래야 적용완료 
+// home_screen.dart //
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+class HomeScreen extends StatelessWidget {
+  WebViewController? controller;                //webview를 통해 불러온 웹사이트를 이 컨트롤러로 바꿔줄수있음
+  final homeUrl = 'https://blog.codefactory.ai';
+  HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(                   //appBar는 Scaffold 에서 생성가능
+        backgroundColor: Colors.orange,
+        title: Text('Code Factory'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: (){
+                if(controller == null) {return;}
+                controller!.loadUrl(homeUrl);     // !를 넣어줘서 controller가 null값이 아니다라는걸 알려줘야 함.
+              },
+              icon: Icon(
+                Icons.home,
+              ),
+          )
+        ],
+      ),
+      body: WebView(
+        onWebViewCreated: (WebViewController controller){ // webview가 생성될때 작동
+          this.controller = controller;                 //web을 컨트롤 할 수 있는 controller를 HomeScreen 클래스 내에서
+                                                        // 사용할 수 있게끔 보내주는 역할
+        },
+        initialUrl: homeUrl,      //website를 앱화면으로 불러올 수 있음
+        javascriptMode: JavascriptMode.unrestricted,    //javascript 언어 사용가능하게 하는 설정.
+      )
+    );
+  }
+}
+
+
+
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////
+//// 페이지 넘기기, 타이머 설정해서 자동으로 페이지 넘어가는 기능 구현 /////
+// Timer? PageController? PageView? setSystemUIOverlayStyle? Boxfit? Image?
+//// StatefulWidget? /////
+//// home_screen.dart
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  Timer? timer;                 //일정시간마다 특정 로직을 실행시키기 위해 변수 생성 initState에서 로직구현
+  PageController controller = PageController(     //페이지를 컨트롤 하기위한 컨트롤러 생성
+    initialPage: 0,   //처음 시작 페이지 설정, 0이 1페이저
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    timer = Timer.periodic(Duration(seconds: 4), (timer) {      //Timer 로직 구현 부분
+      int currentPage = controller.page!.toInt();               // 현재페이지 불러오기, page는 0.5페이지도 존재 넘어갈랑말랑할때
+      int nextPage = currentPage + 1;
+
+      if(nextPage > 4){
+        nextPage = 0;
+      }
+
+      controller.animateToPage(nextPage, duration: Duration(milliseconds: 1000), curve: Curves.linear);
+      //animateToPage 는 페이지 넘기는 기능, (몇페이지로 넘길것인지, 넘어가는 속도, 넘어갈때 애니메이션)
+    });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();       //컨트롤러와 타이머는 위젯이 삭제될때 꼭 같이 없애줘야 메모리 leak을 방지할 수 있음 
+    if(timer != null){
+      timer!.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark); //위에 시간과 배터리,와이파이 표시의 색깔 조정 
+    return Scaffold(
+      body: PageView(           //PageView는 children의 리스트에 각 페이지를 설정할 수 있다.
+        controller: controller,     //PageView 부분을 컨트롤하기 위한 controller 적용/ 우선 homescreenState클래스에서 변수선언해주고
+                                    // initState 함수에서 로직구현을 해주면 로직대로 페이지가 반응함.
+        children: [1,2,3,4,5].map((e) =>
+          Image.asset('asset/img/image_$e.jpeg', fit: BoxFit.cover,) //cover같은 경우 화면을 맞추기 위해 그림이 짤릴수있음
+        ).toList()     //map같은 경우 리스트가 아닌 iterable 객체를 반환하기 때문에 리스트로 변환해줘야함
+      ),
+    );
+  }
+}

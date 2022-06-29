@@ -30,9 +30,10 @@ void main() {
 	const Stirng name3 = 'hhhhh';
 	final name5 = 'hhiiii';       //final과 const는 데이터타입 선언안해도 var 기능을 수행해줌.
 
-	final DateTime now = DateTime.now();
-	const DateTime now2 = DateTime.now();    
+	final DateTime now = DateTime.now();      //O
+	const DateTime now2 = DateTime.now();    //X
 	// 런타임때 값이 결정되는 경우에는 const를 쓸수가 없다. const는 빌드타임때 값이 결정되어 있어야함.
+
 
 
 	num ++;    // 1더하기 
@@ -228,8 +229,8 @@ class BoyGroup extends Idol{
     int membersCount,
   ): super(        //super는 부모클래스를 말하는것임.
     name: name,     // name:name 이렇게 하는 이유는 Idol 부모클래스의 생성자에서 required로 선언됐기때문
-    membersCount: membersCount
-  );
+    membersCount: membersCount    //이뜻은 BoyGroup으로 객체를 생성하면 부모클래스의 생성자를 실행시키게 됨. 부모클래스 객체변수 설정
+  );                              //이렇게 되면 자식클래스에서 부모클래스 함수를 호출하면 BoyGroup의 name과 membersCount 변수사용가능
 
   void sayMale(){     //자식클래스에서 따로 만든 함수는 부모클래스에서 사용할 수 없다.
     print('저는 남자 아이돌입니다.');
@@ -366,7 +367,7 @@ void main(){
   print(blackPinkMap.keys.toList());
   print(blackPinkMap.values.toList());
 
-  Set blackPinkSet = Set.from(blackPink);
+  Set blackPinkSet = Set.from(blackPink);   //중복값 삭제해주기 
 
   print(blackPinkSet.toList());
 
@@ -647,3 +648,33 @@ Stream<int> calculate(int number) async* {
     await Future.delayed(Duration(seconds:1));
   }
 }
+
+////////////////////////////////////////////////
+DateTime? 
+
+DateTime now = DateTime.now();
+now.year;
+now.month;
+now.day;
+now.hour;
+now.minutes;
+now.seconds;
+now.milliseconds;
+
+Duration?
+
+Duration duration = Duration(seconds: 60);
+
+duration.inDays;     // 0
+duration.inHours;
+duration.inMinutes;  // 1
+duration.inSeconds   // 60
+duration.inMilliseconds 
+
+DateTime specificDay = DateTime(2017, 11, 23);   
+final difference = now.difference(specificDay)  // now - specifiDay  Duration 반환
+now.isAfter(specificDay)    // 특정날짜보다 나우가 이후 날짜인지 true
+now.isBefore()
+
+now.add(Duration(hours:10));   //  날짜연산
+now.subtract(Duration(seconds: 20))
