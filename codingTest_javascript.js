@@ -221,7 +221,7 @@ false || 'apple'        // apple 반환
 
 
 
-
+/////프로그래머스 완전탐색, 모의고사 lv.1
 // function solution(answers) {
 //     var answer = [];
 //     let supo1 = [];

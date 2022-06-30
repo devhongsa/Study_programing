@@ -317,8 +317,7 @@ unixTime = datetime.timestamp(date)
 #datetime을 string으로 
 stringTime = dt.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것인지.
 
-#datatime 형식 바꾸기
-df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으로 변경 
+
 
 ######################################### dataframe #########################################
 
@@ -328,10 +327,6 @@ df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으�
 
 import pandas as pd
 
-
-
-#dataframe timestamp 날짜로 변경, dataframe timedelta (DateOffset)
-pd.to_datetime(df['timestamp'], unit='s') + pd.DateOffset(hours=8)
 
 #dataframe 만들기
 pd.DataFrame(data=None, index=None, columns=None, dtype=None, copy=False)
@@ -352,7 +347,7 @@ df.at[index, 'timestamp']
 #loop 돌때 loc보다 빠른 행 넣기 
 https://dowtech.tistory.com/39          
 
-#행 위치 데이터 추출
+#행 인덱스위치 데이터 추출
 df['timestamp'].iloc[-1]
 #인덱스 위치 데이터추출   
 df['timestamp'].loc[0]
@@ -373,6 +368,11 @@ df['buy'].iloc[:2].mean()       # 행 0부터 1까지 평균
 pd.isna(df.at[i,'timestamp'])   #nan이면 True 반환
 pd.notna(df.at[i,'timestamp'])  #nan이 아니면 True 반환 
 
+# nan값 대체하기 
+df.fillna(1, inplace=True)
+df.replace(np.nan, 1)
+
+
 #inplace
 데이터프레임에서 inplace=True 값을 주면 원본객체를 함께 변경한다는 뜻임.
 즉 df = df.sort_value() 이런식으로 원본 변수에 다시 지정안해줘도 된다는 뜻.
@@ -386,7 +386,7 @@ df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기
 
 df_index = df[df['name']=='hongsa'].index
 df.drop([df_index])            #index로 행 삭제하기.
-df.drop(columns=['name'])       #컬럼 삭제하기
+df.drop(columns=['name'], inplace=True)       #컬럼 삭제하기
 df.drop('timestamp', axis=1)   # column 삭제하기 
 
 df.loc[df["Salary"] >= 5000]
@@ -422,6 +422,7 @@ timestampList = df['timestamp'].values.tolist()
 df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬  최근시간이 위로 오는 정렬 
 
 df.reset_index(drop=True)   #index 다시 설정 drop=true는 이전의 index열 삭제함. 
+df.set_index(keys=['timestamp'], drop=True, inplace=True)
 
 
 #중복값 제거하기 
@@ -436,8 +437,18 @@ df.value_counts(normalize=True)   #normalize True로 하면 비율로 보여줌.
 #groupby 
 https://ponyozzang.tistory.com/291
 df = df.groupby('local_timestamp').tail(1)                  ##timestamp컬럼 데이터들 중 똑같은애들끼리 묶어서 그룹화하고 마지막행만 모아서 리턴
-df.groupby(['city', 'fruits'],as_index=False).mean()        ##그냥 groupby하면 인덱스가 바뀌는데, 바꾸고싶지않으면 False로
+df.groupby(['city', 'fruits'],as_index=False).mean()        ##그냥 groupby하면 인덱스가 바뀌는데, 바꾸고싶지않으면 False로 //sum()
 
+#rolling
+df.rolling(window=60, min_periods=None, center=False, win_type=None, on=None, axis=0, closed=None, method='single').mean()   ## window 빼고 다 생략가능  //.sum() 
+## min_periods는 window가 7이면 6번째까지 nan값을 넣어주는데 min_periods를 1로 설정하면 첫번째부터 값을 대입해줌 
+
+#datatime 형식 바꾸기
+df['timestamp'].dt.strftime('%Y-%m-%d %H:%M')  #datetime을 원하는 형식으로 변경 
+#dataframe timestamp 날짜로 변경, dataframe timedelta (DateOffset)
+pd.to_datetime(df['timestamp'], unit='s') + pd.DateOffset(hours=8)
+# 날짜 범위로 데이터 프레임 만들기 
+period = pd.period_range(start='2022-01-13 00:00:00',end='2022-01-13 02:30:00',freq='30T')
 
 #excel로 저장
 df.to_excel('bal.xlsx')    # 실행하는 위치에 저장
@@ -453,6 +464,10 @@ pd.DataFrame(requests.get("https://api.opensea.io/api/v1/collections?offset=300&
 
 
 
+
+####### ccxt ##########
+
+ohlcv = binance.fetch_ohlcv('BTC/USDT', timeframe = '1d', since = start_date, limit = 1000, params=)
 
 #########################################  #########################################
 mlflow 
@@ -874,6 +889,22 @@ import matplotlib.pyplot as plt
 
 arr = np.random.normal(0, 1, 1000)
 plt.hist(arr, bins=100)  # bins는 몇구간으로 나눠서 볼지 
+## y축 값 1000단위 , 구분 
+current_values = plt.gca().get_yticks()
+plt.gca().set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+
+## 그래프 겹치기 
+fig,ax1 = plt.subplots()
+ax2 = ax1.twinx()
+ax1.plot(x,y,color,label)
+ax1.bar()
+## 한 plot에 y축 2개일때 y축 값 1000 단위 , 구분 
+current_values = ax1.get_yticks()
+ax1.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+current_values = ax2.get_yticks()
+ax2.set_yticklabels(['{:,.0f}'.format(x) for x in current_values])
+
+
 plt.show()
 
 
