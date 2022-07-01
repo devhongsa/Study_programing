@@ -149,6 +149,27 @@ let count = arr.filter(element => 'a' === element).length;            // 배열 
 let date = new Date('2021-01-17')
 date.getDay()    // 숫자로 리턴 0~6 
 
+//주의사항
+let lst = [1,2,3,4,5]
+let copylst = lst  
+//이렇게 했을 떄 copylst는 lst의 메모리 주소를 받았기 때문에 lst를 변경하면 copylst도 같이 변경됨.
+let copylst2 = [...lst]  // 이렇게 해야 새로운 메모리 주소로 받아짐. 
+
+
+//연산
+nums = [-1,2,6,7,4,23]
+Math.max(1,-1,3,5,6)
+Math.max(...nums)
+Math.min(1,-1) 
+Math.abs()
+Math.pow(3,2);     //제곱   혹은 3**2
+Math.round(10.6);  //반올림
+Math.ceil(10.2);   //올림
+Math.floor(10.5);  //내림
+Math.sqrt(9);      //제곱근
+Math.random();     // 0~1 범위 랜덤 숫자
+
+
 
 // 문자열 
 str.charAt(0);
@@ -190,12 +211,13 @@ member.reverse();   //요소 역정렬
 
 member.includes('egoing')       //true false 리턴
 member.indexOf('egoing')        // 첫번째 index 리턴 
+member.lastIndexOf('egoing')
 
 //a-b는 오름차순 b-a는 내림차순 
 arr.sort((a, b) => a-b);
 
 arr.find((user)=>(user === 'there')) // 만족하는 값 하나만 리턴
-arr.filter((user)=> user.length >= 3)// 만족하는 모든 값 배열로 리턴 
+arr.filter((value, index)=> value.length >= 3)// 만족하는 모든 값 배열로 리턴 
 
 member.join(',')  //각요소 사이사이마다 , 포함되서 스트링으로 리턴 
 
@@ -217,6 +239,7 @@ let obj = {}        //자바스크립트 객체의 키값에 숫자가 들어갈
 //왼쪽값이 true일경우 왼쪽값 반환 그렇지 않으면 오른쪽값 반환 
 'apple' || 'banana'   // apple 반환 
 false || 'apple'        // apple 반환
+
 
 
 
