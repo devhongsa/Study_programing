@@ -70,10 +70,29 @@ asset :    //여기서 asset은 폴더이름
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 //////tips////////
+//option+command+L  안드로이드스튜디오 코드정렬 
 
 //만일 Widget의 파라미터가 뭐가 있는 알고 싶으면, 위젯 오른쪽 클릭 > Go to > declaration or Usages
 //import하기 쉬운방법, 위젯이름 오른쪽 클릭 show action , import 
 //꼭 override 해줘야하는 함수 찾는거는 부모클래스 오른쪽 클릭후 show action 에서 찾을 수 잇음
+
+//// pubspec.yaml ////
+//이미지파일, 폰트 쓸때 flutter: 부분에 
+//   assets:
+//     - asset/img/
+
+//   fonts:
+//     - family: parisienne
+//       fonts:
+//         - asset: asset/font/Parisienne-Regular.ttf
+
+//     - family: sunflower
+//       fonts:
+//         - asset: asset/font/Sunflower-Bold.ttf
+//         - asset: asset/font/Sunflower-Light.ttf
+//           weight: 500
+//         - asset: asset/font/Sunflower-Medium.ttf
+//           weight: 700
 
 //// 패키지 다운받기 ////
 // pub.dev 들어가서 패키지 검색. webview / flutter.dev 팀이 만든 패키지가 신뢰성있음.
@@ -82,6 +101,7 @@ asset :    //여기서 asset은 폴더이름
 // 자동으로 업데이트하지 않겠다는 뜻 / 그리고 android/app/build.gradle 로 가서 defaultconfig > minsdkversion 20 으로 변경, webview readme 참고
 // 그리고 중요한거는 main.dart를 run 중지시키고 terminal에서 flutter clean 입력해준다음에 다시 실행해야함. 그래야 적용완료 
 
+//// google fonts ////
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,11 +119,17 @@ CircularProgressIndicator? 로딩표시하기
 mainAxisAlignment? Coulmn이면 세로방향이 mainAxis이고 정렬
 CrossAxisAlignment? 나와 반대되는 방향 정렬
 MainAxisSize? 내 방향으로의 사이즈 
-Expanded?    컨테이너 자리 차지하는거 관련
+Expanded?    컨테이너 자리 차지하는거 관련, 이미지가 화면밖을 넘어갈때 해주면 딱 맞게 이미지가 맞춰짐.
 MediaQuery?  핸드폰 너비 사이즈 관련
 SafeArea?  핸드폰 위쪽 시간있고 배터리표시있는 부분 범위침범안하게 해주는 기능 
 Boxfit?   사진같은거를 화면에 어떤식으로 맞출거냐 
+backgroundColor? 뒤에 배경색 변경 
+TextStyle? 텍스트 색, 폰트, 사이즈 등 조절 
+IconButton? 
+ElevatedButton? 
 
+onPressed?  버튼이 눌렸을때 실행할 코드 함수 지정 
+loadUrl?      설정한 url로 페이지 이동 
 WebViewController? 웹뷰를 가져왔을 때 웹페이지를 컨트롤할 수 있게 해주는 기능
 AppBar?   앱의 위쪽에 bar 만들기 기능
 IconButton?   버튼
@@ -113,6 +139,9 @@ PageController?   페이지를 컨트롤 할 수 있게 하는 기능
 PageView?         여러 페이지 설정하는 기능 1페이지에는 뭐, 2페이지에는 뭐  리스트형태로 
 setSystemUIOverlayStyle?  핸드폰 위에 배터리, 시간 부분 색깔 조정 
 Image?    이미지 불러오는 기능
+showCupertinoDialog?   페이지 위로 새창 띄우기 
+Align? 새로운 창을 화면 어디에 정렬할것인지.
+CupertinoDatePicker?   날짜선택하는 기능 
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -445,6 +474,184 @@ class _HomeScreenState extends State<HomeScreen> {
           Image.asset('asset/img/image_$e.jpeg', fit: BoxFit.cover,) //cover같은 경우 화면을 맞추기 위해 그림이 짤릴수있음
         ).toList()     //map같은 경우 리스트가 아닌 iterable 객체를 반환하기 때문에 리스트로 변환해줘야함
       ),
+    );
+  }
+}
+
+
+
+////////////////////// d-day 앱 ///////////////////////////
+/////// 날짜, 상태관리 
+/////// home_screen.dart
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.pink[100], //기본 500 100~900까지 색깔 강도 조절 가능
+      body: SafeArea(
+        bottom: false,
+        child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [_TopPart(), _BottomPart()],
+            ) //코드가 길어지는것을 방지하기 위해 _TopPart 부분을 클래스로 하나 생성함.
+            ),
+      ),
+    );
+  }
+}
+
+//_를 넣는 이유는 이 파일안에서만 이 위젯을 쓸것이기 때문
+class _TopPart extends StatefulWidget {
+  const _TopPart({Key? key}) : super(key: key);
+
+  @override
+  State<_TopPart> createState() => _TopPartState();
+}
+
+class _TopPartState extends State<_TopPart> {
+  DateTime selectedDate = DateTime.now();           //상태변수, 나중에 홈위젯에서 관리해줘야함
+
+  @override
+  Widget build(BuildContext context) {
+    final now = DateTime.now();
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(
+            "U&I",
+            style: TextStyle(
+                color: Colors.white, fontFamily: 'parisienne', fontSize: 80),
+          ),
+          Column(
+            children: [
+              Text(
+                '우리 처음 만난 날',
+                style: TextStyle(
+                    color: Colors.white, fontFamily: 'sunflower', fontSize: 30),
+              ),
+              Text(
+                '${selectedDate.year}.${selectedDate.month}.${selectedDate.day}',
+                style: TextStyle(
+                    color: Colors.white, fontFamily: 'sunflower', fontSize: 20),
+              ),
+            ],
+          ),
+          IconButton(
+              iconSize: 60,
+              onPressed: () {
+                showCupertinoDialog(
+                    context: context,
+                    barrierDismissible: true,    //dialog 밖의 영역을 누르면 dialog가 닫힘.
+                    builder: (BuildContext context) {
+                      return Align(
+                          //새로운 창을 화면 어디에 정렬할 것인지
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            color: Colors.white,
+                            height: 300.0,
+                            child: CupertinoDatePicker(         // 날짜 선택하는 위젯기능
+                              mode: CupertinoDatePickerMode.date,
+                              initialDateTime: selectedDate,    //처음 세팅되있는 날짜 설정
+                              maximumDate: DateTime(now.year, now.month,now.day+1),   //이후 날짜는 선택못하게
+                              onDateTimeChanged: (DateTime date){
+                                setState((){            //상태관리할때는 setState로
+                                  selectedDate = date;
+                                });
+                              },
+                            ),
+                          ));
+                    });
+              },
+              icon: Icon(
+                Icons.favorite,
+                color: Colors.red,
+              )),
+          Text(
+            'D+${DateTime(now.year,now.month,now.day).difference(selectedDate).inDays+1}',
+            style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'sunflower',
+                fontSize: 50,
+                fontWeight: FontWeight.w700),
+          )
+        ],
+      ),
+    );
+  }
+}
+
+class _BottomPart extends StatelessWidget {
+  const _BottomPart({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(child: Image.asset('asset/img/middle_image.png'));
+  }
+}
+
+
+
+/////////////// const constructor////////////////////
+import 'dart:async';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const TestWidget(label: 'test1'),         //const로 해주면 이 위젯은 build가 다시 실행될때, 다시 build하지않는다.
+                                                      //즉 화면에서 바뀌지않을 위젯들은 불필요하게 재빌드를 안하게 해줌으로써 리소스 절약
+            TestWidget(label: 'test2'),
+            ElevatedButton(onPressed: (){
+              setState((){
+
+              });
+            }, child: const Text('빌드!'))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TestWidget extends StatelessWidget {
+  final String label;
+
+  const TestWidget({required this.label, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    print('$label build 실행');
+    return Container(
+      child: Text(label),
     );
   }
 }
