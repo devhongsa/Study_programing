@@ -1,11 +1,13 @@
 // 작업폴더 
-// server 폴더 생성 
 // npm init 
 // npm install express 
 // npm install graphql express-graphql 
 // npm install nodemon -g 
 // npm install lodash
-// server 폴더에서 app.js 폴더 생성 
+// npm install mongoose   // mongoDB 사용시 
+// npm install cors 
+// 작업 폴더에서 app.js 폴더 생성 
+// server 폴더 생성 
 // server 폴더에서 shcema 폴더생성후 schema.js 파일 생성 
 
 //graphql query 문 
