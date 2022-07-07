@@ -7,6 +7,7 @@
 
 // nodejs에서 사용시 
 
+//app.js
 const mongoose = require('mongoose');
 
 mongoose.connect(`mongodb+srv://${process.env.mongoUserName}:${process.env.mongoUserPassword}@cluster0.3y6bvww.mongodb.net/?retryWrites=true&w=majority`).then(() => {
@@ -14,3 +15,9 @@ mongoose.connect(`mongodb+srv://${process.env.mongoUserName}:${process.env.mongo
         console.log('Listening for requests on my awesome port 4000');
     })
 }).catch((e)=> console.log("Error:::" + e))
+
+
+
+
+
+//CRUD 

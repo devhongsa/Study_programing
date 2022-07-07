@@ -6,20 +6,21 @@ macos는 터미널 열고 heroku login
 
 heroku에서 코드실행할 프로젝트 폴더 생성. 
 
-Procfile  파일생성 
+//////Procfile  파일생성 ///////
 worker: python 파일이름.py 
 clock: python clock.py 
+web: node app.js     /// nodejs로 웹 배포시 
 
 
-requirements.txt 파일생성
+///////requirements.txt 파일생성///////
 패키지이름 작성 (pip freeze > requirements.txt)
 
 
-runtime.txt  파일생성 (없어도 됨)
+///////runtime.txt  파일생성 (없어도 됨)///////
 python-3.8.13
 
 
-clock.py (일정시간마다 실행시키려면 필요)
+////////clock.py (일정시간마다 실행시키려면 필요)///////
 from apscheduler.schedulers.blocking import BlockingScheduler
 import updateDB
 
@@ -42,7 +43,8 @@ sched.start()
 heroku에 프로젝트 배포하는법 
 프로젝트폴더내에서 
 git init 
-heroku create 프로젝트명 
+heroku create 프로젝트명            //프로젝트앱이 이미 있으면 안해도 됨.
+heroku git:remote -a [앱이름] 
 git add . 
 git commit -m "commit message" 
 git push heroku main 
@@ -69,9 +71,9 @@ heroku logs --tail 로그 보기
 
 heroku open 장고로 배포했을때 홈페이지 열기
 
-
-
 heroku 컴퓨터에 환경변수 설정하기 
+heroku 홈페이지에서 앱 settings 들어가면 config vars 에서 key - value 입력 
+혹은
 heroku config:set 환경변수_키=환경변수_값   // 환경변수 설정
 heroku config:unset 환경변수_키            // 환경변수 삭제
 heroku config:get 환경변수_키              // 환경변수 가져오기 
@@ -80,3 +82,14 @@ heroku config:get 환경변수_키              // 환경변수 가져오기
 import os 
 
 변수 = os.environ.get('환경변수_키')  로 사용가능 
+
+
+
+
+///////////////////////troubleshoot ///////////////////////////
+nodejs로 웹 배포할때 NPM 설치시 버전 충돌로 인한 배포 실패 일어날때 : 터미널에서 node --version , npm --version 쳐보고 package.json 에서 
+"engines": {
+    "node": "16.14.2",          /// 내 로컬 버젼 입력 
+    "npm": "8.5.0"
+  }
+추가 
