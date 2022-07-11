@@ -1,3 +1,5 @@
+//node.green  최근 자바스크립트 표준에 대한 기능들 
+
 //명령어모음.
 npm init : package.json 생성
 npm install : package.json 파일 및 해당 종속성에 나열된 모든 모듈을 설치
@@ -7,9 +9,60 @@ npm install package_name -g : 옵션. 글로벌로 설치. 로컬의 다른 프�
 npm uninstall : 패키지 삭제 명령어입니다.
 npm update : 설치한 패키지들을 업데이트해줍니다.
 npm dedupe : 중복 설치된 패키지들을 정리해주는 명령어입니다.
+npm run app.js // js파일 실행시키기 
 
 
+//노드 버전 관리 패키지
+npm install -g n // 노드 버전관리 설치후 터미널에 n 입력후 버전선택 
 
+////// prettier vscode 설정법  (formatter) //////
+//vscode extension에서 prettier 설치 
+npm install --save-dev prettier // js 코드 검사 및 코드정렬 기능   --save-dev는 devDependencies 항목에 기록됨. 릴리즈때는 필요없는 패키지라는 뜻.
+//이후 프로젝트 폴더에 .prettierrc 파일 생성 
+{
+  "semi": false,
+  "singleQuote": true
+}
+// .vscode 폴더 생성후 settings.json 파일 생성 
+{
+  "[javascript]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
+} 
+
+///// ESLint /////
+//npm install --save-dev eslint
+//npm install --save-dev eslint-config-airbnb-base eslint-plugin-import    //airbnb에서 정의한 eslint 설정 
+//npm install --save-dev eslint-config-prettier   // prettier가 고친거에 대해서 굳이 오류표시를 하지않음. 
+//npm install --save-dev eslint-plugin-node
+//작업폴더에 eslintrc.js 파일 생성 
+module.exports = {
+  extends: ['airbnb-base', 'prettier'],
+}
+// 만약 ESLint 가 원하지않은 부분을 오류처리한다면 /* eslint-disable-next-line [오류이름]*/   이거를 바로 윗줄에 넣어주면됨. 오류이름을 넣으면 그 오류만 무시함.
+
+
+/// typescript /// 
+npm install --save-dev typescript
+npm install --save-dev @types/node 
+// 작업폴더에 jsconfig.json 파일 생성 
+{
+  "compilerOptions": {
+      "strict":true         //코드를 더욱 깐깐하게 보겠다
+  },
+  "include":[
+      "src/**/*"            //src에 있는 모든 파일에 적용 
+  ]
+}
+//구글에 jsconfing.json 치면 레퍼런스 잘 나와있음. 참고 
+
+// js파일에서 맨윗줄에 // @ts-check  넣어서 사용 
+
+
+//
+//package-lock.json 파일도 깃에 같이 올려주는것이 좋음. 다른사람과 협업시 버전차이로 인한 오류를 방지할 수 있음.
+//npm install시 npm이 package-lock.json 파일을 보고 우선적으로 모듈을 설치함. 그리고 이파일에 실제 내가 설치한 버전이 나와있음.
 
 //Cannot use import statement outside a module
 //package.json에 "type":"module"  써 넣으면 해결됨.
@@ -50,10 +103,14 @@ consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo
 
 // http://opentutorials.org:3000/main?id=HTML&page=12 
 //http : hypertext transfer protocol의 약자이다. http는 웹서버와 웹브라우저가 서로 통신하기위해 만들어진 규칙
-//opentutorials.org : host(domain) 이라고 한다. 인터넷에 연결되어 있는 컴퓨터의 주소.
+//opentutorials.org : host(domain) 이라고 한다. 인터넷에 연결되어 있는 컴퓨터의 주소.IP
 //3000 : port번호이다. 1대의 컴퓨터안에 여러개의 서버가 존재할 수 있다. 그러므로 서버 port번호를 통해 어떤 서버에 접속할건지를 정하는것. default는 80이다.
 //main : Path이다. 어떤 디렉토리에 어떤html파일을 불러올것인가.
 //?id=HTML&page=12 : query string이다.  main이라는 html에서 어떤 부분을 불러올 것인가라는 정보. ?으로 시작하고, 값과 값은 &로 연결하기로 되어있다.
+
+
+// hoisting?
+// 함수선언, 변수 선언이 코드에 어느 줄에 위치해있던지 맨위에 선언된걸로 치는 것
 
 var http = require('http');
 var fs = require('fs');

@@ -18,6 +18,17 @@ Math.random();     // 0~1 범위 랜덤 숫자
 3.1235.toFixed(3)  // 반올림
 3.12314.toPrecision(4)
 
+// ...? 
+const [head, ...rest] = [1,2,3]    // head => 1 , rest => [2,3]
+let jsonData = {'key' : 'value'}
+let jsonData2 = {'key' : 'value2'}
+
+function foo(head, ...rest){
+    console.log(head)   // 1 
+    console.log(rest)   // [2,3,4]
+}
+
+{jsonData, ...jsonData2}   => {'key' : 'value2'}    // key값이 중복되면 마지막에 넣었던 ...jsonData2 값으로 대체됨. 
 
 % 
 &&  //and
