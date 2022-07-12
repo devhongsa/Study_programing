@@ -91,6 +91,108 @@ console.log(1+1);   //2
 //writehead 200: 성공했다 , 403: 이페이지는 없다. 302: 다른페이지로 가라 301: 이페이지는 다른페이지로 바뀌었다.
 
 
+
+////////////////////////// nodejs에서 postgresql db연동. //////////////////////////
+npm install pg 
+
+const { Client } = require("pg")
+
+async function main() {
+  const client = new Client({
+    user: "",
+    password:
+      "",
+    database: "",
+    host: "",
+    port: 5432,
+    ssl: {
+      rejectUnauthorized: false,          //localhost가 아닌경우 이거 넣어줘야함 .
+    },
+  })
+  await client.connect()
+  const res = await client.query("SELECT $1::text as message", ["Hello world!"])
+  console.log(res.rows[0].message) // Hello world!
+  await client.end()
+}
+
+main()
+// 터미널에서 디비 접속 psql -U [username] -d [dbname] -h [host] --password
+
+
+//nodejs에서 기본 CRUD 
+const { Client } = require("pg")
+const program = require("commander")
+const prompts = require("prompts")
+
+async function connect() {
+  const client = new Client({
+    user: "",
+    password:
+      "",
+    database: "",
+    host: "",
+    port: 5432,
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  })
+  await client.connect()
+  const res = await client.query("SELECT $1::text as message", ["Hello world!"])
+  console.log(res.rows[0].message) // Hello world!
+  return client
+}
+
+program.command("add").action(async () => {
+  const client = await connect()
+  const userName = await prompts({
+    type: "text",
+    name: "userName",
+    message: "Provide a user name to insert",
+  })
+
+  //const query = `INSERT INTO public.userfollow (uid) VALUES ('${userName.userName}')`
+  const query = `INSERT INTO public.userfollow (uid) VALUES ($1::text)`
+  await client.query(query, [userName.userName])
+
+  await client.end()
+})
+
+program.command("remove").action(async () => {
+  const client = await connect()
+  const userName = await prompts({
+    type: "text",
+    name: "userName",
+    message: "Provide a user name to delete",
+  })
+
+  //const query = `DELETE FROM public.userfollow WHERE uid = '${userName.userName}'`
+  const query = `DELETE FROM public.userfollow WHERE uid = $1::text` //사용자의 입력으로 의도하지 않은 쿼리문이 실행되는 것을 방지하기위해
+
+  await client.query(query, [userName.userName])
+
+  await client.end()
+})
+
+program.command("list").action(async () => {
+  const client = await connect()
+
+  const query = `SELECT * FROM public.userfollow`
+  const result = await client.query(query)
+  console.log(result)
+
+  await client.end()
+})
+
+program.parseAsync()
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////// nodejs에서 postgresql db스키마 관리, 마이그레이션 //////////////////////////
+////////////////////////// sequelize //////////////////////////
+npm install sequelize sequelize-cli
+scripts에 "seq" : "sequelize-cli" 추가 
+npm run seq init 입력 
+
 //template literal
 // 템플릿 리터럴은 ~표시 밑에 있는 ` 이걸로 표현하며, 문자열안에서 \n 으로 줄바꿈 안하고, enter를 쳐도 줄바꿈 표현 가능.
 // 또한 ${} 를 통해 문자열 안에서 변수 투입가능  기존 문자열이면 ' +name+ ' 이런식으로 넣어줬어야 함.

@@ -283,3 +283,72 @@ module.exports = new GraphQLSchema({
     query: RootQuery,
     mutation: Mutation
 })
+
+
+
+
+
+///////////////////  apollo graphql ///////////////////////
+
+npm install apollo-server graphql
+vscode extension  graphql for vscode 설치 
+
+const { ApolloServer, gql } = require("apollo-server")
+
+const typeDefs = gql`
+
+  type Book {
+    title: String
+    author: String
+  }
+
+  type Query {
+    books(search: String): [Book]
+  }
+
+  type Mutation {
+    addBook(title: String!, author: String!): Book
+  }
+`
+const books = [
+  {
+    title: "The Awakening",
+    author: "Kate Chopin",
+  },
+  {
+    title: "City of Glass",
+    author: "Paul Auster",
+  },
+]
+
+const resolvers = {
+  Query: {
+    books: (_, { search }) =>
+      search
+        ? books.filter(
+            ({ title, author }) =>
+              title.includes(search) || author.includes(search)
+          )
+        : books,
+  },
+  Mutation: {
+    addBook: (_, { title, author }) => {
+      const newBook = {
+        title,
+        author,
+      }
+      books.push(newBook)
+    },
+  },
+}
+
+const server = new ApolloServer({
+  typeDefs,
+  resolvers,
+  csrfPrevention: true,
+  cache: "bounded",
+})
+
+server.listen(5000).then(({ url }) => {
+  console.log(`🚀  Server ready at ${url}`)
+})

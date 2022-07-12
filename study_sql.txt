@@ -1,3 +1,8 @@
+// postgresql 터미널 로그인
+// postgresql 환경변수 Path 설정.   bin 폴더로 경로설정해주기 
+// 터미널에서 psql -U [username] -d [dbname] -h [host] --password
+//  /d  하면 table 목록 뜸 
+
 
 # CREATE TABLE 
 CREATE TABLE Temp_Table (
@@ -28,9 +33,13 @@ insert into public."User" ("walletAddress", "contractAddres") values ('address',
 delete from balance.userbalance where btc>0;
 delete from balance.userbalance
 
+#UPDATE 
+UPDATE users SET name = 'coco' WHERE name = 'bobo';
+
 
 # 테이블 복사하기 
 CREATE TABLE newtable AS SELECT * FROM oldtable;
+CREATE TABLE users (id SERIAL PRIMARY KEY, name VARCHAR NOT NULL);      //serial를 붙이면 매번 user데이터를 넣을때마다 고유한 id값을 안넣어줘도 됨.
 
 
 #where문 
