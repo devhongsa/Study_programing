@@ -1,3 +1,9 @@
+mac 경로
+/Library/PostgreSQL/14/data/pg_hba.conf
+/opt/homebrew/var/postgres/pg_hba.conf
+/opt/homebrew/var/postgres/postmaster.pid
+
+windows
 // postgresql 터미널 로그인
 // postgresql 환경변수 Path 설정.   bin 폴더로 경로설정해주기 
 // 터미널에서 psql -U [username] -d [dbname] -h [host] --password
