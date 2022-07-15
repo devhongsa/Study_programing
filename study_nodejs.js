@@ -188,6 +188,7 @@ program.parseAsync()
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 ////////////////////////// nodejs에서 postgresql db스키마 관리, 마이그레이션 //////////////////////////
+https://sequelize.org/docs/v6/core-concepts/model-querying-basics/
 ////////////////////////// sequelize //////////////////////////
 npm install sequelize sequelize-cli
 scripts에 "seq" : "sequelize-cli" 추가 
@@ -207,7 +208,8 @@ config 폴더에 config.json 내용 수정
   }
 }
 npx sequelize-cli migration:generate --name initialize
-npm run seq -- migration:generate --name add-cities
+OR  npm run seq -- migration:generate --name add-cities
+
 migrations 폴더에 생성된 파일에서 up down 마이그레이션 코드 작성
 npm run seq db:migrate   // up 
 npm run seq db:migrate:undo // down 
