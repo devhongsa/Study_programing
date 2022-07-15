@@ -5,10 +5,24 @@ mac 경로
 
 windows
 // postgresql 터미널 로그인
+// psql -U [유저이름] -d [db이름]
+// postgres=#  : #은 superuser  , postgres=>  : >는 superuser 아니라는 뜻 
+
+
+\l : db목록보기  \du : 유저목록보기  \dt : 테이블목록보기  \dn : 스키마목록보기 
+\connect [dbname] : db 접속 
+
+CREATE USER [유저이름] WITH PASSWORD 'password';   // 새 유저 만들기 
+GRANT ALL PRIVILEGES ON DATABASE [db이름] TO [username]     // 특정유저에게 디비에 대한 모든 권한 주기. 
+GRANT SELECT ON [테이블이름] TO [유저이름]   //특정유저에게 테이블 접근권한 주기  SELECT 대신 ALL PRIVILEGES 쓰면 모든권한 
+ALTER USER [유저이름] WITH CREATEDB   //db생성권한 주기 
+
+
 // postgresql 환경변수 Path 설정.   bin 폴더로 경로설정해주기 
 // 터미널에서 psql -U [username] -d [dbname] -h [host] --password
 //  /d  하면 table 목록 뜸 
 
+CREATE SCHEMA [스키마이름];
 
 # CREATE TABLE 
 CREATE TABLE Temp_Table (
