@@ -350,10 +350,10 @@ alert(numbers.sort(sortNumber)); // array, [20,10,9,8,7,6,5,4,3,2,1]
 </body>
 </html>
 
-//클로저 내부함수 외부함수
+//클로저 closure 내부함수 외부함수
 자바스크립트는 함수안에 함수를 정의할 수 있음
 함수안에서 정의된 함수를 내부함수라고하고, 내부함수를 감싸고 있는 함수를 외부함수라고 한다.
-
+//ex1
 function outter(){
     var title = 'coding everybody';
     return function(){
@@ -362,6 +362,17 @@ function outter(){
 }
 inner = outter();
 inner();
+
+//ex2
+function and(x){
+    return function print(y){
+        return x + ' and ' + y
+    }
+}
+
+const saltAnd = and('salt')      //saltAnd 는 내부함수 and함수는 외부함수 
+console.log(saltAnd('pepper'))  // salt and pepper 
+
 
 // private variable 
 function factory_movie(title){
@@ -562,7 +573,7 @@ func();             //'window'
 func.apply(o);      // o
 func.apply(p);      // p
 
-//상속
+//상속  tree라고 생각하면 됨. prototype이라는거는 Person이라는 객체안에 다른 객체(함수든 변수든) 넣는것을 말함.
 function Person(name){
     this.name = name;
 }
