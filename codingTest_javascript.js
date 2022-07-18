@@ -180,6 +180,7 @@ str.includes('co') //대소문자 구분함
 str.startsWith('c')  //true return 
 str.endsWith('n')   //false return
 str = str.replace('c', 'j') // 문자치환  처음만나는 c만 바꿈 
+str = str.replaceAll('c','j')
 str = str.replace(/c/g,'i') //정규표현식, 모든 c를 i로 바꿈 
 str.slice(0,3)
 str.slice(4) //4부터 쭉 

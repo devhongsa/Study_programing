@@ -812,6 +812,7 @@ let arr2 = arr.map((item)=>item.toUpperCase());            // ["THERE", "ARE", .
 
 arr.find((user)=>(user === 'there')) // 만족하는 값 하나만 리턴
 arr.filter((user)=> user.length >= 3)// 만족하는 모든 값 배열로 리턴 
+arr.flat()      // 고차원 배열을 평평하게 펴줌
 
 let nums = [1,2,3,4,5];
 let call_count = 0;
@@ -852,9 +853,61 @@ set.add(1).add(1)    // {1}
 set.has(1)          // true 
 set.delete(1)
 
+// Promise 
+
+new Promise((resolve,reject) => {               
+    console.log('Inside promise')
+    reject(new Error('First reject'))               //reject 나오면 밑에 resolve는 실행되지 않음, 반대로 resolve가 먼저 나오면 reject는 실행되지 않음 
+    console.log('after reject')                     // 하지만 reject이후에 다른 코드들은 실행이됨 resolve만 실행x 
+    resolve('First resolve')
+}).catch((error)=>{                                 //reject로 인해 에러 캣치
+    console.log('error', error)
+}).then((value) => {                                
+    console.log('Inside first then')
+    console.log('value', value)                     // 위에서 resolve가 실행되지 못했기 때문에 value는 undefined
+})                                                  // 만약 then과 catch 자리가 바뀌면 then은 실행되지 못함. 
+
+
+new Promise((resolve,reject)=>{
+    console.log('before timeout')
+    setTimeout(()=>{
+        resolve(Math.random())
+        console.log('after resolve')
+    }, 1000)
+}).then((value)=>{
+    console.log('value', value)                     // resolve 값이 여기로 옴.
+})
+// before timeount => after resolve => value 0.30940
 
 
 
+
+
+// optional chaining  ?. 
+
+let user = {}
+
+console.log(user?.address?.street)    // undefined 
+//user 객체안에 address가 없으면 undefined 리턴함. 에러를 일으키지 않음. 
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////nomad coder/////////////
 
 //웹사이트는 html 파일을 열고, html은 js와 css 의 코드를 끌어와서 웹사이트에 보여주는 접착제 역할을 한다.

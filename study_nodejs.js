@@ -14,6 +14,7 @@ npm run app.js // js파일 실행시키기
 
 //노드 버전 관리 패키지
 npm install -g n // 노드 버전관리 설치후 터미널에 n 입력후 버전선택 
+npm install core-js   // js의 신기능들을 node버전에 상관없이 사용할 수 있는 패키지  require('core-js') 해주고 기능 쓰면됨.
 
 ////// prettier vscode 설정법  (formatter) //////
 //vscode extension에서 prettier 설치 
