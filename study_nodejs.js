@@ -236,6 +236,56 @@ consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo
 // hoisting?
 // 함수선언, 변수 선언이 코드에 어느 줄에 위치해있던지 맨위에 선언된걸로 치는 것
 
+
+//nodejs에서 파일은 모듈을 의미함 . 파일 밑에 module.exports = 함수나 변수 등  써놓으면 다른 파일에서 사용가능 
+//package.json 에서 패키지 버전정보에서 ^3.2.0  처럼 꺽새표시를 하면  npm update했을때 major 버전은 업데이트하지않고 minor버전을 최신업데이트함.
+// ^ 말고 ~ 하면 patch 버전의 최신버전을 업데이트함.
+
+// eslint 깔고, package.json  scripts에 "lint":"eslint src/**/*"  넣고, npm run lint 하면, 에러들을 잡아줌 
+
+// npm install -g yarn
+// yarn add 패키지이름
+// yarn remove 패키지이름 
+// yarn add -D 패키지이름  =  npm install --save-dev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
@@ -554,14 +604,14 @@ app.listen(3000);
 // 비동기 vs 동기
 //readFileSync
 console.log('A');
-var result = fs.readFileSync('syntax/sample.txt', 'utf8');    //동기는 return이 있기 때문에 변수에 넣는것이 가능.
+var result = fs.readFileSync('syntax/sample.txt', 'utf8');    //비동기는 return이 있기 때문에 변수에 넣는것이 가능.
 console.log(result);
 console.log('C');
 //결과 : A B C 출력
 
 //readFile
 console.log('A');
-fs.readFileSync('syntax/sample.txt', 'utf8', function(err, result){     //비동기는 return이 없기때문에 변수에 넣는것불가능.
+fs.readFile('syntax/sample.txt', 'utf8', function(err, result){     //동기는 return이 없기때문에 변수에 넣는것불가능.
   console.log(result);
 });
 console.log('C');
