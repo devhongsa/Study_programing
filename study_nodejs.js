@@ -11,6 +11,11 @@ npm update : 설치한 패키지들을 업데이트해줍니다.
 npm dedupe : 중복 설치된 패키지들을 정리해주는 명령어입니다.
 npm run app.js // js파일 실행시키기 
 
+//mac 전용
+time node main.js : 파일실행에 걸린 시간까지 나옴 
+top -o PID : memory 사용 현황 
+du -h local : local 폴더 
+
 
 //노드 버전 관리 패키지
 npm install -g n // 노드 버전관리 설치후 터미널에 n 입력후 버전선택 
@@ -279,20 +284,13 @@ console.log(buf.compare(result)) // 0이 나오면 완전히 같은 내용이라
 
 // rs.on("error", (error) => {})
 // rs.on("end", () => {})
-
-
-// 스트림 큰 파일 처리하기 
-
-
-
-// github 레포 참고 
+// 사용예시는 github 레포에서 확인 
 
 // nodejs 내장객체
 // __dirname : 이걸 쓴 파일이 있는 폴더위치 , __filename : 이걸 쓴 파일의 위치 
 // process
 // setInterval : 일정시간 간격마다 실행해라 , setTimeout : 일정시간 후에 실행해라 
 // clearInterval
-
 let count = 0
 const handle = setInterval(() => {
   console.log('Interval')
