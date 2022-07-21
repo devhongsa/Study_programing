@@ -249,16 +249,71 @@ consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolo
 // yarn add -D 패키지이름  =  npm install --save-dev
 
 
+// nodejs convention 컨벤션 
+// 파일이름은 소문자, _, - 3개만 쓰도록 한다. 대문자로 쓰게되면 여러문제 발생할 수 있음. javascript는 모듈 require할때 대소문자 구분없이 require해주지만 이로인한 문제 발생.
+
+// buffer?
+const fs = require("fs")
+
+const result = fs.readFileSync("src/test")
+
+console.log(result)
+
+//utf-8 인코딩을 사용하지 않으면 16진수 buffer값이 출력됨.
+// 1 byte = 8 bit, 0 이상 255이하의 값          0 ~ 2^8-1
+
+const buf = Buffer.from([97, 98, 99, 100, 101]) //리스트에 10진수 아스키코드 넣어야함.
+console.log(buf)
+
+console.log(buf.compare(result)) // 0이 나오면 완전히 같은 내용이라는 뜻, 1이나 -1 나오면 다른 buffer
+
+// stream? 
+// 기본 form
+// const fs = require("fs")
+// const rs = fs.createReadStream("test", { encoding: "utf-8" })
+
+// rs.on("data", (data) => {
+//   // do something with data
+//   // encoding 설정 안해주면 data가 버퍼로 떨어짐.
+// })
+
+// rs.on("error", (error) => {})
+// rs.on("end", () => {})
+
+
+// 스트림 큰 파일 처리하기 
 
 
 
+// github 레포 참고 
 
+// nodejs 내장객체
+// __dirname : 이걸 쓴 파일이 있는 폴더위치 , __filename : 이걸 쓴 파일의 위치 
+// process
+// setInterval : 일정시간 간격마다 실행해라 , setTimeout : 일정시간 후에 실행해라 
+// clearInterval
 
+let count = 0
+const handle = setInterval(() => {
+  console.log('Interval')
+  count += 1 
 
+  if (count == 4){
+    console.log('done!')
+    clearInterval(handle)
+  }
+}, 1000)
 
+/// 스탠다드 라이브러리 
 
+const os = require('os')
+os.arch()          // 32비트 64비트 
+os.platform()     //platform 리눅스 윈도우 
+os.cpus()         //cpu 정보
 
-
+//// child_process    : 파이썬 멀티프로세스랑 같은거 
+//dns 
+//Path
 
 
 
@@ -604,18 +659,29 @@ app.listen(3000);
 // 비동기 vs 동기
 //readFileSync
 console.log('A');
-var result = fs.readFileSync('syntax/sample.txt', 'utf8');    //비동기는 return이 있기 때문에 변수에 넣는것이 가능.
+var result = fs.readFileSync('syntax/sample.txt', 'utf8');    //동기 return이 있기 때문에 변수에 넣는것이 가능.
 console.log(result);
 console.log('C');
-//결과 : A B C 출력
+//결과 : A B C 출력 , 동기이기때문에 파일을 읽어오고 변수에 넣을때까지 기다림 
 
 //readFile
 console.log('A');
-fs.readFile('syntax/sample.txt', 'utf8', function(err, result){     //동기는 return이 없기때문에 변수에 넣는것불가능.
+fs.readFile('syntax/sample.txt', 'utf8', function(err, result){     //비동기는 return이 없기때문에 변수에 넣는것불가능. 
   console.log(result);
 });
 console.log('C');
-// 결과 : A C B 출력 
+// 결과 : A C B 출력 , 비동기이기때문에 파일을 읽어오라고 시킨후 바로 다음코드로 넘어가고, 응답이오면 그때 콜백함수가 실행됨.
+
+
+//promises.readFile 
+async function main() {
+  const result = await fs.promises.readFile('syntax/sample.txt', 'utf-8')
+  console.log(result)
+}
+main() 
+// 현재는 promises.readFile만 써도 전혀 문제가 되지 않음 . 이거쓰면 좋음.
+
+
 
 
 //콜백함수
