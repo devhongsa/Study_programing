@@ -1,6 +1,7 @@
 npm init -y 
 npm install -g nodemon    //서버자동으로 껐다가 켜주는기능.  nodemon index.js 로 서버실행해야함. global로 다운받아줘야 nodemon 인식함.
 npm install express --save 
+npm install --save-dev @types/express
 npm install ejs pug --save 
 npm install moment --save 
 npm install mongodb --sav

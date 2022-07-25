@@ -880,8 +880,42 @@ new Promise((resolve,reject)=>{
 // before timeount => after resolve => value 0.30940
 
 
+// Async , await 
+function p() {
+	return new Promise((resolve, reject) => {
+	    resolve('hello'); 
+        // or reject(new Error('error');
+	});
+}
+p().then((n) => console.log(n));
+
+async function p2(){ // async을 지정해주면 Promise를 리턴하는 함수로 만들어준다.
+    return 'hello2'; //리턴값은 Promise{<resolved>: "hello2"} 자동 resolve해준다는걸 알 수있다.
+    // reject는 throw 에러를 날리면 된다.
+  }
+p2().then((n) => console.log(n));
 
 
+//
+async function p2() {
+    let promise = new Promise((resolve, reject) => {
+      setTimeout(() => resolve("완료!"), 2000)
+    })
+  
+    return promise
+  }
+  
+  async function main() {
+    let getGreeting = p2()              //이 코드가 없으면 총 4초가 걸림.
+    let getGreeting2 = p2()
+    let a = await getGreeting
+    let b = await getGreeting2
+    console.log(a, b)
+    console.log("end")
+  }
+  
+main()
+  
 
 // optional chaining  ?. 
 
@@ -889,6 +923,40 @@ let user = {}
 
 console.log(user?.address?.street)    // undefined 
 //user 객체안에 address가 없으면 undefined 리턴함. 에러를 일으키지 않음. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
