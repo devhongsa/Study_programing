@@ -13,9 +13,57 @@ https://expressjs.com/en/api.html    // express 공식 docs
 
 // express에서의 middleware? : 요청에서 응답까지의 모든 과정에서 사용되는 함수들(미들웨어)
 
+// main.js
+// @ts-check
+
+const express = require("express")
+const fs = require("fs")
+
+const app = express()
+
+const PORT = 4000
+
+//app.use 미들웨어
+app.use(
+  "/",
+  async (req, res, next) => {
+    //async함수로도 사용가능
+    console.log("Middleware 1-1")
+
+    const fileContent = await fs.promises.readFile(".gitignore")
+    // @ts-ignore
+    req.fileContent = fileContent  //이 방법을 통해 다른 미들웨어간의 데이터 전달 가능
+    // @ts-ignore
+    req.requestedAt = new Date() 
+
+    next() ///  next의 뜻은 이 미들웨어 작업이 끝났고 다음 미드웨어로 넘어가라는 뜻임 이 코드가 없으면 다음 미들웨어가 실행되지않음
+  },
+  (req, res, next) => {
+    //이런식으로 여러 미들웨어를 한 함수안에 넣을 수 있음
+    console.log("Middleware 1-2")
+    next()
+  }
+)
+
+app.use((req, res) => {
+  console.log("Middleware 2")
+  // @ts-ignore
+  res.send(`Hello, express! : ${req.requestedAt}, ${req.fileContent}`)    //다른 미들웨어에서 저장한 정보를 불러옴 
+})
+
+app.listen(PORT, () => {
+  console.log(`The Express server is listening at port : ${PORT}`)
+})
+// 
 
 
 
+// Path pattern 
+//   /ab?cd    : ? 앞에 있는 b문자가 있거나 없어도됨. 하지만 a cd는 반드시 있어야함. 
+//   /ab+cd    : b가 몇번이 반복되도 상관없음.    /abbbbbbcd , 근데 b가 없으면 안됨. 
+//   /ab*cd    :  ab와 cd 중간에 어떤게 와도 상관없음. /absdklfjsecd   , ab로시작해서 cd로 끝나기만 하면됨.
+//   /a(bc)?d  : ?의 적용을 받을 문자 bc
+//   app.get(['/abc', '/xyz']) 배열을 사용해도 가능 , regex 도 사용가능 
 
 
 
