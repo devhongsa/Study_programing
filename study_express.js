@@ -67,6 +67,67 @@ app.listen(PORT, () => {
 
 
 
+//Router 사용하기
+//main.js
+// @ts-checks
+const express = require("express")
+const fs = require("fs")
+const bodyParser = require("body-parser") //npm install body-parser
+
+const userRouter = express.Router() //path pattern이 유사한 경로들 묶어서 처리하기
+
+const app = express()
+//app.use(bodyParser.json())    //req.body를 파싱해주는 패키지 사용
+app.use(express.json()) //14.16부터 express 자체기능으로 사용 가능
+
+const PORT = 4000
+
+userRouter.get("/", (req, res) => {
+  res.send("Get users list")
+})
+
+const USERS = {
+  15: {
+    nickname: "foo",
+  },
+}
+
+userRouter.param("id", (req, res, next, value) => {
+  console.log("id parameter", value) //  users/1235 url요청하면 1235가 value로 오게되고 이 코드가 먼저실행됨.
+  // 그 이후에 밑에 userRouter get ID 코드 실행됨.
+  // @ts-ignore
+  req.user = USERS[value]
+  next()
+})
+
+userRouter.get("/:id", (req, res) => {
+  // /users/:id
+  console.log("userRouter get ID")
+  // @ts-ignore
+  res.send(req.user)
+})
+
+userRouter.post("/", (req, res) => {
+  res.send("User registered")
+})
+
+userRouter.post("/:id/nickname", (req, res) => {
+  // req.body: {"nickname": "bar"}
+  // @ts-ignore
+  const { user } = req
+  const { nickname } = req.body
+
+  user.nickname = nickname
+
+  res.send(`User nickname updated: ${nickname}`)
+})
+
+app.use("/users", userRouter) // /users 가 공통된 path
+
+app.listen(PORT, () => {
+  console.log(`The Express server is listening at port : ${PORT}`)
+})
+// http POST localhost:4000/15/nickname nickname=bar   요청보내면 USER 데이터 업데이트 
 
 
 
@@ -77,6 +138,133 @@ app.listen(PORT, () => {
 
 
 
+// pug 사용하기 npm install pug
+// src폴더안에 views폴더 생성.
+// index.pug 파일 생성 
+html
+    head 
+        link(rel="stylesheet" href="/public/index.css")
+    body 
+        h1 User profile page 
+        h2.gold Nickname        //.gold는 classname으로 gold가 오게됨
+        div.green.big= nickname //이런식으로 여러개의 classname 생성 가능 
+// src폴더안에 public폴더 생성
+// index.css 파일생성
+body {
+  background-color: grey;
+}
+
+.gold {
+  color: gold;
+}
+
+.green {
+  color: green;
+}
+
+.big {
+  font-size: 24px;
+}
+
+//main.js
+// @ts-check
+
+const express = require("express")
+const fs = require("fs")
+const bodyParser = require("body-parser")
+
+const userRouter = express.Router() //path pattern이 유사한 경로들 묶어서 처리하기
+
+const app = express()
+//app.use(bodyParser.json())    //req.body를 파싱해주는 패키지 사용
+app.use(express.json()) //14.16부터 express 자체기능으로 bodyParser 사용 가능
+app.use("/public", express.static("src/public")) //static 파일 서빙하기, 첫인자로 /public을 붙여줘야 url에서 users라는 경로로 요청할때
+//만약 src폴더에도 users라는 폴더가 있고 15라는 파일이 있을때, 보안상 이슈가 발생하지 않음.
+
+app.set("views", "src/views") //views 폴더가 src폴더에 있을때 이거 설정해줘야함
+app.set("view engine", "pug") //pug사용한다는 설정
+
+const PORT = 4000
+
+userRouter.get("/", (req, res) => {
+  res.send("Get users list")
+})
+
+const USERS = {
+  15: {
+    nickname: "foo",
+  },
+}
+
+userRouter.param("id", (req, res, next, value) => {
+  console.log("id parameter", value) //  users/1235 url요청하면 1235가 value로 오게되고 이 코드가 먼저실행됨.
+  // 그 이후에 밑에 userRouter get ID 코드 실행됨.
+  // @ts-ignore
+  req.user = USERS[value]
+  next()
+})
+
+userRouter.get("/:id", (req, res) => {
+  // /users/:id
+  const resMimeType = req.accepts(["json", "html"])
+
+  if (resMimeType === "json") {
+    // @ts-ignore
+    res.send(req.user)
+  } else if (resMimeType === "html") {
+    res.render("index", {
+      // @ts-ignore
+      nickname: req.user.nickname,
+    })
+  }
+  console.log("userRouter get ID")
+})
+
+userRouter.post("/", (req, res) => {
+  res.send("User registered")
+})
+
+userRouter.post("/:id/nickname", (req, res) => {
+  // req.body: {"nickname": "bar"}
+  // @ts-ignore
+  const { user } = req
+  const { nickname } = req.body
+
+  user.nickname = nickname
+
+  res.send(`User nickname updated: ${nickname}`)
+})
+
+app.use("/users", userRouter) // /users 가 공통된 path
+
+app.get("/", (req, res) => {
+  res.render("index", {
+    message: "Hello, PUG!",
+  })
+})
+
+app.listen(PORT, () => {
+  console.log(`The Express server is listening at port : ${PORT}`)
+})
+///
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//에러 핸들링하기 
 
 
 
