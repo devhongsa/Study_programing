@@ -5,6 +5,7 @@ npm install --save-dev @types/express
 npm install ejs pug --save 
 npm install moment --save 
 npm install mongodb --sav
+npm install --save-dev jest @types/jest supertest @types/supertest
 
 https://expressjs.com/en/api.html    // express 공식 docs 
 
@@ -238,7 +239,7 @@ userRouter.post("/:id/nickname", (req, res) => {
 app.use("/users", userRouter) // /users 가 공통된 path
 
 app.get("/", (req, res) => {
-  res.render("index", {
+  res.render("index", {         //pug에서는 res.send가 아닌  res.render를 사용 
     message: "Hello, PUG!",
   })
 })
@@ -265,6 +266,107 @@ app.listen(PORT, () => {
 
 
 //에러 핸들링하기 
+//src폴더에 routers폴더 생성 후 users.js
+// @ts-check
+const express = require("express")
+const userRouter = express.Router() //path pattern이 유사한 경로들 묶어서 처리하기
+
+userRouter.get("/", (req, res) => {
+  res.send("Get users list")
+})
+
+const USERS = {
+  15: {
+    nickname: "foo",
+  },
+}
+
+userRouter.param("id", async(req, res, next, value) => {
+  //만약 async함수로 사용할거면 반드시 try catch문을 사용해야함 
+  try{
+    console.log("id parameter", value) //  users/1235 url요청하면 1235가 value로 오게되고 이 코드가 먼저실행됨.
+    // 그 이후에 밑에 userRouter get ID 코드 실행됨.
+  
+    // @ts-ignore
+    const user = USERS[value]
+  
+    if (!user) {
+      //error 핸들링 : 만약 db에 없는 id값을 url로 찾으면 에러 발생시킴
+      const err = new Error("User not found.")
+      // @ts-ignore
+      err.statusCode = 404
+      throw err
+    }
+  
+    // @ts-ignore
+    req.user = user
+    next()
+  }catch(err){
+    next(err)
+  }
+ 
+})
+
+userRouter.get("/:id", (req, res) => {
+  // /users/:id
+  const resMimeType = req.accepts(["json", "html"])
+
+  if (resMimeType === "json") {
+    // @ts-ignore
+    res.send(req.user)
+  } else if (resMimeType === "html") {
+    res.render("index", {
+      // @ts-ignore
+      nickname: req.user.nickname,
+    })
+  }
+  console.log("userRouter get ID")
+})
+
+userRouter.post("/", (req, res) => {
+  res.send("User registered")
+})
+
+userRouter.post("/:id/nickname", (req, res) => {
+  // req.body: {"nickname": "bar"}
+  // @ts-ignore
+  const { user } = req
+  const { nickname } = req.body
+
+  user.nickname = nickname
+
+  res.send(`User nickname updated: ${nickname}`)
+})
+
+module.exports = userRouter
+
+
+//main.js
+// @ts-check
+
+const express = require("express")
+
+const app = express()
+app.use(express.json())
+app.set("views", "src/views")
+app.set("view engine", "pug")
+
+const PORT = 4000
+
+const userRouter = require("./routers/user")
+
+app.use("/users", userRouter)
+app.use("/public", express.static("src/public"))
+
+// 인자가 4개면 error핸들링 콜백함수로 인식함, error 발생시 여기서 catch함
+app.use((err, req, res, next) => {
+  res.statusCode = err.statusCode || 500
+  res.send(err.message)
+})
+
+app.listen(PORT, () => {
+  console.log(`The Express server is listening at port: ${PORT}`)
+})
 
 
 
@@ -281,9 +383,86 @@ app.listen(PORT, () => {
 
 
 
+/// jest 사용해보기 (javascript test package)
+// npm install --save-dev jest @types/jest supertest @types/supertest
+// src폴더에 app.spec.js 파일 생성 (내가 만들 main.js app의 규격을 미리 규정해 놓는것임.)
+// package.json 파일 scripts에 "test": "jest" 추가 / npm run test 하면 app.spec.js파일이 실행됨.
+
+//app.js
+// @ts-check
+
+const express = require("express")
+
+const app = express()
+app.use(express.json())
+app.set("views", "src/views")
+app.set("view engine", "pug")
+
+const userRouter = require("./routers/user")
+
+app.use("/users", userRouter)
+app.use("/public", express.static("src/public"))
+
+// 인자가 4개면 error핸들링 콜백함수로 인식함, error 발생시 여기서 catch함
+app.use((err, req, res, next) => {
+  res.statusCode = err.statusCode || 500
+  res.send(err.message)
+})
+
+module.exports = app
 
 
+//app.spec.js 
+const supertest = require("supertest")
+const app = require("./app")
 
+const request = supertest(app)
+
+test("retrieve user json", async () => {
+  //expect(1 + 2).toBe(3)
+  const result = await request.get("/users/15").accept("application/json")
+  console.log(result.body)
+
+  expect(result.body).toMatchObject({
+    //json 형식 규정해서, response 온거랑 다르면 test 통과못함.
+    nickname: expect.any(String),
+  })
+  //요청해서 온 result.body가 toMatchObject로 정한 형식과 맞지 않으면 test통과 못함.
+})
+
+test("retrieve user page", async () => {
+  const result = await request.get("/users/15").accept("text/html")
+  console.log(result.text)
+
+  expect(result.text).toMatch(/^<html>.*<\/html>$/) //정규식 표현, html로 시작해서 html로 끝나면 통과
+})
+
+test("update nickname", async () => {
+  const newNickname = "newNickname"
+  const res = await request
+    .post("/users/15/nickname")
+    .send({ nickname: newNickname })
+
+  expect(res.status).toBe(200)
+
+  const userResult = await request.get("/users/15").accept("application/json")
+  expect(userResult.status).toBe(200)
+  expect(userResult.body).toMatchObject({
+    nickname: newNickname,
+  })
+})
+
+
+//main.js
+//서버 listen 부분을 분리한 이유는 app.js에 이 부분이 들어가게되면 exports할때 서버가 자동으로 실행되기때문에 test에 영향을 끼침.
+// @ts-check
+const app = require("./app")
+
+const PORT = 4000
+
+app.listen(PORT, () => {
+  console.log(`The Express server is listening at port: ${PORT}`)
+})
 
 
 
