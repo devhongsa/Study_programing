@@ -8,6 +8,7 @@ npm install mongodb --sav
 npm install --save-dev jest @types/jest supertest @types/supertest
 
 https://expressjs.com/en/api.html    // express 공식 docs 
+https://inpa.tistory.com/category/Node.js/Node    //좋은 스터디 블로그 
 
 
 ///////////////////////////////////////////////////fastcampus nodejs express//////////////////////////////////////////////////////
