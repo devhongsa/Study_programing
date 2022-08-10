@@ -5,7 +5,8 @@ npm install --save-dev @types/express
 npm install ejs pug --save 
 npm install moment --save 
 npm install mongodb --sav
-npm install --save-dev jest @types/jest supertest @types/supertest
+npm install --save-dev jest @types/jest supertest @types/supertest   // 서버테스트 패키지
+npm install koa   // websocket 사용
 
 https://expressjs.com/en/api.html    // express 공식 docs 
 https://inpa.tistory.com/category/Node.js/Node    //좋은 스터디 블로그 
@@ -145,7 +146,7 @@ app.listen(PORT, () => {
 // index.pug 파일 생성 
 html
     head 
-        link(rel="stylesheet" href="/public/index.css")
+        link(rel="stylesheet" href="/public/index.css")   //css 적용
     body 
         h1 User profile page 
         h2.gold Nickname        //.gold는 classname으로 gold가 오게됨
@@ -216,7 +217,7 @@ userRouter.get("/:id", (req, res) => {
   } else if (resMimeType === "html") {
     res.render("index", {
       // @ts-ignore
-      nickname: req.user.nickname,
+      nickname: req.user.nickname,  //index.pug와 연결해주는 부분 nickname 변수를 전해줄수 있음.
     })
   }
   console.log("userRouter get ID")
@@ -453,7 +454,6 @@ test("update nickname", async () => {
   })
 })
 
-
 //main.js
 //서버 listen 부분을 분리한 이유는 app.js에 이 부분이 들어가게되면 exports할때 서버가 자동으로 실행되기때문에 test에 영향을 끼침.
 // @ts-check
@@ -465,6 +465,70 @@ app.listen(PORT, () => {
   console.log(`The Express server is listening at port: ${PORT}`)
 })
 
+
+
+
+
+
+
+
+
+
+
+
+
+/// websocket 사용해보기 
+// npm install koa koa-pug koa-websocket koa-route koa-static koa-mount tailwindcss
+// koa는 express와 같은 웹서버프레임워크이다.
+// vscode extension tailwind css 설치
+
+// main.js ( koa 기본 동작)
+const koa = require("koa")
+const app = new koa()
+const Pug = require("koa-pug")
+const path = require("path")
+
+new Pug({
+  viewPath: path.resolve(__dirname, "./views"), // path.resolve는 이 main.js파일위치를 뜻하는 __dirname 에서 상대경로를 지정해주는 역할.(./views)
+  app,
+})
+
+app.use(async (ctx, next) => {
+  ctx.body = "Hello World"
+  await next() // 여기서 next하면 다음 미들웨어로 가게됨.
+  ctx.body = `[${ctx.body}]` // 미들웨어 동작이 다 끝나면 다시 돌아와서 이 코드도 실행함. express와의 차이점. express는 next() 다음에 쓴 코드는 실행되지않음.
+})
+
+app.use(async (ctx) => {
+  ctx.body = `<${ctx.body}>`
+})
+
+app.use(async (ctx) => {
+  await ctx.render("index")   //koa-pug 역시 send가 아닌 render함수를 사용 
+})
+
+app.listen(3000)
+
+
+
+// tailwind css setting 
+// 작업폴더 안에 tailwind.config.js 파일생성
+module.exports = {
+  purge: [],
+  darkMode: false, // or 'media' or 'class'
+  theme: {
+    extend: {},
+  },
+  variants: {},
+  plugins: [],
+}
+
+//.vscode setting.json 안에 "tailwindCSS.emmetCompletions": true  추가   //tailwind css 자동완성 기능 활성화 
+
+
+
+
+// koa websocket 사용
 
 
 
