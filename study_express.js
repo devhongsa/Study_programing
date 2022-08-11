@@ -528,11 +528,156 @@ module.exports = {
 
 
 
-// koa websocket 사용
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+// koa websocket 사용해보기 (실시간 채팅)
+// index.pug 
+html
+    head 
+        link(href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet")
+    body 
+        div.mx-4.my-4.bg-gray-200 Hello,Pug!
+        h1 나의 채팅 서비스
+        div#chats 채팅목록
+        form#form
+            input#input(placeholder="채팅을 입력해 보세요.")
+            button 보내기 
+        script(src="/public/client.js") 
+
+
+// client.js 
+//IIFE 브라우저에서 socket 정보가 보여지는걸 방지하는 방법, 함수를 정의하지않고 바로 함수실행
+;(() => {
+  const socket = new WebSocket(`ws://${window.location.host}/ws`)
+  const formEl = document.getElementById("form")
+  const inputEl = document.getElementById("input")
+  const chatsEl = document.getElementById("chats")
+
+  if (!formEl || !inputEl || !chatsEl) {
+    throw new Error("Init failed!")
+  }
+
+  const chats = []
+
+  const adjectives = ["멋진", "훌륭한", "친절한", "새침한"]
+  const animals = ["물범", "사자", "사슴", "돌고래", "독수리"]
+
+  function pickRandom(array) {
+    const randomIdx = Math.floor(Math.random() * array.length)
+    return array[randomIdx]
+  }
+
+  const myNickname = `${pickRandom(adjectives)} ${pickRandom(animals)}`
+
+  formEl.addEventListener("submit", (event) => {
+    // formEl이 submit되면 서버에게 데이터를 보냄
+    event.preventDefault()
+    socket.send(
+      JSON.stringify({
+        nickname: myNickname,
+        message: inputEl.value,
+      })
+    )
+    inputEl.value = ""
+  })
+
+  //   socket.addEventListener("open", () => {
+  //     //socket이 열리면 client가 server에게 메세지보냄
+  //     socket.send("Hello, server!!")
+  //   })
+
+  socket.addEventListener("message", (event) => {
+    // server로 부터 메세지가 오면 동작하는 기능
+    //alert(event.data)
+    chatsEl.innerHTML = ""
+    chats.push(JSON.parse(event.data))
+
+    chats.forEach(({ message, nickname }) => {
+      const div = document.createElement("div")
+      div.innerText = `${nickname}: ${message}`
+      chatsEl.appendChild(div)
+    })
+  })
+})()
+
+
+// main.js (websocket-koa.js)
+const Koa = require("koa")
+const Pug = require("koa-pug")
+const path = require("path")
+const websockify = require("koa-websocket")
+const route = require("koa-route")
+const serve = require("koa-static")   //static파일 사용하기위한 패키지
+const mount = require("koa-mount")    //경로 이름 겹치는거 방지?
+
+const app = websockify(new Koa())
+
+new Pug({
+  viewPath: path.resolve(__dirname, "./views"),
+  app,
+})
+
+app.use(mount("/public", serve("src/public")))
+
+app.use(async (ctx) => {
+  await ctx.render("index")
+})
+// Using routes
+app.ws.use(
+  route.all("/ws", function (ctx) {
+    //ctx.websocket.send("Hello World")
+    ctx.websocket.on("message", function (data, isBinary) {
+      // client로부터 메세지가 오면 동작하는 코드들, data에 client가 send한 정보가 담겨있음
+      const msg = isBinary ? data : data.toString() //ws 버전 8이후부터는 buffer로 메세지가 오기때문에 string으로 변환해줘야함
+      console.log(msg) //여기 콘솔로그는 터미널에서만 보이고 웹에서는 출력이 안됨.
+
+      const { nickname, message } = JSON.parse(msg)
+
+      // client로 메세지 보내기
+      //broadcast : 모든 웹소켓 객체에 보내기
+      const { server } = app.ws //현재 이 서버 웹소켓에 연결된 클라이언트 불러오기위한 server 객체 
+
+      if (!server) {
+        return
+      }
+
+      server.clients.forEach((client) => {
+        // server에 연결되어 있는 clients 모두 불러와서 forEach로 각각 send 해주기 (broadcast)
+        client.send(
+          JSON.stringify({
+            message,
+            nickname,
+          })
+        )
+      })
+
+      //unicast : 메세지 보낸 사람에게만 보내기
+      //   ctx.websocket.send(
+      //     JSON.stringify({
+      //       message,
+      //       nickname,
+      //     })
+      //   )
+    })
+  })
+)
+
+app.listen(3000)
 
 
 
