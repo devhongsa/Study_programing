@@ -9,6 +9,7 @@
 
 //app.js
 const mongoose = require('mongoose');
+const {MongoClient} =  require('mongodb')
 
 mongoose.connect(`mongodb+srv://${process.env.mongoUserName}:${process.env.mongoUserPassword}@cluster0.3y6bvww.mongodb.net/?retryWrites=true&w=majority`).then(() => {
     app.listen({port: port}, ()=> {
@@ -16,8 +17,75 @@ mongoose.connect(`mongodb+srv://${process.env.mongoUserName}:${process.env.mongo
     })
 }).catch((e)=> console.log("Error:::" + e))
 
+// or
 
+const uri = `mongodb+srv://${config.env.mongoUserName}:${config.env.mongoUserPassword}@cluster0.3y6bvww.mongodb.net/${config.env.mongoDatabase}?retryWrites=true&w=majority`
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
 
+module.exports = client
 
 
 //CRUD 
+async function main() {
+    await client.connect()
+  
+    //Create
+    const users = client.db("fc22").collection("users") //존재하지않는 db,컬렉션이라도 자동으로 생성함
+  
+    //Delete
+    await users.deleteMany()
+  
+    //Create
+    await users.insertMany([
+      {
+        name: "Foo",
+        birthYear: 2000,
+      },
+      {
+        name: "Boo",
+        birthYear: 1995,
+      },
+      {
+        name: "Doo",
+        birthYear: 2001,
+      },
+    ])
+  
+    //Update
+    await users.updateOne(
+      {
+        name: "Boo",
+      },
+      {
+        $set: {
+          name: "Baza",
+        },
+      }
+    )
+  
+    await users.deleteOne({
+      name: "Foo",
+    })
+  
+    //Read
+    const cursor = users.find(
+      {
+        birthYear: {
+          $gte: 1994, //1994 보다 큰
+        },
+      },
+      {
+        sort: {
+          birthYear: -1, //내림차순 정렬
+        },
+      }
+    )
+    await cursor.forEach(console.log)
+  
+    await client.close()
+  }
+  
+  main()
