@@ -10,6 +10,15 @@ pragma solidity >= 0.7.0 < 0.9.0;
 contract hello{
     string public hi = "Hello solidity";
 
+//자료형 타입 값 타입 vs 참조 타입
+// 값 타입 : uint, int, bool, address, bytes1...bytes32(고정길이)
+// 참조 타입 : bytes(동적길이), string(동적 길이), array, mapping, struct
+// 참조 타입의 경우 변수 정의를 할때 메모리 저장타입을 같이 써줘야함. (memory or storage)
+function fun1(string memory _str) public pure returns(string memory){
+    return _str;
+}
+
+
 //boolean type
 bool public b = true;
 
@@ -20,6 +29,23 @@ bytes public bt2 = "STRING";
 // address : 컨트랙 주소; 
 
 //int uint
+int8 : -2^7 ~ 2^7-1
+int16 : -2^15 ~ 2^15-1
+int32 : -2^31 ~ 2^31-1 
+int64 : -2^63 ~ -2^63-1
+int128 : -2^127 ~ 2^127-1
+int256 (=int) : -2^255 ~ 2^255-1 
+
+uint8 : 0 ~ 2^8-1
+uint16 : 0 ~ 2^16-1
+uint32 : 0 ~ 2^32-1
+uint64 : 0 ~ 2^64-1
+uint128 : 0 ~ 2^128-1
+uint256 : 0 ~ 2^256-1
+
+//산술연산자 : +, -, *, **, /
+//논리연산자 : &&, || 
+//비교연산자 : <, >, !=, ==, <=, >=
 
 // 1 ether = 10^9 Gwei = 10^18 wei
 // Gwei는 가스비 , 복잡하고 긴 smart contract 일수록 가스비용 더 나옴
@@ -31,6 +57,8 @@ uint256 public value2 = 1 wei;
 uint256 public value3 = 1 gwei;
 uint public a = 10;
 
+
+//함수 생성
 function changeA1() public{
     a = 5;
 }
@@ -46,17 +74,20 @@ function changeA3(uint256 _value) public returns(uint256) {
 }
 
 /// 접근 지정자 
-// public : 모든 곳에서 접근가능, 배포했을때 유저인터페이스에서 테스트 가능, public 안쓰면 버튼안나옴
+// public : 모든 곳에서 접근가능, 배포했을때 유저인터페이스에서 테스트 가능, public 안쓰면 버튼안나옴 (public 변수생성시 getter 함수 생성됨)
 // public으로 지정한 변수들은 remix에서 콜함수로 저절로 만들어지는데 call 함수들은 트랜잭션이 없고 즉시 호출되기 때문에 gas 소비도 없다.
 // 그래서 public으로 지정한 변수들을 굳이 get function을 만들어서 호출안해도 됨. 저절로 호출함수 만들어짐.
 
-// external : public 처럼 모든곳에서 접근 가능하나, external함수가 정의된 스마트컨트랙 내에서는 다른 함수에서 external함수 호출불가
+// external : public 처럼 모든곳에서 접근 가능하나, external함수가 정의된 스마트컨트랙 내에서는 다른 함수에서 external함수 호출불가, 단 this사용시 내부에서 사용가능
 // private : private이 정의된 함수가 있는 스마트컨트랙에서만 접근가능(이 스마트컨트랙을 상속 받은 자식이라도 접근 불가능)
 // internal : internal로 정의된 함수가 있는 스마트컨트랙 내에서만 접근가능하고, 이 스마트컨트랙을 상속 받은 자식도 접근 가능
 
 uint256 public v = 5;
 uint256 private v2 = 10;            // private으로 하면 배포했을때 v2는 접근하지못함. 여기 컨트랙안에서만 접근가능
 
+
+// constant 상수 
+uint public constant c = 5;
 }
 
 
@@ -72,8 +103,11 @@ contract Public_example{
     }
 }
 
-//view? : function 밖에 있는 변수들을 읽을 수 있으나 변경 불가능, 블록체인상에 기록되지 않음. 읽기전용함수
-//pure : funcftion 밖에 있는 변수들을 읽지도 못하고, 변경도 불가능. 외부변수를 가져오지않고 오직 자기function의 파라미터를 가지고 리턴하는 함수.
+//함수의 modifier
+//view? : function 밖에 있는 변수들을 읽을 수 있으나 변경 불가능, 블록체인상에 기록되지 않음. 읽기전용함수, storage에 있는 값들을 쓸때 view 함수정의
+// 만약 외부값을 가지고 와서 그값을 변경한다면 view를 쓰지못함.
+//pure? : funcftion 밖에 있는 변수들을 읽지도 못하고, 변경도 불가능. 외부변수를 가져오지않고 오직 자기function의 파라미터를 가지고 리턴하는 함수. storage 값들을 쓰지않고
+// memory안의 값만 쓴다면 pure함수로 정의 
 
 contract Public_example_2{
     Public_example instance = new Public_example();     // 다른 contract을 쓰고 싶을때 객체형성
@@ -184,29 +218,33 @@ contract Son is Father("James"), Mother
 }
 
 // event
+// print와 같은 기능
+// 블록체인의 특정 블록에 값을 저장
+// 함수 내부에서만 사용 가능, emit 키워드 사용.
+// event 이름 정의시 첫글자는 대문자로 정의함.(소문자도 상관없지만, 관례상)
 
 contract Event1
 {
-    event info(string name, uint256 money);
+    event Info(string name, uint256 money);  //event에서는 string memory를 안써줘도 됨.
 
     function sendMoney() public
     {
-        emit info("Hongsa", 1000);
+        emit Info("Hongsa", 1000);
     }
 }
 
 contract Event2
 {
-    event numberTracker(uint256 num, string str);
-    event numberTracker2(uint256 indexed num, string str);   //index가 지정된 num은 후에 필터기능으로 특정인덱스
+    event NumberTracker(uint256 num, string str);
+    event NumberTracker2(uint256 indexed num, string str);   //index가 지정된 num은 후에 필터기능으로 특정인덱스
                                                              //부분의 데이터 뽑아보기 가능
 
     uint256 num = 0;
 
     function PushEvent(string memory _str) public
     {
-        emit numberTracker(num, _str);
-        emit numberTracker2(num, _str);
+        emit NumberTracker(num, _str);
+        emit NumberTracker2(num, _str);
         num++;
     }
 }
@@ -246,6 +284,11 @@ contract lec17
     function getAge(uint256 _index) public view returns(uint256)
     {
         return ageList[_index];
+    }
+
+    function deleteMapping(int _key) public{
+        delete(ageList[_key]);
+        ageList[_key] = 0;           //둘중에 아무거나 써도 똑같음 
     }
 
 }
@@ -297,7 +340,7 @@ contract lec18
 
 contract lec20
 {
-    struct Character
+    struct Character        //struct에서도 event와 마찬가지로 string memory 이런식으로 정의르 안해줘도 됨.
     {
         uint256 age;
         string name;
@@ -333,6 +376,7 @@ contract lec21{
 
 
 // for, while , do-while
+// 함수 내부에서만 작동
 
 contract lec22
 {
@@ -345,6 +389,15 @@ contract lec22
         {
             emit CountryIndexName(i, countryListp[i]);
         }
+
+       
+        uint total = 0;
+        uint a = 8;
+        do{
+            total = total + a;
+            a++;
+        }while(a>10);
+        return total;
     }
 }
 
@@ -357,7 +410,8 @@ keccak256(bytes(string)) == keccak256(bytes(string2))       // 그래서 이런�
 // 에러핸들러 : require?, revert?, assert?, try/catch
 
 0.4.22 ~0.7.x 버전
-assert : gas를 다 소비한 후, 특정한 조건에 부합하지 않으면(false일 때) 에러를 발생시킨다.
+assert : gas를 다 소비한 후, 특정한 조건에 부합하지 않으면(false일 때) 에러를 발생시킨다. // 0.8 버전이후 환불해주는것으로 바뀜. assert는 오직 내부적 에러테스트용도로 사용
+// assert가 에러를 발생시키면 Panic(uint256)이라는 에러타입의 에러를 발생시킴.
 revert : 조건없이 에러를 발생시키고, gas를 환불 시켜준다.
 require : 특정한 조건에 부합하지 않으면(false일 때) 에러를 발생시키고, gas를 환불 시켜준다.
 
@@ -509,16 +563,18 @@ contract lec30
 }
 
 
-//payable, msg.value, 이더전송
+//payable?, msg.value?, 이더전송
 // payable은 이더/토큰과 상호작용시 필요한 키워드이다. send,transfer, call를 이용하여 이더를 보낼때 payable이라는 키워드 필요
-// 주로 함수, 주소, 생성자에 붙여서 사용
+// 주로 함수, 주소, 생성자(생성자에 붙이면 스마트컨트랙트가 이더를 받을 수 있게해줌)에 붙여서 사용
+// payable을 적용한 함수나 변수는 remix ide에서 빨간색 버튼으로 표시가됨.
+// 노란색은 gas를 소모하는 트랜잭션이 이루어지는 함수라는 뜻
 
 // msg.value 는 송금보낸 코인의 값
 
 // 이더를 보내는 3가지 방법
 // 1. send? : 2300 gas를 소비, 성공여부를 true or false로 리턴
 // 2. transfer? : 2300 gas를 소비, 실패시 에러를 발생 
-// 3. call? : 가변적인 gas를 소비 (gas값 지정 가능), 성공여부를 true or false로 리턴
+// 3. call? : 가변적인 gas를 소비 (gas값 지정 가능), 성공여부를 true or false로 리턴, 외부 스마트컨트랙트 함수 호출 가능.
 //             재진입(reentrancy) 공격 위험성 있음
 
 
@@ -526,10 +582,11 @@ contract lec31
 {
     event howMuch(uint256 _value);
 
-    function sendNow(address payable _to) public payable
+    // _to는 이더를 받아야하니까 payable 붙여야하고, 함수 sendNow를 실행해야 이더를 보낼수있으니까 함수에도 payable 붙여야함
+    function sendNow(address payable _to) public payable   
     {
         bool sent = _to.send(msg.value);
-        require(sent,"Failed to send token");
+        require(sent,"Failed to send token");   //send는 에러를 안일으키기 때문에 require이 따로 필요함
         emit howMuch(msg.value);
     }
 
@@ -555,7 +612,7 @@ contract lec31
 }
 
 // 주소.balance : 해당 주소의 현재 갖고있는 이더의 잔액
-// msg.sender : 스마트컨트랙을 사용하는 주체   call vs delegate call 에서 주요 내용 
+// msg.sender : 스마트컨트랙(함수)을 사용하는 주체   call vs delegate call 에서 주요 내용 
 
 contract MobileBanking{
     address owner;
