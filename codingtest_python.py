@@ -1,5 +1,6 @@
 # 리스트 list
 list1 = [1, 2, 3]
+[*list1]  ##리스트 언팩킹 
 letters = ["A", "B", "C"]
 lst1 = ['A', 'B', 'C', 'D']
 lst2 = ['C', 'D', 'E', 'F']

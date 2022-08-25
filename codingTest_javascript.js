@@ -190,6 +190,7 @@ str.split(' ')  //리스트로 반환
 
 //배열 array 리스트, list
 var member = ['egoing', 'k8805', 'sorialgi'];
+[...member]  //리스트 언팩킹
 
 member.push('f');           // 배열 맨뒤에 추가
 
