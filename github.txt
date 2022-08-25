@@ -1,3 +1,9 @@
+레포지토리 
+study_fastcampus => 맥북,회사컴에서 Nodejs폴더, grapql test, db userfollow 테이블 수정하는 로직
+flutter-graphql => 맥북에서 flutter_graphql, 맥북에서만 사용 플러터로 graphql 테스트
+ep-graphql(heroku git) => graphql 서버
+
+
 403에러 해결 : https://beagle-dev.tistory.com/244
 =) git remote set-url origin https://devhongsa@github.com/devhongsa/Study_programing.git 를 입력해주세요
 
