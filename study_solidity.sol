@@ -575,7 +575,7 @@ contract lec30
 // 1. send? : 2300 gas를 소비, 성공여부를 true or false로 리턴
 // 2. transfer? : 2300 gas를 소비, 실패시 에러를 발생 
 // 3. call? : 가변적인 gas를 소비 (gas값 지정 가능), 성공여부를 true or false로 리턴, 외부 스마트컨트랙트 함수 호출 가능.
-//             재진입(reentrancy) 공격 위험성 있음
+//             재진입(reentrancy) 공격 위험성 있음, send와 transfer의 2300gas로는 트랜잭션이 실패할 확률이 높으므로 call함수 사용 권장 
 
 
 contract lec31
@@ -607,6 +607,39 @@ contract lec31
         (bool sent,) = _to.call{value : msg.value , gas : 1000}("");
         require(sent, "Failed to send token")
         emit howMuch(msg.value)
+    }
+
+}
+
+// call로 외부 스마트컨트랙트 함수 호출하기
+contract lec13_1{
+    function addNumber(uint _num1, uint _num2) public pure returns(uint){
+        return _num1 + _num2;
+    }
+    function whoIsMsgSender() public view returns(address){
+        return msg.sender;
+    }
+}
+
+contract lec13 {
+
+    function callAddNumber(address _lec13_1Address, uint _num1, uint _num2) public returns(bool, bytes memory){
+        // addNumber함수는 uint를 리턴하지만 아래에서는 uint를 bytes값으로 받아옴
+        (bool sent, bytes memory outputFromCalledFunction) = _lec13_1Address.call(
+            abi.encodeWithSignature("addNumber(uint256, uint256)", _num1,_num2)
+        );
+
+        require(sent,"failed");
+        return(sent, outputFromCalledFunction)
+    }
+
+    function callWhoIsMsgSender (address _lec13_1Address) public returns(bool, bytes memory){
+        (bool sent, bytes memory outputFromCalledFunction) = _lec13_1Address.call(
+            abi.encodeWithSignature("WhoIsMsgSender()")
+        );
+        require(sent, "failed");
+        return(sent, outputFromCalledFunction);   // 여기서 msg.sender 반환값을 보면 함수를 호출한 주소가아닌 lec13의 컨트랙트주소가 나온다.
+        // 그 이유는 우리가 lec13의 함수를 통해서 lec13_1의 함수를 호출했기 때문에 lec13_1 입장에서는 lec13이 함수호출자인것임.
     }
 
 }
@@ -652,17 +685,84 @@ contract MobileBanking{
 
 // fallback?
 // fallback 함수는 이름 그대로 대비책 함수 
+// 사용자가 A 스마트컨트랙트 주소에 이더를보내거나, A에 없는 함수를 호출할때 fallback함수가 실행된다. 
 // 특징
 // 1. 무기명함수
 // 2. external 필수
-// 3. payable 
+// 3. payable : 스마트컨트랙트가 이더를 받을 수 있게해줌
 // 왜 쓰는가?
 // 1. 스마트 컨트랙이 이더를 받을 수 있게 한다.
 // 2. 스마트 컨트랙이 이더를 받고 난 후 어떠한 행동을 할 수 있게 한다.
-// 3. call은 외부 스마트컨트랙의 함수를 부르는 기능이 있는데, 만약 call이 없는 함수를 부를때, 어떠한 행동을 할 수 있게 한다.
+// 3. call은 외부 스마트컨트랙의 함수를 부르는 기능이 있는데, 만약 존재하지않는 함수를 call하게되면, 어떠한 행동을 할 수 있게 한다.
 
 //0.6 이전
-// function() external payable{}
+// function() external payable{}        //payable을 써줘야 스마트컨트랙트가 이더를 받을 수 있게됨.
+
+//0.6 이후      // receive와 fallback이 나뉨
+// fallback() external payable {}
+// receive() external payable {}
+
+contract safe{
+    event received(address _from, uint _amount);
+    event justFallback(string _str);
+
+    //fallback 함수 0.6이하 버전
+    function() external payable{
+        emit received(msg.sender, msg.value); //누군가 safe컨트랙트로 이더를 보내면 보낸사람과, 보낸수량을 출력해줌
+    }
+
+    //0.6이후 버전
+    fallback() external {               //잘못된 함수를 호출하면서 이더를 보낼경우에는 external payable로 해줘야 fallback함수가 실행됨.
+        emit justFallback("No function");
+    }
+
+    receive() external payable{
+        emit received(msg.sender, msg.value);
+    }
+
+    //
+    function checkMybalance() public view returns(uint){
+        return address(this).balance;   //address(this)는 safe 컨트랙트의 주소
+    }
+}
+
+contract lec14 {
+    function sendNow(address payable _to) public payable{
+        bool sent = _to.send(msg.value);            //safe의 fallback함수실행 msg.sender는 lec14의 컨트랙주소가됨.
+        require(sent, "Failed to send either");
+    }
+
+    function transferNow(address payable _to) public payable{
+        _to.transfer(msg.value);
+    }
+
+    function callNow (address payable _to) public payable{              //call은 _to 앞에 payable을 붙여도되고 안붙여도됨
+        //(bool sent, ) = _to.call.value(msg.value)("");   // 0.7 이하 버전
+        (bool sent, ) = _to.call{value: msg.value}("");  // 0.7이후 버전
+
+        require(sent, "Failed to send either")
+    }
+
+    function callWrong (address _safeAddress) public returns(bool, bytes memory){
+        (bool sent, bytes memory outputFromCalledFunction) = _safeAddress.call(         //safe컨트랙트로 call
+            abi.encodeWithSignature("wrong()")      // safe에 wrong 함수가 없기때문에 safe컨트랙트의 fallback 함수 실행됨.
+        );
+        require(sent, "failed");
+        return(sent, outputFromCalledFunction);
+    }
+
+    function callWrong2 (address _safeAddress) public payable returns(bool, bytes memory){
+        // (bool sent, bytes memory outputFromCalledFunction) = _safeAddress.call.value(msg.value)(    
+        //     abi.encodeWithSignature("wrong()")          //wrong함수부르면서 이더까지 같이보냄
+        // );
+
+        (bool sent, bytes memory outputFromCalledFunction) = _safeAddress.call.{value:msg.value}(    
+            abi.encodeWithSignature("wrong()")          
+        );
+        require(sent, "failed");
+        return(sent, outputFromCalledFunction);
+    }
+}
 
 contract Bank{
     event JustFallbackWithFunds(address _from, uint256 _value, string message);
