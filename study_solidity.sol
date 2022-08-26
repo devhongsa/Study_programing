@@ -135,7 +135,7 @@ contract study{
 }
 
 
-//constructor?
+//constructor? 생성자
 //constructor에는 public, private, external 같은 visibility를 안넣어줘도됨.
 
 contract A
@@ -202,7 +202,7 @@ contract Mother
 
 contract Son is Father("James"), Mother
 {
-    //constructor() Father("James"){}               //이런식으로 초기화 가능
+    //constructor(string memory _given_name) Father(_given_name){}               //자식 생성자를 통해 부모 생성자도 실행하는 방법
 
     uint256 public earning = 0;
 
@@ -214,6 +214,32 @@ contract Son is Father("James"), Mother
     function getMoney() view public override(Father, Mother) returns(uint256)
     {
         return money + money2;
+    }
+}
+
+// 인스턴스화
+
+contract fatherWallet{
+    uint public money;
+    constructor (uint _money){
+        money = _money;
+    }
+
+    function addMoney(uint _money) public {
+        money = money + _money;
+    }
+
+    function changeMoney(uint _money) public virtual {
+        money = _money;
+    }
+}
+
+
+contract son3 {
+    fathersWallet wallet1 = new fatherWallet(1000);
+    
+    function addWalletAll(uint _money1) public {
+        wallet.addmoney(_money);
     }
 }
 
@@ -336,7 +362,7 @@ contract lec18
 
 }
 
-// struct 구조체
+// struct? 구조체
 
 contract lec20
 {
@@ -907,14 +933,16 @@ contract caller{
 
 
 // enum? 
+// 숫자에 이름을 붙이는것.
+// 0~255개 까지 이름을 붙일 수 있음.
 
 contract lec38{
 
     enum CarStatus{
-        TurnOff,
-        TurnON,
-        Driving,
-        Stop
+        TurnOff,    //0   
+        TurnON,     //1
+        Driving,    //2
+        Stop        //3
     }
 
     CarStatus public carStatus;
@@ -949,6 +977,7 @@ contract lec38{
 }
 
 //interface?
+// 스마트컨트랙트 내에서 정의되어야할 필수 요소들을 나타낸 설명서와 같음.
 //1. interface 안에 정의된 함수는 external로 표시
 // interface 안에 정의된 함수는 아직 body가 없고 함수이름만 구현된 상태임.
 //2. enum, structs 가능 
@@ -966,14 +995,15 @@ interface ItemInfo{
 contract lec39 is ItemInfo{
     item[] public itemList;
     uint256[] public a;
-    function addItemInfo(string memory _name, uint256 _price) override public{
+    function addItemInfo(string memory _name, uint256 _price) public override {
         itemList.push(item(_name,_price));
     }
-    function getItemInfo(uint256 _index) override public view returns(item memory){
+    function getItemInfo(uint256 _index) public view override returns(item memory){
         return itemList[_index];
     }
 }
 //leg39에는 ItemInfo에 정의된 함수 addItemInfo, getItemInfo 함수가 무조건 정의되어 있어야한다. 이때 override도 붙여야함.
+//이때 interface내의 함수에서 virtual을 써줘야 자식컨트랙트에서 override가 가능하지만, interface 같은경우 virtual이 암묵적으로 들어가있기때문에 안써줘도 된다.
 //정의가 안되어있으면 에러가 뜸. 
 
 //library?
@@ -988,16 +1018,20 @@ library SafeMath{
 }
 
 contract lec40{
-    using SafeMath for uint8;
+    using SafeMath for uint8;       //작성한 라이브러리 사용법
     uint8 public a;
 
     function becomeOverflow(uint8 _num1, uint8 _num2) public{
-        a = _num1.add(_num2);
+        //a = _num1.add(_num2);     //이런식으로 사용하려면 using SafeMath for uint8; 를 위에 써줘야함.
+        a = SafeMath.add(_num1, _num2);
     }
 }
 //using SafeMath for uint8 이거는 SafeMath에 구현된 함수를 사용할때   a.add(b) 이런식으로 uint8에 .add()를 붙여서 사용할 수 있게 해줌.
 
 //import?
+//contract 밖에서 선언.
+//import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/docs-v3.x/....."
+
 
 //import "./lec41_1.sol"  저장위치가 같을때  ./
 //import "../"
@@ -1008,33 +1042,64 @@ string(abi.encodePacked(n,n2,n3);)     //string 여러개를 합쳐주는
 
 
 
-//// 블록체인 인 액션 ////
-
-블록체인 기능이 필요한 애플리케이션의 특성 
-1. 중개자가 없는 P2P 트랜잭션
-2. 신뢰 범위를 넘어서는 서로 알지 못하는 피어 간에 작동
-3. 보편적으로 타임스탬프를 가진 변조 불가능한 장부에서 확인, 검증, 저장이 필요한 경우
-4. 규칙과 정책에 의해 가이드된 자율적인 오퍼레이션을 가진 경우
-
-
-함수안에서 로컬 변수로 구조체를 정의할 때, memory 타입인지 storage 타입인지 명시적으로 선언해주어야한다.
 
 
 
 
-//solidity vs C++
 
-//솔리디티의 contract는 C++의 class랑 같은 개념
 
-//솔리디티에서 함수 생성시
-//function 함수이름(파라미터) public view(pure) returns(리턴값 데이터타입)
 
-//C++에서 함수 생성시
-//함수리턴타입 함수이름(파라미터) {}
 
-//struct 구조체 생성시 C++ 은 {};, solidity는 {}
 
-// 객체만들기 
-// C++ : Classname a;
-// sol : Classname public a = new Classname();
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////// ERC20 토큰 만들기 /////////////////
+//ERC20 은 fallback 함수 구현 못함. 스마트컨트랙 주소로 토큰 보내면 소실됨.
+
+
+contract myToken {
+    string private tokenName;   //Ether
+    string private tokenSymbol; // ETH
+    uint private tokenTotalSupply; // 1000
+    uint private tokenDecimal; // 1 토큰 = 10^18 wei => 18
+
+    constructor(string memory _name, string memory _symbol, uint _totalSupply, uint _decimal){
+        tokenName = _name;
+        tokenSymbol = _symbol;
+        tokenTotalSupply = _totalSupply;
+        tokenDecimal = _decimal;
+    }
+
+    function name() public view returns(string memory) {
+        return tokenName;
+    }
+
+    function symbol() public view returns(string memory) {
+        return tokenSymbol;
+    }
+
+    function totalSupply() public view returns(uint) {
+        return tokenTotalSupply;
+    }
+
+    function decimal() public view returns(uint) {
+        return tokenDecimal;
+    }
+
+}
