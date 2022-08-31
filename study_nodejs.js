@@ -23,6 +23,7 @@ npm install core-js   // js의 신기능들을 node버전에 상관없이 사용
 
 ////// prettier vscode 설정법  (formatter) //////
 //vscode extension에서 prettier 설치 
+//  vscode file -> preference -> setting -> 검색에서 format on save 체크 -> 검색에서 default format -> editor prettier 선택
 npm install --save-dev prettier // js 코드 검사 및 코드정렬 기능   --save-dev는 devDependencies 항목에 기록됨. 릴리즈때는 필요없는 패키지라는 뜻.
 //이후 프로젝트 폴더에 .prettierrc 파일 생성 
 {

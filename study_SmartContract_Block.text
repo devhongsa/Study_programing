@@ -26,6 +26,7 @@ contract Basic{
 
 
 ////////////////// 블록체인 인 액션 4장 p.89////////////////// 
+//////////////// truffle로 컴파일, 배포하기 /////////////////
 1.Node js 설치
 2.Truffle 설치 node js command prompt 에서 npm install -g truffle  명령어 입력 
 3.truffle version 명령어 입력하면 버전확인
@@ -37,6 +38,8 @@ contracts/  : 스마트컨트랙트를 위한 솔리디티 소스 파일. Migrat
 migrations/ : 마이크레이션은 자바스크립트로 만들어진 js파일로 개발 중인 스마트 컨트랙트의 변화를 관리한다.
 test/ : 자바스크립트와 솔리디티 테스트
 truffle-config.js : 트러플 설정파일. 블록체인 네트워크 ID, IP, RPC 포트 번호 같은 설정 정보가 들어있다.
+networks 부분 : 어느 네트워크에 배포 할것인지 설정. development는 개발용으로서 가나쉬 네트워크 사용. HDWalletProvider 사용하는 부분이 public 네트워크 설정하는 부분
+truffle 자체 네트워크도 있음. 콘솔에 truffle develop 입력하면 지갑주소와 함께 truffle network에 연결됨.  콘솔로 await web3.eth.getAccounts() 함수도 실행가능
 
 7. ballot-contract > contracts 디렉토리에 스마트컨트랙트 파일 Ballot.sol 넣기.
 8. ballot-contract 디렉토리 위치에서 명령어 truffle compile 실행.
@@ -50,7 +53,8 @@ truffle-config.js 파일에서 const HDWalletProvider = require('@truffle/hdwall
 network: {rinkeby : { 이 부분 수정.}} infura.io 에서 프로젝트 형성하고, 니모닉문자는 계정 복구구문 써넣기.
 
 11. migrations 디렉토리에 2_deploy_contracts.js 파일 추가하기. -> Ballot.sol 배포를 위한 파일
-// 1_initial_migration.js 에서 migration 지우고 내 스마트컨트랙트 depoly 해도됨.
+// Migrations.sol 의 기능은 migrations 폴더에서 새로운 배포파일이 생길때만 migrate를 하도록 하는 것이다.
+// 배포를 새로 하면 스마트컨트랙트 주소도 바뀌므로, 기존에 배포했던 컨트랙트는 다시 배포하지 않기위함이다.
 const Ballot = artifacts.require("Ballot");       // 배포해야할 스마트컨트랙트 이름 Ballot 
 
 module.exports = function (deployer) {

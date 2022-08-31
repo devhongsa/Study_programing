@@ -303,7 +303,7 @@ deploy();
 
 
 2. 배포된 스마트컨트랙트 주소, 그리고 abi 통으로 복사 
-3. 웹페이지 쪽 작업폴더에서 web3.js 파일생성
+3. 웹페이지 쪽 작업폴더에서 web3.js 파일생성   // npm install web3
 import Web3 from "web3";
 window.ethereum.request({ method: "eth_requestAccounts" });
 
