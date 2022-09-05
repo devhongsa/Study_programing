@@ -25,7 +25,7 @@ list1.sort(reverse=True)  # 내림차순
 
 list1 = set(list1)  # 중복값 제거
 
-if 'aaa' in a:
+if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
     print('aaa exist')
 
 union = (set(lst1) | set(lst2))  # 합집합, 두리스트 합집합
