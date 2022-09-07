@@ -186,8 +186,9 @@ li = member.concat(["e", "f"]); //배열과 배열 합치기
 
 member.unshift("z"); // 배열 맨앞에 넣기
 
-member.splice(1); //member 인덱스 1부터 쭉 긁어서 리스트 리턴, 기존 member도 짤려있음
-member.splice(1, 1); // 인덱스 1만 가져옴
+//요소 삭제
+member.splice(1); //member 인덱스 1부터 쭉 긁어서 리스트 리턴, 기존 member는 빈배열이 되어있음
+member.splice(1, 1); // member의 인덱스 1 요소 삭제후, 삭제한 요소를 리스트로 리턴 //splice(삭제할 요소 인덱스, 삭제할요소개수)
 member.splice(1, 0, "d"); //1번 인덱스에 'd' 추가 기존 1에 있던 값은 뒤로 밀림.
 member.splice(1, 1, "x", "y"); // 1번 인덱스부터 x ,y 추가 기존 1에 있던 값은 삭제됨.
 
@@ -200,7 +201,7 @@ member.sort(); //요소 정렬
 member.reverse(); //요소 역정렬
 
 member.includes("egoing"); //true false 리턴
-member.indexOf("egoing"); // 첫번째 index 리턴
+member.indexOf("egoing"); // 첫번째 index 리턴, 못찾으면 -1 리턴
 member.lastIndexOf("egoing");
 
 //a-b는 오름차순 b-a는 내림차순
