@@ -1,4 +1,4 @@
-https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  
+https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  //sql문 테스트
 https://www.hackerrank.com/domains/sql
 https://leetcode.com/problemset/database/
 
@@ -96,7 +96,9 @@ insert into newtable ( select * from "oldtable");
 
 
 
-
+https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  //sql문 테스트
+https://www.hackerrank.com/domains/sql
+https://leetcode.com/problemset/database/
 ###################  inflearn sql ###########################
 SELECT DISTINCT *                                   // DISTINCT는 값이 중복되지 않게 나오게함
 FROM Customers
@@ -130,6 +132,7 @@ SELECT name, Right(name,3) from students
 CEIL() 올림 
 FLOOR() 내림 
 ROUNT(long, 4)  // 4자리수 반올림
+산술연산 + - * /
 
 
 ////// 집계함수 
@@ -149,3 +152,33 @@ GROUP BY suppierID                  // suppierID 별로 price 평균낸값 추�
 HAVING AVG(price) >= 100            // WHERE문은 GROUP BY 이전에 실행되기 때문에 WHERE AVG(price)>= 100 을 하면 안된다. 그래서 HAVING을 씀
 ORDER BY AVG(price)
 
+SELECT salary*months AS earnings, COUNT(*) FROM Employee GROUP BY earnings ORDER BY earnings DESC LIMIT 1;
+// from -> where -> group by -> order by -> limit -> select 
+
+
+
+///// CASE 
+SELECT CASE 
+            WHEN categoryid = 1 AND supplierid = 1 THEN '음료'
+            WHEN categoryid = 2 THEN '조미료'
+            ELSE '기타'
+        END AS categoryName, * , AVG(price)
+FROM Products
+GROUP BY categoryName
+
+
+SELECT CASE
+            WHEN A=B and B=C THEN 'Equilateral'
+            WHEN A+B<=C or A+C<=B or B+C<=A THEN 'Not A Triangle'
+            WHEN A=B or B=C or A=C THEN 'Isosceles'
+            ELSE 'Scalene'
+        END
+FROM triangles
+// CASE WHEN 절의 순서가 중요함. 첫번째 WHEN절에서 데이터가 'Equilateral'로 할당되었으면, 할당된 데이터는 그다음 WHEN절에서 고려대상이 되지 않음.
+
+
+//피봇팅
+SELECT AVG(CASE WHEN categoryid = 1 THEN price ELSE NULL END) AS category1_price,
+       AVG(CASE WHEN categoryid = 2 THEN price ELSE NULL END) AS category2_price,
+       AVG(CASE WHEN categoryid = 3 THEN price ELSE NULL END) AS category3_price
+FROM products
