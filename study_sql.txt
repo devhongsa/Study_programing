@@ -182,3 +182,25 @@ SELECT AVG(CASE WHEN categoryid = 1 THEN price ELSE NULL END) AS category1_price
        AVG(CASE WHEN categoryid = 2 THEN price ELSE NULL END) AS category2_price,
        AVG(CASE WHEN categoryid = 3 THEN price ELSE NULL END) AS category3_price
 FROM products
+
+
+
+
+/////// JOIN 
+SELECT *
+FROM orders
+     INNER JOIN customers ON orders.customerID = customers.customerID
+     INNER JOIN shippers ON orders.shipperID = shippers.shipperID
+// orders 테이블과 customers 테이블엔 모두 customerID가 있고 이 두 테이블에서 customerID가 같은 데이터들만(교집합) 가져옴
+
+SELECT *
+FROM customers 
+    LEFT JOIN orders ON customers.customerID = orders.customerID
+WHERE orderID IS NULL 
+//orders 테이블에 없는 즉 주문을 한번도 안한사람이라도 customers테이블에 있으면 일단 가져와서 null값으로 처리함. 
+//그래서 null값을 응용해서 주문을 한번도 안한사람을 where문으로 찾아낼 수 있음.
+
+SELECT country.continent, FLOOR(AVG(city.population))
+FROM city
+    INNER JOIN country ON country.code = city.countrycode
+GROUP BY country.continent
