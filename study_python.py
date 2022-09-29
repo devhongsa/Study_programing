@@ -349,7 +349,8 @@ https://dowtech.tistory.com/39
 
 #행 인덱스위치 데이터 추출
 df['timestamp'].iloc[-1]
-#인덱스 위치 데이터추출   
+df[df['ethWallet']=='wa'].iloc[0]['id']
+#인덱스이름 위치 데이터추출   
 df['timestamp'].loc[0]
 
 
@@ -384,14 +385,19 @@ df = df[df['country'].isin(['한국','대만','일본'])]   ## 조건리스트�
 
 df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기 
 
+#인덱스 값찾기
 df_index = df[df['name']=='hongsa'].index
-df.drop([df_index])            #index로 행 삭제하기.
-df.drop(columns=['name'], inplace=True)       #컬럼 삭제하기
+
+#index로 행 삭제하기.
+df.drop([df_index])            
+#컬럼 삭제하기
+df.drop(columns=['name'], inplace=True)       
 df.drop('timestamp', axis=1)   # column 삭제하기 
 
 df.loc[df["Salary"] >= 5000]
 df.loc[(df["Salary"] >= 5000)&(df["Salary"] < 7000)]
 
+# 행 값들 조건으로 바꾸기 
 df.loc[df['def'] == 1,'ghi'] = 100    # def칼럼의 값이 1인 행들에서, ghi 값을 100으로 바꾼다.
 #특정 값 바꾸기
 df["Gender"] = df["Gender"].replace({"M": "male", "F": "female"})
@@ -414,9 +420,6 @@ df.columns = ['col', 'col', 'col']
 df.rename(columns={'Before':'After'})
 # 특정 열을 리스트로 바꾸기
 timestampList = df['timestamp'].values.tolist()
-
-
-
 
 #정렬하기 
 df.sort_values('timestamp', ascending=False)   #timestamp값으로 내림차순 정렬  최근시간이 위로 오는 정렬 

@@ -23,7 +23,7 @@ list1.clear()  # 아예 리스트 비우기
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
 
-list1 = set(list1)  # 중복값 제거
+list1 = list(set(list1))  # 중복값 제거
 
 if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
     print('aaa exist')
@@ -44,7 +44,7 @@ for i, val in enumerate(list1):
 
 # string 문자열
 string1 = "hi hello"
-string1.split()
+string1.split('.')  #'.' 를 기준으로 문자열 나누기 리스트로 반환
 string1.isalpha()
 string1.isdigit()
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
