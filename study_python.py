@@ -389,7 +389,9 @@ df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기
 df_index = df[df['name']=='hongsa'].index
 
 #index로 행 삭제하기.
-df.drop([df_index])            
+df.drop([df_index])   
+#조건 행 삭제
+df.drop(df[df['price'] == 1000].index)   
 #컬럼 삭제하기
 df.drop(columns=['name'], inplace=True)       
 df.drop('timestamp', axis=1)   # column 삭제하기 
