@@ -378,6 +378,9 @@ df.replace(np.nan, 1)
 데이터프레임에서 inplace=True 값을 주면 원본객체를 함께 변경한다는 뜻임.
 즉 df = df.sort_value() 이런식으로 원본 변수에 다시 지정안해줘도 된다는 뜻.
 
+#스트링타입 컬럼 열 데이터 조작
+df['fruit'].str.strip() # 양쪽공백제거하기 
+
 #조건으로 데이터프레임 행 추출하기 
 timestamp = datetime.now()
 df = df[timestamp<=df['timestamp']]
