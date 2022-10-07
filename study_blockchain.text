@@ -54,5 +54,48 @@ client-server vs p2p network
 구현 비용 비싸다 / 구현 비용 저렴
 안정적 확장 가능 / 노드의 수가 증가하면 문제 발생 가능성 증가 
 
-TCP : 서버와 클라이언트간에 데이트를 신뢰성 있게 전달하기 위해 만들어진 프로토콜 
-UDP : TCP와 다른점은 TCP는 요청을 했을때 상대측에서 받았는지 안받았는지 확인이 가능하지만 UDP는 그냥 요청만 보냄.
+TCP : 서버와 클라이언트간에 데이트를 신뢰성 있게 전달하기 위해 만들어진 프로토콜 3 handshake
+UDP : TCP와 다른점은 TCP는 요청을 했을때 상대측에서 받았는지 안받았는지 확인이 가능하지만 UDP는 그냥 요청만 보냄.(tcp보다 빠름)
+
+
+Block Sync 
+1.Ping/Pong : blockchain을 다운받기 위해 연결된 다른 노드들에게 ping전송하고 pong 응답받는과정 
+2.Header Download : Block Header 들을 먼저 다운받음.
+3.Block Download : 제네시즈 블록 다음 블록부터 최근 블록까지 트랜잭션을 포함한 전체 데이터를 다운로드 진행
+4.Block Validation : 다운받은 블록들이 제대로된 데이터인지 검증 진행.
+
+풀노드 : 1,2,3,4 과정 모두 진행
+라이트노드 : 1,2번 까지만 진행 
+
+
+Block 구조 
+Block Size 
+Block Header
+    Version 
+    이전 블록해쉬
+    merkle Root : transaction들의 hash root (모든 트랜잭션들을 해쉬값으로 나타낸거)
+    timestamp : 블록생성시간 
+    difficulty : pow 어려움 정도 
+    nonce : pow의 결과(채굴 정답)
+Transaction Counter 
+Transaction
+
+
+채굴자들의 block 생성과정(채굴과정)
+1. mempool 에서 tx들 선택 
+2. coinbase Tx 생성 (채굴보상 나에게로 보내는 tx)
+3. merkle root 연산
+4. block header 구성 
+5. find nonce (pow)
+6. block 전파 
+
+비트코인 한블록당 크기제한을 둬서(1mb) 한 블록에 들어가는 tx 수는 약 2000개밖에 되지않는다. (데이터베이스 성능때문에 제한을둠.)
+이로인해 채굴자들은 수수료가 높은 트랜잭션, 데이터용량이 작은 거래들만 선택해서 채굴하려고 함. 
+비트코인 사용자가 늘어나고 수수료 가격도 가파르게 증가하게됨. 
+2017년 segwit hard fork는 블록당 데이터용량을 키운 업데이트임.
+
+
+
+
+합의 알고리즘 
+BFT (Byzantine Fault Tolerance): 분산화된 네트워크에서 일부 장애가 발생하더라도 네트워크가 정상적으로 동작할 수 있도록 하는 알고리즘. 
