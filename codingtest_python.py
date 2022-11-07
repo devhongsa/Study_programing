@@ -5,6 +5,9 @@ letters = ["A", "B", "C"]
 lst1 = ['A', 'B', 'C', 'D']
 lst2 = ['C', 'D', 'E', 'F']
 
+ethWalletList = [address for address in ethWalletList if(address != None)]
+verb = 'buy' if amount>=0 else 'sell'
+
 set(list1)
 list1.index(1)
 {x: 0 for x in list1}

@@ -172,8 +172,8 @@ str = str.replace("c", "j"); // 문자치환  처음만나는 c만 바꿈
 str = str.replaceAll("c", "j");
 str = str.replace(/c/g, "i"); //정규표현식, 모든 c를 i로 바꿈
 str.slice(0, 3);
-str.slice(4); //4부터 쭉
-str.slice(-3); // 뒤에서 3번째부터 쭉
+str.slice(4); //4부터 쭉 출력
+str.slice(-3); // 뒤에서 3번째부터 쭉 출력
 str.split(" "); //리스트로 반환
 
 //배열 array 리스트, list

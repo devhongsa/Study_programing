@@ -42,6 +42,8 @@ field4    varchar(1000)
 ALTER TABLE Temp_Table ADD field5 char(10);
 ALTER TABLE Temp_Table DROP COLUMN field5 ;
 
+ALTER TABLE foo ADD UNIQUE (thecolumn);   //unique key 설정하기
+
 UPDATE table SET column = '홍길동' WHERE U_ID = 'roqkfwk';
 
 

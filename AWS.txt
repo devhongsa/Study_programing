@@ -1,0 +1,118 @@
+homebrew 
+brew search 패키지이름 
+brew info 패키지이름 
+brew install 패키지이름 
+brew upgrade 패키지이름 
+brew uninstall 패키지이름 
+brew update      // homebrew 업데이트 
+
+aws 무료계정가입
+
+EC2 서비스 : AWS 서버를 만들 수 있는 곳 
+    인스턴스 : 서버
+
+    네트워크 및 보안
+        탄력적 IP : AWS에서 ip를 하나 받아서 내 인스턴스와 연결을 할 수 있음.
+        보안 그룹 
+            인바운드 규칙 : 내 서버에 어떤 요청을 허용할것인지, 특정ip만 요청할 수 있게 하는 등, 보안설정
+
+    로드 밸런싱
+        로드 밸런서 : 서버에 부하가 걸렸을때, 똑같은 서버를 자동으로 늘리고 줄이는 규칙을 설정하는 곳
+
+
+인스턴스? 만들기 
+1. EC2 서비스 화면으로 이동
+2. 인스턴스로 들어가서 인스턴스 시작
+3. AMI, 운영체제 선택
+4. 인스턴스 유형, 컴퓨터 성능 선택 앞에 t로시작하는지 c로 시작하는지 각 특장점들이 있기 때문에 따로 공부가 필요함.
+5. 네트워크 설정
+    vpc(virtual private cloud) : 나만을 위한 인스턴스 공간, 프로젝트가 여러개라면 각각 다른 vpc공간을 사용하는것이 권장됨.
+    서브넷 
+    퍼블릭 IP 자동 할당 : 공공ip를 할당해서 누구나 이 ip를 통해 요청할 수 있게끔
+6. 고급 세부 정보 
+    스팟 인스턴스 요청 : 최대로 지불할 요금선을 정해서 그 이상 과금이 안나오게함.
+    IAM : collaborator 설정 
+    storage: 8GiB 기본, 범용 SSD 기본
+7. 인스턴스 개수 : 서버개수 설정
+
+8. 키페어 : 키페어 pem 파일이 있어야 서버 접속가능 
+
+인스턴스 연결
+1. EC2 인스턴스 연결 : 그냥 연결누르면 됨. 
+2. SSH 클라이언트 연결 : pem 파일 있는 위치로 가서, aws 사이트 ssh 클라이언트 연결부분에 적혀있는 명령어들 실행 , 
+    chmod는 pem파일의 접근permission 설정하는 명령어임.   ls -al 하면 현재 파일들의 permission 설정들을 볼 수 있음.
+    명령어 다 입력하면 fingerprint 물어보는데 yes 하면 됨.
+
+인스턴스 중지, 종료.
+인스턴스를 중지를 해도 비용은 계속 발생함. 종료(삭제)를 해야지 비용발생이 안됨.
+스냅샷 기능은 삭제한 인스턴스가 다시 필요해질 상황을 대비해서 미리 백업을 해두는 기능. 비용발생.
+
+
+S3?
+S3는 저장소라고 생각하면 됨. 여러가지 파일들을 저장하거나 웹사이트도 호스팅할 수 있음.
+
+S3 만들기 
+버킷이름 설정
+리전 설정
+퍼블릭 액세스 차단 설정 : 체크해야지 나만 접근가능 해제하면 모든 유저가 다 들어와서 볼수있기때문에 치명적임. 추후에 IAM 관리를 통해서 접근가능한 유저 설정 가능.
+버킷 버전 관리 : git과 같이 버전 관리를 통해 일정 시점으로 롤백할 수 도 있는 기능.
+생성
+
+파일,폴더 업로드하기 (올라가는 파일들을 객체라고 표현을 함.)
+권한 : 파일마다 접근권한을 설정해줄수있음
+속성 : 스토리지 클래스는 보통 standard로 설정을 하고 자주 안꺼내보는 파일들은 밑에목록들을 사용하면됨. 비용이 저렴해짐.
+업로드가 되면 객체에 파일에 들어가서 속성을 확인할 수 있음. 이때 url이 뜨게 되는데 여기로 접속을 해도 퍼블릭 액세스를 막아놨기때문에 다운로드가 안됨.
+하지만 버켓 퍼블릭액세스를 풀고, 객체 액세스도 풀면  저 url로 들어갔을때 파일이 다운로드가 됨.
+
+
+
+aws-sdk?  사용하기 (nodejs에서 s3 버켓에 있는 파일들 불러서 쓰거나, 파일을 업로드할때 사용)
+npm 프로젝트 폴더 생성
+npm install @aws-sdk/client-s3
+s3 버킷 접근하기 위한 IAM 설정 필요 
+aws iam 서비스로 들어가서 사용자 추가 
+    사용자 이름 설정
+    AWS 액세스 유형선택 : 액세스 키 방식(key,secret) , 암호 방식 (그냥 비밀번호 치고 들어가기)
+    권한설정 부분에서 s3 검색시 , full access , read only 등 다양한 접근권한 종료가 있음 원하는 권한 체크후 생성
+
+플젝 폴더에서 libs 폴더 생성 후 s3Client.js 파일 생성
+const { S3Client } = require("@aws-sdk/client-s3");
+// Set the AWS Region.
+const REGION = "us-east-1";
+// Create an Amazon S3 service client object.
+const s3Client = new S3Client({
+  region: REGION,
+  credentials: {
+    accessKeyId: "",
+    secretAccessKey: "",
+  },
+});
+
+module.exports = { s3Client };
+
+
+플젝 메인 위치에서 index.js 파일 생성
+const { ListBucketsCommand } = require("@aws-sdk/client-s3");
+const { s3Client } = require("./libs/s3Client");
+
+const run = async () => {
+  try {
+    const data = await s3Client.send(new ListBucketsCommand({}));
+    console.log("Success", data.Buckets);
+    return data; // For unit tests.
+  } catch (err) {
+    console.log("Error", err);
+  }
+};
+run();
+
+
+
+RDS? 
+데이터베이스 생성하기 
+1. DB 종류 선택
+2. DB 인스턴스 식별자 : 기본 이름말고 알아보기 쉬운 이름 설정 권장.
+3. 퍼블릭 설정 : 퍼블릭으로 열어줘야 사용자이름과 암호, 엔드포인트만 있으면 어느 곳에서든 디비접속가능
+default로 생성
+4. 보안설정 인바운드 규칙에서 포트를 열어줘야지 mysql workbench라던지 postgresql pgamdin 으로 연결이 가능함.
+
