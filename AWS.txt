@@ -182,7 +182,7 @@ private ec2 접속.
 aws s3 ls --region [region위치]   : 해당 region에 있는 s3 버켓 리스트 보여줌. 이때 원래 이게 안되야 정상. endpoint없이 이게 된다는 것은 라우팅 테이블에 
   nat gateway가 설정되어있기때문임. 이는 외부에 트래픽이 노출되므로 s3전용 endpoint를 만들어 s3관련 요청은 endpoint를 사용하게 설정해야함.
 vpc endpoint생성
-  서비스에서 s3검색. 리전에 맞는 gateway 선택 
+  서비스에서 s3검색. 리전에 맞는 s3 gateway 선택 
   vpc선택 
   라우팅 테이블은 private 전용 테이블로 체크하고 생성.
   그러면 라우팅 테이블에 endpoint관련 설정이 자동으로 추가되어있음.
@@ -192,6 +192,9 @@ private ec2에서 다시 aws s3 ls --region [region위치] 입력하면 이제 n
 
 
 
+##################################################################################################
+##################################################################################################
+##################################################################################################
 awscli 설치 
 https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/getting-started-install.html
 aws --version
@@ -233,7 +236,6 @@ aws configure get region   default 지역 가져오기
 aws configure get region --profile [profileName]
 
 export AWS_PROFILE = [profileName]  환경변수 설정 (default가 이 프로필로 바뀜 )
-
 
 
 AWS 주요 서비스들 
@@ -281,11 +283,7 @@ EC2 서비스 : AWS 서버를 만들 수 있는 곳
 스냅샷 기능은 삭제한 인스턴스가 다시 필요해질 상황을 대비해서 미리 백업을 해두는 기능. 비용발생.
 
 
-S3?
-S3는 저장소라고 생각하면 됨. 여러가지 파일들을 저장하거나 웹사이트도 호스팅할 수 있음.
-
-
-
+S3 
 파일,폴더 업로드하기 (올라가는 파일들을 객체라고 표현을 함.)
 권한 : 파일마다 접근권한을 설정해줄수있음
 속성 : 스토리지 클래스는 보통 standard로 설정을 하고 자주 안꺼내보는 파일들은 밑에목록들을 사용하면됨. 비용이 저렴해짐.
@@ -302,6 +300,7 @@ aws iam 서비스로 들어가서 사용자 추가
     사용자 이름 설정
     AWS 액세스 유형선택 : 액세스 키 방식(key,secret) , 암호 방식 (그냥 비밀번호 치고 들어가기)
     권한설정 부분에서 s3 검색시 , full access , read only 등 다양한 접근권한 종료가 있음 원하는 권한 체크후 생성
+
 
 플젝 폴더에서 libs 폴더 생성 후 s3Client.js 파일 생성
 const { S3Client } = require("@aws-sdk/client-s3");
@@ -335,7 +334,6 @@ const run = async () => {
 run();
 
 
-
 RDS? 
 데이터베이스 생성하기 
 1. DB 종류 선택
@@ -344,3 +342,7 @@ RDS?
 default로 생성
 4. 보안설정 인바운드 규칙에서 포트를 열어줘야지 mysql workbench라던지 postgresql pgamdin 으로 연결이 가능함.
 
+
+모놀리식 아키텍쳐 vs 마이크로서비스 아키텍쳐 
+모놀리식은 소규모 프로젝트에 적합. 
+마이크로서비스는 기능마다 독립적으로 분리하여 유지보수가 쉽게 설계하는것. 대규모 프로젝트에 적합.
