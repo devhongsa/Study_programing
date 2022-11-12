@@ -149,7 +149,7 @@ private subnet에 ec2 만들기. 퍼블릭 Ip 비활성화. 키페어 등록/생
 **보안그룹설정 : public ec2에서의 ssh요청을 받을 것이므로 SSH 포트22번에 사용자지정 public 보안그룹만 허용 설정.
               모든 ICMP 0-65535 포트 사용자지정 public 보안그룹만 허용 설정.
 
-**이때 public subnet의 NACL설정에서 만약 모든트래픽허용을 안해주고 SSH만 허용해줬으면 private ec2에서 오는 응답을 못받기때문에 통신이 안된다.
+**이때 public subnet의 NACL설정에서 만약 모든트래픽허용을 안해주고 SSH만 허용해줬으면 private ec2에서 오는 응답(응답포트는 ssh포트와 다르기때문)을 못받기때문에 통신이 안된다.
 
 Nat gateway 생성 : public subnet에 생성. 탄력적 IP 할당. 연결유형 퍼블릭 
 private subnet의 routing table에 가서 0.0.0.0/0의 요청을 위에 만든 nat gateway로 보내주는걸로 설정추가. natgateway는 이를 igw로 연결
@@ -341,8 +341,65 @@ RDS?
 3. 퍼블릭 설정 : 퍼블릭으로 열어줘야 사용자이름과 암호, 엔드포인트만 있으면 어느 곳에서든 디비접속가능
 default로 생성
 4. 보안설정 인바운드 규칙에서 포트를 열어줘야지 mysql workbench라던지 postgresql pgamdin 으로 연결이 가능함.
+5. DB username과 password 기억해놓기 
+
+
 
 
 모놀리식 아키텍쳐 vs 마이크로서비스 아키텍쳐 
 모놀리식은 소규모 프로젝트에 적합. 
 마이크로서비스는 기능마다 독립적으로 분리하여 유지보수가 쉽게 설계하는것. 대규모 프로젝트에 적합.
+
+
+
+
+
+
+############################################################################
+###############  django project에 AWS rds 연결하기  ###########################
+############################################################################
+
+1. settings.py에 생성한 DB의 name, username, password, host 주소 , port 입력
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'fastcampus',
+        'USER': 'hongsa',
+        'PASSWORD': 'Dnjfchs23',
+        'HOST': 'testhongmysql.cpikzej9kpmo.us-east-1.rds.amazonaws.com',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'"
+        }
+    }
+}
+
+2. brew install mysql, pip install mysqlclient  만약 brew install mysql 먼저 안하면 client설치 오류남.
+3. ubuntu 환경에서는 sudo apt-get install libmysqlclient-dev 해주고 mysql 설치하면 됨.
+4. python3 manage.py migrate 해주면 db와 연결완료 
+
+
+############################################################################
+###############  EC2에 django 프로젝트 배포하기 #################################
+############################################################################
+
+- ubuntu EC2 인스턴스 생성. 보안규칙 : SSH 22포트 모든ip, 사용자 지정 TCP 8000포트 모든 ip
+- 인스턴스 연결
+- sudo apt-get update
+- sudo apt-get install build-essential
+- sudo apt-get install python3
+- django settings에 ALLOWED_HOSTS 부분에 ec2 public dns 주소넣어주고, project github 레포지토리 생성.
+- ssh-keygen -t rsa : passphrase 비밀번호도 생성. 이게 github의 deploy key가 될것임.
+- cd .ssh , cat id_rsa.pub : key 복사 후 github 레포지토리 setting에 deploy key 생성.
+- ssh-keygen -t rsa -C "내깃헙이메일" : overwrite 
+- cat id_rsa.pub : 복사해서 내 깃헙 "계정"의 settings에 SSH and GPG keys 목록으로 가서 ssh 키 생성
+- ec2에서 mkdir [프로젝트이름] , git clone [레포지토리SSH주소] : passphrase 입력하면 clone됨.
+- sudo apt-get install virtualenv
+- virtualenv -p python myenv
+- sudo apt-get install python3-pip
+- pip install -r requirements.txt 
+- python3 manage.py runserver 0.0.0.0:8000
+- 인터넷에서 ec2 퍼블릭 dns 주소:8000 접속해보면 완료
+- ctrl-z , bg, disown -h  : 이렇게 하면 ec2 logout 해도 서버가 계속 백그라운드로 돌아감. 이거 안하면 logout시 서버도 같이 꺼짐.
+- ps-ef | grep python : 현재 작업중인 python 파일들을 보여줌. 이 작업들에 아이디 번호가 있는데 kill -9 아이디번호 해주면 작업 강제종료.
+

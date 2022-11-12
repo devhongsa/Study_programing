@@ -1,5 +1,6 @@
 # https://lucky516.tistory.com/52?category=1010534 장고로 웹페이지 만들기 튜토리얼 
 ## https://docs.djangoproject.com/ko/4.1/intro/tutorial01/  장고 docs
+## https://www.django-rest-framework.org/tutorial/1-serialization/ 장고 rest framework docs
 
 # pip install django
 # python3 -m pip install Django (mac os)
@@ -45,6 +46,25 @@
 # polls/admin.py  파일에서 db테이블을 코딩시켜놓으면 admin전용 웹사이트에서 쉽게 db를 조작할 수 있음
 
 
-
-
+#{% csrf_token %} : 모든 post 요청에 대해서 위조방지를 위한 보안기능. post요청은 무조건 이거를 써야함.
 ### DDD 
+
+
+
+##### 장고 개발 로드맵 
+# pip install django 
+# python3 -m pip install Django (mac os)
+# django-admin startproject myprojectname  :  기본 프로젝트 개발환경 구성. 
+# settings.py 에서 DB뭐 쓸건지, timezone 뭔지, 어떤 웹앱을 탑재할건지 기본 세팅
+# python manage.py startapp mywebappname  : 웹앱 개발을 위한 기본 환경 구성.
+# settings.py에서 installed_app부분에 mywebapp 탑재 
+# mywebapp의 models.py 에서 db 테이블 정의
+# python manage.py makemigrations mywebbappname  : db 테이블 migration -> migrations폴더에 intial파일 생성됨
+# python manage.py migrate : mywebbapp에서 migration된 내용들 실제 db에 적용.
+# project urls.py에서 mywebapp 경로설정.
+# mywebapp 에서 urls.py 만들고 api 개발 시작. 이러한 url요청이오면 views.py의 어떤 함수를 실행시켜라라는 로직구현. 실제 메인로직부분은 views.py에서 담당. 
+# views.py에서 특정 url로 요청이 왔을때 어떤 작업을 할 건지 메인로직 구현. 여기서 얻어진 유의미한 데이터들을 template html에 context로 전달하고 리스폰스.
+# mywebapp/templates/mywebapp 에서 template html 파일 작성. views.py에서 받아온 데이터들을 html에 표현하여 사용자에게 전달
+
+# python manage.py createsuperuser : admin 계정을 만들고 mywebapp admin.py에서 DB 테이블 등록하면, 웹페이지에서 쉽게 DB조작가능.
+# /admin url로 접속하면 됨.
