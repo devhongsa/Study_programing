@@ -65,6 +65,23 @@
 # mywebapp 에서 urls.py 만들고 api 개발 시작. 이러한 url요청이오면 views.py의 어떤 함수를 실행시켜라라는 로직구현. 실제 메인로직부분은 views.py에서 담당. 
 # views.py에서 특정 url로 요청이 왔을때 어떤 작업을 할 건지 메인로직 구현. 여기서 얻어진 유의미한 데이터들을 template html에 context로 전달하고 리스폰스.
 # mywebapp/templates/mywebapp 에서 template html 파일 작성. views.py에서 받아온 데이터들을 html에 표현하여 사용자에게 전달
+# AWS에 배포시 EC2 퍼블릭 dns 주소를 settings.py ALLOWED_HOSTS 에 추가해줘야함.
 
 # python manage.py createsuperuser : admin 계정을 만들고 mywebapp admin.py에서 DB 테이블 등록하면, 웹페이지에서 쉽게 DB조작가능.
 # /admin url로 접속하면 됨.
+
+
+# cookie 
+# 원리 :
+    # 클라이언트가 페이지를 요청
+    # 서버에서 쿠키생성
+    # 브라우저에 쿠키 저장. 
+    # http헤더에 쿠키를 포함 시켜 응답
+    # 클라이언트가 같은 요청을 할 경우 Http헤더에 쿠키를 함께 보냄
+# session 
+# 원리 :
+    # 클라이언트가 서버 접속시 세션 ID 발급
+    # 클라이언트는 세션ID에 대해 쿠키를 사용해서 저장하고 가지고 있음
+    # 클라이언트는 서버에 요청할때, 이 쿠키의 세션ID를 서버에 전달해서 사용 
+    # 서버는 세션ID를 전달 받아서 별다른 작업없이 세션ID로 세션에 있는 클라이언트 정보를 가져옴
+    # 클라이언트 정보를 가지고 서버 요청을 처리하여 클라이언트에 응답

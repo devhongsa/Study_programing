@@ -15,6 +15,12 @@ https://niceman.tistory.com/145         ##멀티프로세싱
 #pip install -r requirements.txt   txt파일에 있는 패키지들 install
 #/usr/local/bin/python3.7 -m pip install psutil  원하는 interpreter에 패키지 설치 
 
+#특정 프로젝트에서만 필요한 패키지들 requirements.txt 만들어줌
+#pip install pipreqs
+#pipreqs ~/Desktop/github/deliveryProject 
+
+
+
 # 현재 경로 pwd
 
 x = [1,2,3,...]

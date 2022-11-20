@@ -151,10 +151,6 @@ private subnet에 ec2 만들기. 퍼블릭 Ip 비활성화. 키페어 등록/생
 
 **이때 public subnet의 NACL설정에서 만약 모든트래픽허용을 안해주고 SSH만 허용해줬으면 private ec2에서 오는 응답(응답포트는 ssh포트와 다르기때문)을 못받기때문에 통신이 안된다.
 
-Nat gateway 생성 : public subnet에 생성. 탄력적 IP 할당. 연결유형 퍼블릭 
-private subnet의 routing table에 가서 0.0.0.0/0의 요청을 위에 만든 nat gateway로 보내주는걸로 설정추가. natgateway는 이를 igw로 연결
-이렇게 하면 private ec2에서 sudo yum install mysql 같은 명령어 수행가능 
-
 이후 public ec2에 private ec2 keypair 파일 저장하기 : scp -i publickeypair.pem privatekeypair.pem ec2-user@퍼블릭ip:/home/ec2-user
 public ec2 ssh 접속 -> public ec2에서 private ec2 ssh 접속.
 
@@ -165,6 +161,13 @@ putty : public ip 주소를 ip address에 복붙, ssh체크 => 옆에 ssh-Auth�
       =>설정값 저장하고 open 누르기 => 커맨드창에 ssh privateIP 입력 
 
 
+
+###########################################
+Nat gateway 만들고 private ec2와 연결하기
+###########################################
+Nat gateway 생성 : public subnet에 생성. 탄력적 IP 할당. 연결유형 퍼블릭 
+private subnet의 routing table에 가서 0.0.0.0/0의 요청을 위에 만든 nat gateway로 보내주는걸로 설정추가. natgateway는 이를 igw로 연결
+이렇게 하면 private ec2에서 sudo yum install mysql 같은 명령어 수행가능 
 
 
 ###########################################
@@ -188,6 +191,8 @@ vpc endpoint생성
   그러면 라우팅 테이블에 endpoint관련 설정이 자동으로 추가되어있음.
 private ec2에서 다시 aws s3 ls --region [region위치] 입력하면 이제 nat gateway가 아닌 vpc endpoint를 사용하게 됨.
   
+
+
 
 
 
@@ -267,7 +272,9 @@ EC2 서비스 : AWS 서버를 만들 수 있는 곳
             인바운드 규칙 : 내 서버에 어떤 요청을 허용할것인지, 특정ip만 요청할 수 있게 하는 등, 보안설정
 
     로드 밸런싱
-        로드 밸런서 : 서버에 부하가 걸렸을때, 똑같은 서버를 자동으로 늘리고 줄이는 규칙을 설정하는 곳
+        로드 밸런서 : 서버에 부하가 걸렸을때, 똑같은 서버를 자동으로 늘리고 줄이는 규칙을 설정하는 곳, 여러 서버에 트래픽을 자동으로 분산시켜줌.
+        L4: client요청이 왔을때 어떤 데이터인지는 보지않고, 그냥 ip만 분산해줌. 비용저렴.  속도 빠름.
+        L7: 요청이 왔을때 어떤요청인지 확인을하고 스마트하게 분산시켜줌. 속도 문제, 비용문제 
 
 
 
@@ -380,13 +387,13 @@ DATABASES = {
 
 
 ############################################################################
-###############  EC2에 django 프로젝트 배포하기 #################################
+###############  EC2에 django 프로젝트 배포하기, docker 만들기, nginx 적용하기 #################################
 ############################################################################
 
 - ubuntu EC2 인스턴스 생성. 보안규칙 : SSH 22포트 모든ip, 사용자 지정 TCP 8000포트 모든 ip
 - 인스턴스 연결
 - sudo apt-get update
-- sudo apt-get install build-essential
+- sudo apt-get install build-essential  : 개발에 필요한 패키지 모음. 소스 컴파일러(GCC) 설정이나 의존성 해결하는 configure,make 명령어 등
 - sudo apt-get install python3
 - django settings에 ALLOWED_HOSTS 부분에 ec2 public dns 주소넣어주고, project github 레포지토리 생성.
 - ssh-keygen -t rsa : passphrase 비밀번호도 생성. 이게 github의 deploy key가 될것임.
@@ -395,11 +402,394 @@ DATABASES = {
 - cat id_rsa.pub : 복사해서 내 깃헙 "계정"의 settings에 SSH and GPG keys 목록으로 가서 ssh 키 생성
 - ec2에서 mkdir [프로젝트이름] , git clone [레포지토리SSH주소] : passphrase 입력하면 clone됨.
 - sudo apt-get install virtualenv
-- virtualenv -p python myenv
+- 내 프로젝트 작업폴더에서 virtualenv -p python [가상환경이름]
+- source 가상환경이름/bin/activate
 - sudo apt-get install python3-pip
+- db mysql 사용시 : sudo apt-get install libmysqlclient-dev
+- (docker) vi requirements.txt => uwsgi 추가. 
 - pip install -r requirements.txt 
 - python3 manage.py runserver 0.0.0.0:8000
 - 인터넷에서 ec2 퍼블릭 dns 주소:8000 접속해보면 완료
+- 만약 접속이 안된다면, 연결한 db에도 접근이 가능한상태인지 확인.
+
 - ctrl-z , bg, disown -h  : 이렇게 하면 ec2 logout 해도 서버가 계속 백그라운드로 돌아감. 이거 안하면 logout시 서버도 같이 꺼짐.
-- ps-ef | grep python : 현재 작업중인 python 파일들을 보여줌. 이 작업들에 아이디 번호가 있는데 kill -9 아이디번호 해주면 작업 강제종료.
+- ps -ef | grep python : 현재 작업중인 python 파일들을 보여줌. 이 작업들에 아이디 번호가 있는데 kill -9 아이디번호 해주면 작업 강제종료.
+
+- (docker) curl -fsSL https://get.docker.com/ | sudo sh
+- (docker) sudo usermod -aG docker $USER 
+- (docker) docker --version
+- (docker) vi Dockerfile (프로젝트 폴더 안에 생성)
+아래내용 붙여넣기
+FROM python:3.10.6
+
+ENV PYTHONUNBUFFERED 1
+
+RUN apt-get -y update
+RUN apt-get -y install vim
+
+RUN mkdir /srv/docker-django
+ADD . /srv/docker-django
+
+WORKDIR /srv/docker-django
+
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+EXPOSE 8000
+CMD ["python","manage.py","runserver","0.0.0.0:8000"]
+
+#nginx 쓸거면 마지막 두줄은 빼야됨.
+# ADD . 부분은 docker container를 /srv/docker-django 에 만들거고 WORKDIR는 여기서 실행할거라는 뜻.
+#################################
+
+docker build -t docker/django .     #여기서 docker/django는 이미지 이름임. build는 도커이미지 생성하라는 명령어.
+docker image list    내가 만든 도커이미지 목록보기 
+docker image rm --force imageID
+docker run -d -p 8000:8000 docker/django     docker/django라는 이름으로 컨테이너를 실행시키라는 뜻.
+  -d는 백그라운드로 실행하라는 뜻
+  -p는 포트라는 뜻. 8000:8000은 8000번 포트로 요청이 왔을때 8000번포트로 연결시켜주라는 뜻.
+
+docker ps : 현재 실행되고 있는 docker container들 상태확인. container-id 확인가능
+docker stop cotainer-id 
+
+
+##### nginx 적용  #####
+sudo apt-get install nginx
+프로젝트 폴더에서 vi uwsgi.ini
+아래내용 붙여넣기
+[uwsgi]
+socket = /srv/docker-django/django.sock
+master = true
+
+processes = 1
+threads = 2
+
+chdir = /srv/docker-django
+module = deliveryProject.wsgi
+# deliveryProject : project folder name
+
+logto = /var/log/uwsgi/uwsgi.log
+log-reopen = true
+
+vacuum = true
+###########################
+
+(nginx) ~경로에서 mkdir nginx 
+cd nginx 
+### vi nginx.conf 
+아래내용 붙여넣기
+
+user root; 
+worker_process auto;
+pid /run/nginx.pid;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+  sendfile on;
+  tcp_nopush on;
+  tcp_nodelay on;
+  keepalive_timeout 65;
+  types_hash_max_size 2048;
+
+  include /etc/nginx/mime.types;
+  default_type application/octet-stream;
+
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2; # Dropping SSLv3, ref: POODLE
+  ssl_prefer_server_ciphers on;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  gzip on;
+  gzip_disable "msie6";
+
+  include /etc/nginx/sites-enabled/*;
+}
+###############################
+
+
+### vi nginx-app.conf 
+
+upstream uwsgi {
+  server unix:/srv/docker-django/apps.sock;
+}
+
+server {
+  listen 80;
+  server_name localhost;
+  charset utf-8;
+  client_max_body_size 128M;
+
+  location / {
+    uwsgi_pass uwsgi;
+    include uwsgi_params;
+  }
+
+  location /media/ {
+    alias /srv/docker-django/.media/;
+  }
+
+  location /static/ {
+    alias /srv/docker-django/.static/;
+  }
+}
+###########################
+
+### vi Dockerfile 
+
+FROM nginx:latest
+
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx-app.conf /etc/nginx/sites-available/
+
+RUN mkdir -p /etc/nginx/sites-enabled/\
+  && ln -s /etc/nginx/sites-available/nginx-app.conf /etc/nginx/sites-enabled/
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+##############################
+
+docker build -t server_dev/nginx .
+docker run -d -p 80:80 server_dev/nginx
+
+
+
+###########################################
+docker-compose 사용하기 
+###########################################
+~ 경로에서  (projectFolder랑 nginx폴더가 위치해있는 경로에서)
+sudo curl -L "https://github.com/docker/compose/releases/download/v2.1.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+### vi docker-compose.yml
+
+version: '3'
+services:
+
+  nginx:
+    container_name: nginx 
+    build: ./nginx 
+    image: docker-django/nginx 
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./deliveryProject:/srv/docker-django
+      - ./log:/var/log/nginx 
+    depends_on:
+      - django
+  
+  django:
+    container_name: django 
+    build: ./deliveryProject
+    image: docker-django/django 
+    restart: always 
+    command: uwsgi --ini uwsgi.ini 
+    volumes:
+      - ./deliveryProject:/srv/docker-django 
+      - ./log:/var/log/uwsgi
+
+# depends_on 설정은 django라는 컨테이너가 없으면 실행하지 말라는 의미. 즉, django 먼저 실행시키라는뜻.
+#############################
+
+docker image rm --force imageID   : 기존에 있던 컨테이너 이미지 삭제하기 
+ docker stop $(docker ps -a -q)  모든 컨테이너 중지
+ docker rm $(docker ps -a -q)    모든 컨테이너 지우기
+ docker rmi $(docker images -q)  모든 이미지 지우기
+
+docker-compose up -d --build 
+docker-compose ps
+
+
+###########################################
+EC2 로드 밸런서 연결하기
+###########################################
+대상 그룹 만들기 : 대상그룹이란 EC2 서버들의 집합체이다. 마이크로서비스같은경우 기능마다 서버가 분리되어있으므로 이를 관리하기 위해서 서비스마다 대상그룹을 만듬.
+    대상그룹설정에서 instance체크
+    port설정은 로드밸런서가 이 대상그룹에 어떤 포트로 요청을 보내줄것인지에 대한 설정임(EC2의 보안그룹 인바운드 포트번호) 즉 대상그룹마다 각각의 다른포트를 정해줘야함.
+    대상그룹마다 포트가 다 다르기때문에 추후에 대상그룹이 더 생기면 로드밸런서 리스너에서도 새로 만든 대상그룹을 추가 해주고 규칙을 수정해줘야함.
+    
+    HTTP1 체크
+    health check : 로드 밸런서가 이제 대상그룹안에 있는 서버들에게 요청을 보낼 때, 어떤 서버는 죽어있을 수 있기 때문에 살아있는지 체크를 해보는거임.
+      특정 url주소로 한번 요청을 해보고 응답이 오는지 테스트를 하는 과정. path에는 /order/shops  이런 주소를 적어주면됨.
+      이때 health check를 할때 EC2의 private ip로 보내므로 이 주소를 ALLOWED_HOSTS에 추가해줘야함.
+로드 밸런서 생성 : 
+  Application load balancer(L7)로 생성 
+  internet-facing
+  IPv4 
+  VPC, vpc AZ 체크
+  로드밸런서가 요청받을 포트번호 80
+  보안그룹설정 : 인바운드 80포트로 오는 모든 요청허용, 아웃바운드 모든 트래픽허용
+  내가 만든 대상그룹과 연결.
+** 생성되면 나오는 로드 밸런서의 퍼블릭 dns 주소를 ec2 장고 프로젝트의 settings.py  ALLOWED_HOSTS에 추가
+
+EC2 AMI 생성 :
+  현재 실행중인 EC2의 모든 컴퓨터환경과 똑같은 AMI(amazon machine image)을 생성할 수 있다.(안에있는 모든 파일들도 포함해서 복제함.)
+  인스턴스 작업에서 이미지 템플릿 -> 이미지 생성 
+  생성된 이미지 오른쪽 클릭 인스턴스 생성
+  이후 대상 그룹에 추가 가능
+
+ALB Rule 설정 :
+마이크로서비스에서는 서비스 기능별로 (/order, /delivery) 대상 그룹(target group)을 만들고, 각각의 대상그룹안에 여러개의 서버를 구성해놓는다.
+로드 밸런서는 이제 /order로 요청이오면 대상그룹1로 보내고, /delivery로 오면 대상그룹2로 보내는 gateway 역할을 하게 된다.(ALB Rule)
+  로드 밸런서누르고 리스너 항목에 보면 규칙 보기/편집 클릭 
+  규칙 + 버튼 누르고 새로운 규칙에 경로(/delivery)와 대상그룹 선택하고 규칙 추가.
+
+Sticky Session : 로그인을 하고나서 새로고침을 누르면 계속 로그인이 유지되어있어야하는데 타겟그룹내에 서버가 여러개이다 보니까 로드밸런서가 새로고침할때마다
+  다른 서버로 요청을 보낼 수 있고, 그럴때마다 session이 저장되어있지않은 서버에서는 다시 로그인을 해야되는 상황이 생긴다. sticky session은 
+  타겟그룹내의 서버에 session을 저장하는것이 아닌 로드밸런서에 session을 저장해서 이런 상황을 막고자 하는 기능이다.
+
+
+
+###########################################
+AWS Route53 , DNS 동작원리
+###########################################
+도메인을 등록하려는 사람(hongsa.com)이 등록대행자에 도메인과 ip주소 전달 => 등록대행자(Aws Route53)는 DNS server에 hongsa.com은 어떤 ip와 연결할것인지에 
+  대한 정보를 db 저장하고 도메인 등록소에 전달 => 도메인 등록소 Top level domain db에 이 정보를 저장 후 ICANN이라는 국제표준기구로 전달 => 
+  ICANN은 Root name server에 이 정보들 저장.
+
+client가 hongsa.com에 접속을 시도했을때 ICANN으로 처음 요청을 보냄 => ICANN은 다시 등록소의 Top level domain에서 hongsa.com은 어떤 ip인지 찾아와서
+client에게 전달해준다.
+
+Aws route53에서 도메인 등록. 1년 2만원 정도. 
+도메인 등록되면 호스팅 영역에 내 도메인 생성됨. 
+레코드에서 유형 IPv4, 라우팅정책은 단순라우팅으로 설정. 실제 로드밸런서 dns주소나 ec2 ip주소, 혹은 cloudfront를 등록하면 내가 등록한 도메인으로 접속시 연결이 됨.
+만약 로드밸런서 포트를 80포트가 아닌 다른 포트로 설정했다면 domain.com:port 를 쳐줘야 연결이 가능함.
+추가로 django 프로젝트 settings.py ALLOWED_HOSTS에도 domain 등록을 해줘야함.
+
+
+
+###########################################
+Route53 Certificate Manager 적용하여, https 사용하기 
+###########################################
+https는 http와 달리 client와 server간의 오가는 데이터들을 암호화해서 보내기 때문에 보안성이 뛰어나다.
+단점은 속도가 느려짐
+
+https를 사용하기 위해서는 서버보안인증서를 route53에 적용시켜줘야지 https를 사용할 수 있다.
+
+AWS Certificate Manager로 이동
+인증서 요청 , 퍼블릭 인증서로 요청
+내 도메인 입력 honglion.com , www.honglion.com
+검증방법 : 이거같은 경우 honglion.com이 내가 구매한 도메인이라는 것을 어떻게 증명할지에 대한 설정이다.
+    DNS 검증방식 선택 
+이후 내가 인증서를 요청한 도메인마다 Route53에 CNAME 레코드를 생성해주면 알아서 검증해줌.
+검증이 되고 정상발급되면 로드밸런서에서 HTTPS 리스너를 추가해줘야한다.
+리스너 추가:
+  HTTPS 443 포트
+  기본작업, 전달대상(Forward to) 설정 
+  security policy 기본선택
+  기본 SSL 인증서 : 내가 방금 만든 도메인 인증서 선택
+
+
+
+###########################################
+Cloudfront 사용하기
+###########################################
+Cloudfront = Cache + CDN 
+서버가 어느 지역에 위치해 있든지, 전세계사람들이 빠르게 내 서버를 이용할 수 있게 해줌.
+  Cache : client가 요청할때마다 origin서버에서 계산해서 응답해주는 것이 아닌, 미리 연산된 값을 Cache서버에 저장해놓고
+  그 값을 client가  요청해올때마다 전달해주는 방식.
+  이렇게 되면 Cache서버는 새로 업데이트된 정보를 전달못해주는 문제가 발생하는데, 이를 해결하기위해 Cache서버를 일정시간간격으로
+  업데이트해줘서 이런 문제를 방지한다(TTL 설정)
+
+  CDN(Content Delivery Network) : 미국에서 한국서버에 요청을 하면 응답시간이 길지만 한번 저장된 정보를 미국의 cache서버(edge location)에 저장해놓으면
+    client가 다음에 요청할때 미국 cache서버에 요청을 하게되기때문에, 어느 위치에 있든 속도가 매우 빨라진다.
+
+Cloudfront 생성하기 :
+  AWS Cloudfront에 가서 생성 
+  원본 도메인은 : 내 ALB로 설정
+  엣지로케이션은 모든 지역선택시 비용높음. 
+  대체 도메인 이름 (CNAME)에 honglion.com, www.honlion.com 추가 
+  캐시키 및 원본요청에서 legacy cache settings에서 customize TTL설정은 몇초마다 한번씩 캐시서버가 원본데이터 요청을 할 것인지에 대한 설정임.
+  SSL 인증서에 내 AWS Certificate Manager 인증서 선택.
+  나머지 설정값은 우선 기본으로 설정해서 생성.
+  이후 Route53에 가서 내 도메인 레코드에서 honglion.com, www.honlion.com IPv4유형 별칭 설정을 ALB에서 Cloudfront로 바꿔줘야함.
+
+client와 server 간의 로드맵 
+client => Route53, Certificate Manager => Cloudfront => ALB => EC2 
+
+
+##################################################
+Nginx, Gunicorn, Supervisor 사용하여 자동배포서버 만들기.
+##################################################
+인스턴스 생성.
+sudo apt update
+sudo apt-get update 
+sudo apt-get install python3-pip 
+sudo pip3 install gunicorn 
+sudo apt-get install supervisor 
+sudo apt-get install nginx 
+sudo pip3 install django 
+django-admin startproject [project_name] 
+cd [project_name] 
+vi [project_name]/settings.py  : ALLOWED_HOSTS 에 "*" 추가
+
+cd /etc/supervisor/conf.d/ 
+sudo touch django.conf 
+sudo vi django.conf
+
+###아래 내용복사해서 붙여넣기###
+[program:gunicorn]
+directory=/home/ubuntu/[project_name]
+command=/usr/local/bin/gunicorn --workers 3 --bind unix:/home/ubuntu/[project_name]/app.sock [project_name].wsgi:application
+autostart=true
+autorestart=true
+stderr_logfile=/logs/gunicorn.err.log
+stdout_logfile=/logs/gunicorn.out.log
+
+###python3 manage.py runserver 0.0.0.0:8000### 요거는 webserver를 사용할것이라서 안적어도 됨.
+
+sudo mkdir /logs   : 경로 맨처음(home, usr, opt 폴더 있는곳)에 logs 폴더생성. 
+sudo supervisorctl reread :  gunicorn:available 뜨면 됨.
+sudo supervisorctl update :  gunicorn:added process group 뜨면 됨.
+cd /etc/nginx 
+cd sites-available
+sudo touch django.conf 
+sudo vi django.conf 
+
+#### 아래 내용 복사붙여넣기 ####
+server{
+  listen 80;
+  server_name *.compute.amazonaws.com;
+  location / {
+    include proxy_params;
+    proxy_pass http://unix:/home/ubuntu/[project_name]/app.sock;
+  }
+}
+#### 80번 포트니까 ec2 보안그룹에서도 80번포트를 열어줘야 접속가능함
+
+sudo ln django.conf /etc/nginx/sites-enabled/
+sudo service nginx restart 
+(sudo service nginx stop)
+
+nginx 구동까지 마친상태에서 이 EC2의 AMI를 생성하고 ec2를 만들면, 별도의 설정작업필요없이 서버가 자동으로 구동되어있어서 바로 접속이 가능해진다.
+
+
+
+##################################################
+AWS Autoscaling 설정하기
+##################################################
+인스턴스 이미지 생성하기(nginx가 적용되어 있는 인스턴스)
+ec2 시작템플릿 만들기 : 
+  autoscaling 기능 체크 
+  만들어놓은 인스턴스 AMI를 연결
+  그 외 컴퓨터 사양들 설정.
+이렇게 하면 autoscaling으로 서버를 늘릴때 자동으로 이 시작템플릿 설정으로 ec2를 만들어냄.
+Auto scaling 그룹생성 
+시작 템플릿 선택후 버전선택(버전은 내가 템플릿 설정을 수정할때마다 버전이 올라가는데 수정 전 버전을 선택할 수 도 있음.)
+vpc는 내가 만든 vpc있으면 거기로 하면되고 없으면 default 네트워크는 가용 할 수 있는 서브넷 모두 선택 
+로드밸런서에 연결하는게 좋음. 안그러면 나중에 우후죽순으로 생겨나면 관리가 어려워짐, 대상그룹도 선택
+상태확인 ELB 체크 , Cloud watch 활성화
+그룹크기는 인스턴스를 자동으로 생성할때 생성할수있는 최소 최대 갯수를 의미함.
+크기조정정책 :
+  cpu 사용률이 어느정도됐을때 auto scaling을 발동할 것인지에 대한 설정
+  워밍업 시간이란 인스턴스가 생성되고나서 세팅하는시간이 어느정도 필요하기 때문에 그 유휴시간을 얼마나 둘것이냐에 대한 설정값임.
+  축소 비활성은 인스턴스를 늘리기만하고 줄이진않겠다는 뜻 
+
+
+
+
 

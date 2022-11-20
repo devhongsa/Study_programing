@@ -1,0 +1,245 @@
+ubuntu 환경 docker, docker-compose, kubectl, kustomize, minikube 설치 
+
+cat > install-docker.sh 
+아래 내용 붙여넣기
+#!/usr/bin/env bash
+## INFO: https://docs.docker.com/engine/install/ubuntu/
+
+set -euf -o pipefail
+
+DOCKER_USER=ubuntu
+
+# Install dependencies
+sudo apt-get update && sudo apt-get install -y \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release
+
+# Add Docker’s official GPG key
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+
+# Set up the stable repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# Install Docker CE
+sudo apt-get update && sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+
+# Use Docker without root
+sudo usermod -aG docker $DOCKER_USER
+
+#########
+
+chmod u+x install-docker.sh 
+./install-docker.sh
+exit 하고 다시 ubuntu 접속해야 docker permission 반영되서 사용가능. 
+
+
+docker-compose 설치하기 
+cat > install-docker-compose.sh 
+아래내용 붙여넣기 
+#!/usr/bin/env bash
+## INFO: https://docs.docker.com/compose/install/
+
+set -euf -o pipefail
+
+DOCKER_COMPOSE_VERSION=v2.1.1
+
+# Download and install
+sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+############
+
+chmod u+x install-docker-compose.sh
+./install-docker-compose.sh
+
+
+kubectl 설치하기 
+cat > install-kubectl.sh 
+아래내용 붙여넣기 
+#!/usr/bin/env bash
+## INFO: https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management
+
+set -euf -o pipefail
+
+# Install dependencies
+sudo apt-get update && sudo apt-get install -y \
+  apt-transport-https \
+  ca-certificates \
+  curl \
+  gnupg \
+  lsb-release
+
+# Add kubectl's official GPG key
+curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/kubernetes-archive-keyring.gpg
+
+# Set up the repository
+echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+# Install kubectl
+sudo apt-get update && sudo apt-get install -y kubectl
+#################
+
+chmod u+x install-kubectl.sh
+./install-kubectl.sh
+
+
+
+kustomize 설치하기 
+cat > install-kustomize.sh 
+아래내용 붙여넣기
+#!/usr/bin/env bash
+## INFO: https://kubectl.docs.kubernetes.io/installation/kustomize/binaries/
+
+set -euf -o pipefail
+
+KUSTOMIZE_VERSION=v4.4.1
+
+# Download kustomize binary
+curl -s "https://raw.githubusercontent.com/kubernetes-sigs/kustomize/kustomize/${KUSTOMIZE_VERSION}/hack/install_kustomize.sh"  | bash
+
+# Install to /usr/local/bin
+sudo install -o root -g root -m 0755 kustomize /usr/local/bin/kustomize
+#####################
+
+chmod u+x install-kustomize.sh
+./install-kustomize.sh
+
+
+minikube 설치
+cat > install-minikube.sh 
+아래내용 붙여넣기
+#!/usr/bin/env bash
+## INFO: https://minikube.sigs.k8s.io/docs/start/
+
+set -euf -o pipefail
+
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+######### 
+
+chmod u+x install-minikube.sh 
+./instgall-minikube.sh
+
+
+
+#############################################################
+Mac OS환경에서 docker, docker-compose, kubectl, kustomize 설치하기 
+brew install --cask docker
+brew install kubectl 
+    docker에도 내장 kubectl이 있는데, 내장 kubectl과 충돌을 일으키면 brew link --overwrite kubernetes-cli 하면됨.
+brew install kustomize
+brew install minikube
+
+minikube start --driver docker : cluster 구성 
+cat ~/.kube/config
+
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority: /Users/hongseungmin/.minikube/ca.crt
+    extensions:
+    - extension:
+        last-update: Thu, 17 Nov 2022 15:13:28 KST
+        provider: minikube.sigs.k8s.io
+        version: v1.28.0
+      name: cluster_info
+    server: https://127.0.0.1:64046
+  name: minikube
+contexts:
+- context:
+    cluster: minikube
+    extensions:
+    - extension:
+        last-update: Thu, 17 Nov 2022 15:13:28 KST
+        provider: minikube.sigs.k8s.io
+        version: v1.28.0
+      name: context_info
+    namespace: default
+    user: minikube
+  name: minikube
+current-context: minikube
+kind: Config
+preferences: {}
+users:
+- name: minikube
+  user:
+    client-certificate: /Users/hongseungmin/.minikube/profiles/minikube/client.crt
+    client-key: /Users/hongseungmin/.minikube/profiles/minikube/client.key
+
+여기서 context부분은 어떤 user(여기서는 minikube user)로 어떤 cluster(여기서는 minikube cluster)에 접속할 것인지에 대한 내용임.
+
+minikube status 
+minikube pause  일시중지
+minikube start
+minikube stop   중지
+minikube unpause 재개
+minikube delete 삭제
+
+kubectl help 
+minikube help  쳐보면 명령어들이 나와있음.
+
+
+
+
+####################################
+Docker, Docker-compose 기본 개념
+####################################
+Docker가 나오게된 배경
+    개발서버에서 개발한 개발환경을 그대로 복제해서 배포서버에 그대로 배포하고 싶을때 (AMI 와 같은 기능)
+    같은 서버에서 독립적인 개발 환경을 여러개 만들고 싶을때 (가상환경과 같은 기능)
+
+가상환경도 비슷한 기능을 하지만 컴퓨팅 파워를 가상환경마다 수동으로 정해줘야함.
+그래서 상황마다 컴퓨팅파워가 유동적으로 분배되지 못하는 단점이 있음.
+
+도커는 컴퓨팅 자원을 공유해서 쓰므로 유동적으로 컨테이너에 컴퓨팅파워가 분배될 수 있다.
+그리고 도커 컨테이너를 생성하면 이에 대한 이미지를 생성할 수 있어서 똑같은 컨테이너를 무한히 생성할 수 있음( auto scaling과 같은 기능)
+
+Docker-compose
+docker 컨테이너끼리의 상호작용이 필요할때, 컨테이너간의 관계를 정의해 주는 것이 docker-compose기능임.
+예를들어 컨테이너2는 컨테이너1이 먼저 생성된 후에 생성되어야 한다는 규칙이라든지 이런것들을 설정하는 역할.
+
+
+####################################
+Docker 기본 명령어 
+####################################
+docker run [image] 
+docker create [image] 
+docker start [container] 
+docker ps -a 
+docker inspect [container]  : 컨테이너 상세정보 확인 
+docker pause [container]
+docker unpause [container]
+docker stop [container]
+docker kill [container] : 강제종료 
+docker stop $(docker ps -a -q) : 컨테이너 모두 중지 
+docker rm [container] : 삭제(실행중인 컨테이너는 불가)
+docker rm -f [container] : 강제삭제 (실행중인 컨테이너 종료 가능)
+docker container prune : 중지된 모든 컨테이너 삭제
+
+docker run --entrypoint sh ubuntu:focal  : --entrypoint는 docker ps 쳤을때 나오는 COMMAND 부분을 조작할 수 있는 명령어임.
+docker run -i -t -e MY_HOST=fastcampus.com ubuntu:focal bash : 컨테이너 내 환경변수 설정하기 
+docker run -i -t --env-file ./sample.env ubuntu:focal env : 컨테이너에 환경변수들 설정되어있는 env파일 내용 심고 환경변수 확인하기.
+
+docker exec [container] [command] : 실행중인 컨테이너에 명령어 실행하기 
+docker exec -i -t my-nginx bash : my-nginx컨테이너에 bash 셸로 접속하기 
+docker exec my-nginx env : my-nginx 컨테이너의 환경변수 확인하기 
+
+docker run -d -p 80:80 nginx   : 서버ip로 80번포트 요청이오면 컨테이너에 80번포트로 요청을 전달하겠다는 뜻. (hostPORT:containerPORT)
+docker run -d -p 127.0.0.1:80:80 nginx : 호스트IP 127.0.0.1에 80번포트로 오는 요청만 컨테이너로 전달하겠다는 뜻. 
+  curl 서버퍼블릭ip:80 으로 요청하면 connection 실패함.
+docker run -d --expose 80 nginx : --expose옵션은 그저 문서화 용도일뿐 실제 80포트로 바인딩하지는 않음.
+
+docker run \ 
+-i    호스트의 표준 입력을 컨테이너와 연결
+-t    TTY 할당
+--rm  컨테이너 실행 종료 후 자동 삭제 
+-d    백그라운드 모드로 실행 
+--name hello-world  컨테이너 이름 지정 
+-p 80:80    호스트:컨테이너 간 포트 바인딩 
+-v /opt/example:/example  호스트:컨테이너 간 볼륨 바인딩 
+fastcampus/hello-world:latest   실행할 이미지 이름 
+my-command    컨테이너 내에서 실행할 명령어 
