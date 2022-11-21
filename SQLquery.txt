@@ -84,8 +84,7 @@ ORDER BY user_num DESC;
 
 
 ###### 테이블 복사하기 #######
-create table newtable (like "oldtable" including all);
-insert into newtable ( select * from "oldtable");
+CREATE TABLE "public"."newAddressSchedule2" AS SELECT * FROM "public"."newAddressSchedule"
 
 
 

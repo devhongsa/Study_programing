@@ -391,6 +391,9 @@ df['fruit'].str.strip() # 양쪽공백제거하기
 timestamp = datetime.now()
 df = df[timestamp<=df['timestamp']]
 df = df[df['country'].isin(['한국','대만','일본'])]   ## 조건리스트로 찾기 
+df = df[df['country'].isin(['한국','대만','일본']).any(axis=1)]   ## isin not  
+
+
 
 df = df[df['name']!='hongsa']   #name이 hongsa인 칼럼 지우기 
 

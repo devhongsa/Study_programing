@@ -212,6 +212,19 @@ aws 액세스키 생성하기
 내 계정 클릭 후 보안 자격증명 들어가기 
 액세스키 생성. csv파일 생김. 
 
+### 자격증명하기 
+vi ~/.aws/credentials 
+[default]
+aws_access_key_id=AKIAIOSFODNN7EXAMPLE
+aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+
+vi ~/.aws/config
+[default]
+region=us-west-2
+output=json
+
+
+
 MFA 설정 : otp 만드는거라고 생각하면 됨.
 
 
@@ -230,6 +243,7 @@ aws-nuke
 
 프리티어 계정이 만료가 되면, bippr0901+a@gmail.com 이런식으로 새 계정을 만들어 주면 bippr0901이메일로 동일하게 이메일을 받을 수 있고, 
 프리티어 계정을 새로 만들수있음. 
+
 
 aws configure 로  키와 시크릿 등 설정. 
 aws sts get-caller-identity   내 자격증명 확인하기 

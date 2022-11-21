@@ -1,4 +1,6 @@
+##############################################
 ubuntu 환경 docker, docker-compose, kubectl, kustomize, minikube 설치 
+##############################################
 
 cat > install-docker.sh 
 아래 내용 붙여넣기
@@ -128,6 +130,8 @@ chmod u+x install-minikube.sh
 
 #############################################################
 Mac OS환경에서 docker, docker-compose, kubectl, kustomize 설치하기 
+#############################################################
+
 brew install --cask docker
 brew install kubectl 
     docker에도 내장 kubectl이 있는데, 내장 kubectl과 충돌을 일으키면 brew link --overwrite kubernetes-cli 하면됨.
@@ -202,6 +206,20 @@ Docker-compose
 docker 컨테이너끼리의 상호작용이 필요할때, 컨테이너간의 관계를 정의해 주는 것이 docker-compose기능임.
 예를들어 컨테이너2는 컨테이너1이 먼저 생성된 후에 생성되어야 한다는 규칙이라든지 이런것들을 설정하는 역할.
 
+# docker network 구조 
+호스트 ip(eth0) : 메인서버의 ip
+docker0 : docker 엔진에 의해 기본으로 생성되는 브릿지 네트워크 veth와 eth간 다리 역할 
+container 마다 veth(virtual eth)가 생성되고 각각의 ip를 가지게됨.
+
+docker network ls 
+docker network driver 
+  bridge 
+  host
+  none 
+  overlay : multi host networking에서 쓰임. 여러 서버들의 네트워크를 연결하는 역할.
+
+docker run -i -t --net none ubuntu:focal   : none네트워크
+
 
 ####################################
 Docker 기본 명령어 
@@ -210,7 +228,9 @@ docker run [image]
 docker create [image] 
 docker start [container] 
 docker ps -a 
+docker images 
 docker inspect [container]  : 컨테이너 상세정보 확인 
+docker image inspect [imageName]
 docker pause [container]
 docker unpause [container]
 docker stop [container]
@@ -218,6 +238,8 @@ docker kill [container] : 강제종료
 docker stop $(docker ps -a -q) : 컨테이너 모두 중지 
 docker rm [container] : 삭제(실행중인 컨테이너는 불가)
 docker rm -f [container] : 강제삭제 (실행중인 컨테이너 종료 가능)
+docker rm -f $(docker ps -a -q)    모든 컨테이너 지우기
+docker rmi -f $(docker images -q)  모든 이미지 지우기
 docker container prune : 중지된 모든 컨테이너 삭제
 
 docker run --entrypoint sh ubuntu:focal  : --entrypoint는 docker ps 쳤을때 나오는 COMMAND 부분을 조작할 수 있는 명령어임.
@@ -233,6 +255,23 @@ docker run -d -p 127.0.0.1:80:80 nginx : 호스트IP 127.0.0.1에 80번포트로
   curl 서버퍼블릭ip:80 으로 요청하면 connection 실패함.
 docker run -d --expose 80 nginx : --expose옵션은 그저 문서화 용도일뿐 실제 80포트로 바인딩하지는 않음.
 
+docker logs [container] : 전체 로그 확인
+docker logs --tail 10 [container]
+docker logs -f [container] : 실시간 로그 스트림 확인
+docker logs -f -t [container] : 로그마다 타임스탬프 표시
+
+/var/lib/docker/containers/[containerID]/[containerID]-json.log  :  linux ubuntu 호스트서버의 컨테이너 로그 저장 경로 
+nc -U ~/Library/Containers/com.docker.docker/Data/debug-shell.sock : macos는 여기 쉘로 들어가고 나서 위 경로로 가야 있음.
+
+로그용량 제한하기 (3mb로 제한, 최대 로그파일 5개로 설정.)
+docker run \
+-d \
+--log-driver=json-file \
+--log-opt max-size=3m \
+--log-opt max-file=5 \
+nginx
+
+
 docker run \ 
 -i    호스트의 표준 입력을 컨테이너와 연결
 -t    TTY 할당
@@ -240,6 +279,131 @@ docker run \
 -d    백그라운드 모드로 실행 
 --name hello-world  컨테이너 이름 지정 
 -p 80:80    호스트:컨테이너 간 포트 바인딩 
--v /opt/example:/example  호스트:컨테이너 간 볼륨 바인딩 
+-v /opt/example:/example  호스트:컨테이너 간 볼륨 바인딩 (호스트볼륨)
+  #호스트볼륨 
+  host-volume.sh 파일에
+    docker run \
+      -d \
+      -v $(pwd)/html:/usr/share/nginx/html \
+      -p 80:80 \
+      nginx
+  이후 host-volume.sh 파일실행하면 현재 메인서버에 있는 html폴더와 컨테이너 경로에 있는 html폴더가 바인딩되어서 공유하게된다.
+
+  #컨테이너 볼륨
+  container-volume.sh 파일
+    docker run \
+      -d \
+      -it \
+      -v $(pwd)/html:/usr/share/nginx/html \
+      --name web-volume \ 
+      ubuntu:focal 
+
+    docker run \
+      -d \
+      --name fastcampus-nginx \
+      --volume-from web-volume \
+      -p 80:80 \
+      nginx 
+
+    docker run \
+      -d \
+      --name fastcampus-nginx2 \
+      --volumes-from web-volume \
+      -p 8080:80 \
+      nginx
+  
+  #도커 볼륨 
+  docker volume create --name [volumeName] : 이거 실행하면 호스트서버에 /var/lib/docker/volumes/[volumeName]/_data 생성됨.
+
+  docker-volume.sh 
+    docker run -d \
+    --name fastcampus-mysql \
+    -e MYSQL_DATABASE=fastcampus \
+    -e MYSQL_ROOT_PASSWORD=fastcampus \
+    -v [volumeName]:/var/lib/mysql \
+    -p 3306:3306 \
+    mysql:5.7
+
+container-volume은 volume역할을 host 서버가 아닌 볼륨전용 컨테이너를 만들어서 이 컨테이너를 다른 컨테이너들과 바인딩시키는 것을 말함.
+docker inspect [container] 에서 Mounts 부분이 어떤 디렉토리를 볼륨마운트하고 있는지 나옴.
+
+-v /opt/example:/example:ro  :  컨테이너가 호스트서버의 볼륨만 읽을 수 있고, 컨테이너에서는 writing이 안됨.
+
 fastcampus/hello-world:latest   실행할 이미지 이름 
 my-command    컨테이너 내에서 실행할 명령어 
+
+
+##############################################
+Dockerfile 
+##############################################
+
+### Dockerfile 없이 이미지 생성하기 
+docker run -it --name my_ubuntu ubuntu:focal  : 우선 기본 unbuntu 도커컨테이너 생성하기 
+docker commit -a fastcampus -m "add my_file" [containerName] [imageName설정] : -a는 누가 변경점을 만드는지 표기, -m은 커밋메세지 남기기 
+
+이때 새로 만든 image는 ubuntu:focal 이라는 이미지를 토대로 만들어졌는데, docker image inspect [만든imageName]해보면 
+RootFS 부문에 layers가 ubuntu:focal의 layers에서 layer가 한단계 더 쌓여있는 거를 확인할 수 있다.
+
+### Dockerfile로 이미지 생성하기 (https://docs.docker.com/engine/reference/builder)
+##############################################
+Dockerfile?
+FROM busybox    # 베이스 이미지 가져오는 명령어(library에서 가져옴)
+LABEL maintainer="FastCampus Park <fastcampus@fastcampus.com>"   # 이미지의 메타데이터 설정. 나중에 이미지가 많아지면 label을 통해 관리용이
+
+ENV FOO=/bar    #컨테이너의 환경변수 설정.
+WORKDIR ${FOO}  # WORkDIR /bar,  cd /bar 라고 생각하면됨 어디서 작업을 수행할건지 정해줌.
+ADD . $FOO      # ADD . /bar 
+COPY \$FOO /quxx # COPY $FOO /quux,  COPY source destination , 호스트서버의 source를 복사해서 이미지의 경로 destination에 붙여넣음
+COPY package*.json ./    # package.json을 워킹디렉토리에 붙여넣음
+
+RUN npm install    # npm install 명령어 실행.
+
+COPY . .    # 호스트서버의 현재디렉토리에 있는 모든 것을 이미지 디렉토리에 모두 복사해라 
+
+EXPOSE 8080  # 이 컨테이너가 8080포트를 사용할것이라는 뜻. 실제로 바인딩되는 것은 아니고 단순히 알려주는 용도 
+
+ARG user1=hongsa   #변수 설정하고 값 할당.
+또는 docker build --build-arg user1=hongsa .   # 이런식으로 빌드시에 argument 전달 가능. Dockfile에 user1이라는 변수가 정의가 되어있어야함.
+  # 이때 ENV와 ARG 명령어 수행시 변수이름이 같다면, ENV변수가 ARG변수를 덮어씌우게 됨. 
+
+CMD ["node", "server.js"]     # cmd 명령어 수행
+##############################################
+
+Dockerfile이 있는 위치에서 명령어 수행
+docker build -t my_app:v1 .    : -t는 tag생성.
+docker build -t my_app:v1 -f example/MyDockerfile .    :-f 는 현재 경로에 있는 Dockerfile이 아닌, 다른 경로에 있는 Dockerfile을 쓰겠다는 의미
+
+build시작하면 맨처음에 build Context를 daemon한테 전달한다는 내용이 있는데, build Context란 build명령을 수행한 현재 디렉토리를 말한다.
+docker가 이미지를 빌드하려면 현재의 작업폴더(프로젝트폴더)를 모두 알아야 되기때문에 만약 작업폴더의 용량이 많다면 build도 오래걸릴 것임. 
+그래서 작업폴더내에서 이미지로 안만들어도 되는 파일들을 생략할 수 있는 .dockerignore 기능도 있음. (.gitignore와 동일한 문법)
+
+### IMAGE 압축파일로 저장하고 불러오기 
+docker save -o ubuntu_focal.tar [imageName]
+docker load -i [압축파일이름(ubuntu_focal.tar)]
+
+
+
+##############################################
+Dockerhub 이미지 저장소 이용하기  https://hub.docker.com
+##############################################
+github 이메일과 비번 동일 
+계정settings에 security에 들어가서 access token 생성.
+
+docker login -u devhongsa  
+access token 입력 
+
+repository 새로 생성. (my-docker)
+
+docker images  로 내가 push할 이미지 확인
+
+docker tag [imageName]:[TAG] devhongsa/my-docker:[tagname]
+docker push devhongsa/my-docker:[tagname]
+docker pull devhongsa/my-docker:[tagname]
+
+
+##############################################
+AWS ECR(Elastic Container Registry) 저장소 이용하기 
+##############################################
+private repository 생성 
+aws 자격증명 및 docker 로그인 
+푸시명령보기에서 자세한 내용 확인(위의 내용과 거의 동일)

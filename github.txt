@@ -14,8 +14,11 @@ ep-graphql(heroku git) => graphql 서버
 git 명령어 모음 
 
 git commit 
+git branch                 // branch 목록 보기 
 git branch version2        //version2 branch 생성
 git checkout version2      // version2로 이동
+git branch -d version2     // branch 삭제 
+git push origin version2   // version2에 push 하기 
 git merge version2         // main branch에서 실행하면 version2 와 버전병합. 
 
 git config --global user.email "bippr0901@gmail.com"
@@ -58,3 +61,4 @@ git pull origin main
 
 충돌 상관없이 현재 commit된 내용 밀어넣기 
 git push origin main --force
+
