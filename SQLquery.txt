@@ -158,12 +158,14 @@ SELECT salary*months AS earnings, COUNT(*) FROM Employee GROUP BY earnings ORDER
 
 
 
-///// CASE 
+///// CASE : 조건문
+CASE 안에 조건문들을 나열해주고 마지막에 END로 마무리 
+AS 'categoryName'은 CASE문으로 나온 결과RAW들의 컬럼이름 
 SELECT CASE 
             WHEN categoryid = 1 AND supplierid = 1 THEN '음료'
             WHEN categoryid = 2 THEN '조미료'
             ELSE '기타'
-        END AS categoryName, * , AVG(price)
+        END AS 'categoryName', * , AVG(price)
 FROM Products
 GROUP BY categoryName
 
@@ -178,11 +180,14 @@ FROM triangles
 // CASE WHEN 절의 순서가 중요함. 첫번째 WHEN절에서 데이터가 'Equilateral'로 할당되었으면, 할당된 데이터는 그다음 WHEN절에서 고려대상이 되지 않음.
 
 
-//피봇팅
+////피봇팅: 결과값이 행(raw)으로 늘어나는것이 아닌 열(column)로 늘어나게 하는것
 SELECT AVG(CASE WHEN categoryid = 1 THEN price ELSE NULL END) AS category1_price,
        AVG(CASE WHEN categoryid = 2 THEN price ELSE NULL END) AS category2_price,
        AVG(CASE WHEN categoryid = 3 THEN price ELSE NULL END) AS category3_price
 FROM products
+//result 
+categoryid1_avgprice     categoryid2_avgprice     categoryid3_avgprice      ...
+20                          23                          33
 
 
 
@@ -193,6 +198,7 @@ FROM orders
      INNER JOIN customers ON orders.customerID = customers.customerID
      INNER JOIN shippers ON orders.shipperID = shippers.shipperID
 // orders 테이블과 customers 테이블엔 모두 customerID가 있고 이 두 테이블에서 customerID가 같은 데이터들만(교집합) 가져옴
+// INNER JOIN은 테이블 A와 B의 교집합부분만 결과값으로 나옴
 
 SELECT *
 FROM customers 
@@ -200,8 +206,38 @@ FROM customers
 WHERE orderID IS NULL 
 //orders 테이블에 없는 즉 주문을 한번도 안한사람이라도 customers테이블에 있으면 일단 가져와서 null값으로 처리함. 
 //그래서 null값을 응용해서 주문을 한번도 안한사람을 where문으로 찾아낼 수 있음.
+// LEFT JOIN은 customers테이블 내용은 다 나타내고, orders테이블과 교집합부분은 JOIN해서 나타내고, 교집합이 없으면 null값 
+// FROM 테이블이 LEFT 테이블임.
+// RIGHT JOIN은 반대 orders테이블 내용을 다 나타냄.
+// FULL OUTRE JOIN은 2개 테이블 내용을 모두 나타냄
+// LEFT, RIGHT는 모두 OUTER JOIN임 OUTER 생략가능 
 
 SELECT country.continent, FLOOR(AVG(city.population))
 FROM city
     INNER JOIN country ON country.code = city.countrycode
 GROUP BY country.continent
+
+
+///////// SELF JOIN : A테이블과 A테이블을 조인, 즉 A테이블의 컬럼들이 모두 독립적인 컬럼값들이 아닌 중복되는 컬럼값들이 존재 
+            모든 Employee 정보가 있는 테이블에서 각employee마다 id가 있고, 어떤 employee의 상사가 누군지에 대한 managerid컬럼이 있을때
+SELECT Employee.Name AS employee_name
+     , Employee.Salary As employee_salary
+     , Manager.Name AS manager_name
+     , Manager.Salary AS manager_salary
+FROM Employee 
+     INNER JOIN Employee as Manager ON Employee.managerId = Manager.Id 
+     WHERE Employee.Salary > Manager>Salary
+
+
+///////// UNION: 테이블 구조는 같지만, recent테이블, past테이블로 나뉘어져있을때 두 테이블을 UNION 해주면 밑으로 이어붙여줌.(중복값 자동 제거)
+SELECT * 
+FROM Users_recent
+
+UNION 
+
+SELECT * 
+FROM Users_past
+
+UNION ALL을 하면 중복값상관없이 모두 합침
+
+mysql은 지원하지않지만, INTERSECT(두 테이블의 교집합만 보여줌), EXCEPT(A-B를 보여줌, 차집합)

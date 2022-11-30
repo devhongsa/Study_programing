@@ -1,23 +1,33 @@
+http://localhost:8080/swagger-ui/index.html
+window 버전
 mysql community edition download 
 mysql community server download 
 **이거말고 bitnamy wamp 설치하면 mysql 쉽게 설치 가능 . 설치중에 cloud어쩌고 하는거는 체크해제 
 윈도우 + R 키 cmd 
 mysql 설치된 경로(C/bitnamy/wamp/mariadb/bin)로 가서 ,  mysql -uroot -p 치면 비밀번호입력하라고 나옴.   -uroot란 root라는 사용자로 접속하겠다는 뜻.
 
+mac 버전 
+brew install mysql
+brew services start mysql 
+brew services stop mysql 
+brew services list 
+mysql -uroot :콘솔 접속
+exit 
+
 CREATE DATABASE hongsa;
 DROP DATABASE hongsa; 
 
 CREATE USER 'hongsa'@'localhost' IDENTIFIED BY 'nfttest2';    유저생성
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';   기존유저 비밀번호 변경 
 DROP USER hongsa@localhost;    유저삭제
 
 SET PASSWORD = PASSWORD('your_password');
 
 SHOW DATABASES;
+USE hongsa;
 SHOW TABLES;
 
 RENAME TABLE topic TO topic_backup;
-
-USE hongsa;
 
 구글에 mysql sql cheatsheet 치면 잘나옴.
 

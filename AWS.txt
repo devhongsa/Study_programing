@@ -202,6 +202,7 @@ private ec2에서 다시 aws s3 ls --region [region위치] 입력하면 이제 n
 ##################################################################################################
 awscli 설치 
 https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/getting-started-install.html
+ubuntu (sudo apt install awscli)
 aws --version
 aws help 
 aws ec2 help
@@ -223,9 +224,22 @@ vi ~/.aws/config
 region=us-west-2
 output=json
 
+aws configure 로  키와 시크릿 등 자격증명 설정 가능 
+aws sts get-caller-identity   내 자격증명 확인하기 
+aws ec2 describe-key-pairs    내 ec2에 등록된 key pair 목록 불러오기 
 
+aws configure --profile [profileName]   새 profile 설정하기 
+
+aws configure get region   default 지역 가져오기 
+aws configure get region --profile [profileName]
+
+export AWS_PROFILE = [profileName]  환경변수 설정 (default가 이 프로필로 바뀜 )
 
 MFA 설정 : otp 만드는거라고 생각하면 됨.
+
+
+
+
 
 
 비용 발생시 경보 생성.
@@ -243,18 +257,6 @@ aws-nuke
 
 프리티어 계정이 만료가 되면, bippr0901+a@gmail.com 이런식으로 새 계정을 만들어 주면 bippr0901이메일로 동일하게 이메일을 받을 수 있고, 
 프리티어 계정을 새로 만들수있음. 
-
-
-aws configure 로  키와 시크릿 등 설정. 
-aws sts get-caller-identity   내 자격증명 확인하기 
-aws ec2 describe-key-pairs    내 ec2에 등록된 key pair 목록 불러오기 
-
-aws configure --profile [profileName]   새 profile 설정하기 
-
-aws configure get region   default 지역 가져오기 
-aws configure get region --profile [profileName]
-
-export AWS_PROFILE = [profileName]  환경변수 설정 (default가 이 프로필로 바뀜 )
 
 
 AWS 주요 서비스들 
@@ -364,9 +366,6 @@ default로 생성
 4. 보안설정 인바운드 규칙에서 포트를 열어줘야지 mysql workbench라던지 postgresql pgamdin 으로 연결이 가능함.
 5. DB username과 password 기억해놓기 
 
-
-
-
 모놀리식 아키텍쳐 vs 마이크로서비스 아키텍쳐 
 모놀리식은 소규모 프로젝트에 적합. 
 마이크로서비스는 기능마다 독립적으로 분리하여 유지보수가 쉽게 설계하는것. 대규모 프로젝트에 적합.
@@ -430,7 +429,7 @@ DATABASES = {
 - ps -ef | grep python : 현재 작업중인 python 파일들을 보여줌. 이 작업들에 아이디 번호가 있는데 kill -9 아이디번호 해주면 작업 강제종료.
 
 - (docker) curl -fsSL https://get.docker.com/ | sudo sh
-- (docker) sudo usermod -aG docker $USER 
+- (docker) sudo usermod -aG docker $USER      : 권한설정에 관한 부분임 
 - (docker) docker --version
 - (docker) vi Dockerfile (프로젝트 폴더 안에 생성)
 아래내용 붙여넣기
@@ -453,7 +452,8 @@ EXPOSE 8000
 CMD ["python","manage.py","runserver","0.0.0.0:8000"]
 
 #nginx 쓸거면 마지막 두줄은 빼야됨.
-# ADD . 부분은 docker container를 /srv/docker-django 에 만들거고 WORKDIR는 여기서 실행할거라는 뜻.
+# ADD . 부분은 docker container에 /srv/docker-django 경로를 만들거고 여기에 내 로컬서버에 있는 작업폴더내용들을 모두 넣겠다는 뜻.
+# WORKDIR는 여기서 실행할거라는 뜻.
 #################################
 
 docker build -t docker/django .     #여기서 docker/django는 이미지 이름임. build는 도커이미지 생성하라는 명령어.
@@ -468,7 +468,6 @@ docker stop cotainer-id
 
 
 ##### nginx 적용  #####
-sudo apt-get install nginx
 프로젝트 폴더에서 vi uwsgi.ini
 아래내용 붙여넣기
 [uwsgi]
@@ -494,7 +493,7 @@ cd nginx
 아래내용 붙여넣기
 
 user root; 
-worker_process auto;
+worker_processes auto;
 pid /run/nginx.pid;
 
 events {
@@ -528,7 +527,7 @@ http {
 ### vi nginx-app.conf 
 
 upstream uwsgi {
-  server unix:/srv/docker-django/apps.sock;
+  server unix:/srv/docker-django/django.sock;
 }
 
 server {
@@ -804,6 +803,241 @@ vpc는 내가 만든 vpc있으면 거기로 하면되고 없으면 default 네�
   축소 비활성은 인스턴스를 늘리기만하고 줄이진않겠다는 뜻 
 
 
+##################################################
+AWS Container Service  
+##################################################
+클러스터 생성
+  네트워킹 전용으로 생성
+  vpc 설정안해도됨.
+  cloud watch 체크 
+  
+작업정의
+  fargate
 
 
 
+
+##################################################
+AWS cli 명령어 작업 
+##################################################
+로그인
+aws ecr get-login --no-include-email --region [region]
+
+ecr 레포지토리 생성 및 이미지 푸쉬 
+https://docs.aws.amazon.com/ko_kr/AmazonECR/latest/userguide/getting-started-cli.html
+aws ecr create-repository \
+    --repository-name repo-cli \
+    --region us-east-1
+
+ecs 클러스터 생성 및 작업정의 생성
+https://docs.aws.amazon.com/ko_kr/AmazonECS/latest/developerguide/ECS_AWSCLI_Fargate.html
+https://docs.aws.amazon.com/ko_kr/AmazonECS/latest/userguide/task_definition_parameters.html   작업정의 파라미터
+
+클러스터 생성
+aws ecs create-cluster --cluster-name [clusterName]
+
+작업정의 생성하기전 ecr image에 접근할 수 있는 권한이 있어야함 
+https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_execution_IAM_role.html
+작업정의 설정 파일 fargate-task.json 에서 
+"executionRoleArn":"[IAM 역할 이름]",   추가 
+
+작업정의 생성(작업정의에서는 내가 사용할 images들 설정함)
+aws ecs register-task-definition --cli-input-json file://./json-list/fargate-task.json
+
+작업정의 나열
+aws ecs list-task-definitions
+
+서비스 생성
+aws ecs create-service --cluster [clusterName] --service-name [serviceName] --task-definition [taskName] --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[[subnetID]],securityGroups=[[보안그룹ID]],assignPublicIp=ENABLED}"
+
+aws ecs create-service --cluster fargate-cluster --service-name fargate-service --task-definition delivery-task:1 --desired-count 1 --launch-type "FARGATE" --network-configuration "awsvpcConfiguration={subnets=[subnet-0970044040934a650],securityGroups=[sg-07aae20b9db6201ed],assignPublicIp=ENABLED}"
+
+
+서비스 나열
+aws ecs list-services --cluster [clusterName]
+ARN 가져오기
+aws ecs list-tasks --cluster [clusterName] --service [serviceName]
+ENI ID 가져오기 
+aws ecs describe-tasks --cluster [clusterName] --tasks [ARN]
+Public IP 가져오기 
+aws ec2 describe-network-interfaces --network-interface-id [ENI]
+
+서비스 삭제
+aws ecs delete-service --cluster [clusterName] --service [serviceName] --force
+클러스터 삭제
+aws ecs delete-cluster --cluster [clusterName]
+
+
+
+##################################################
+ECS CLI Compose   https://github.com/aws/amazon-ecs-cli
+##################################################
+macOS 환경
+sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-darwin-amd64-latest
+brew install gnupg
+
+linux 환경 
+sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest
+sudo apt-get install gnupg 
+
+mkdir keys 
+cd keys 
+vi amazon-ecs-public-key.gpg
+https://github.com/aws/amazon-ecs-cli/blob/mainline/amazon-ecs-public-key.gpg   안에 내용 붙여넣기 
+gpg --import amazon-ecs-public-key.gpg
+
+macOS
+curl -o ecs-cli.asc https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-darwin-amd64-latest.asc
+Linux
+curl -o ecs-cli.asc https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-linux-amd64-latest.asc
+
+gpg --verify ecs-cli.asc /usr/local/bin/ecs-cli
+sudo chmod +x /usr/local/bin/ecs-cli
+ecs-cli --version
+
+ecs cli 설치완료후 
+sudo apt install awscli
+aws configure 설정 
+aws ecr get-login-password --region us-east-1
+프로젝트 이미지, nginx 이미지를 각각의 ECR에 push
+aws iam attach-role-policy --policy-arn arn:aws:iam::aws:policy/service-role/[정책이름] --role-name [역할이름]
+
+ecs-cli up --empty --cluster [clusterName]
+
+ecs-cli configure profile --profile-name hong_profile --access-key [$AWS_ACCESS_KEY_ID] --secret-key [$AWS_SECRET_ACCESS_KEY]
+ecs-cli configure --cluster cli-cluster --region us-east-1 --config-name cluster_config --default-launch-type FARGATE
+
+ecs-cli configure default --config-name cluster_config
+ecs-cli configure profile default --profile-name hong_profile
+
+docker-compose.yml 수정
+version: '3'
+services:
+
+  nginx:
+    build: ./nginx 
+    image: 536776124305.dkr.ecr.us-east-1.amazonaws.com/docker-compose-nginx:latest
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - /srv/docker-django
+      - /var/log/nginx 
+    depends_on:
+      - django
+  
+  django:
+    build: ./deliveryProject
+    image: 536776124305.dkr.ecr.us-east-1.amazonaws.com/docker-compose-django:latest
+    restart: always 
+    command: uwsgi --ini uwsgi.ini 
+    volumes:
+      - /srv/docker-django 
+      - /var/log/uwsgi
+
+
+docker-compose.yml 있는 위치에서 
+vi ecs-params.yml 
+
+version: 1
+
+task_definition:
+  task_execution_role: ecsTaskExecutionRole
+  ecs_network_mode: awsvpc
+  task_size:
+    mem_limit: 0.5GB
+    cpu_limit: 256
+run_params:
+  network_configuration:
+    awsvpc_configuration:
+      subnets:
+        - ""
+        - ""
+      security_groups:
+        - ""
+      assign_public_ip: ENABLED
+services:
+  django:
+    essential: True
+  nginx:
+    depends_on:
+      -container_name: django
+
+
+ecs-cli compose --file docker-compose.yml --ecs-params ecs-params.yml service create --launch-type FARGATE
+ecs-cli compose --file docker-compose.yml service start
+
+
+
+##################################################
+AWS KMS(Key Management Service)
+##################################################
+KMS 는 암호화 키를 관리해주는 서비스 
+관리하는 암호화 키를 CMK(Customer Master Key)라고 부름  
+CMK를 HSMs(Hardware Security Modules)라는 저장소에 저장 
+HSMs에 있는 CMK를 활용하기 위해 KMS API를 사용 
+AWS Cloudtrail로 누가 어떤 Key를 어떻게 사용했는지 로그를 남김 
+
+키생성하기 
+대칭키
+암호화 및 해독
+KMS 
+단일리전 
+키 관리 사용자 
+키 사용 사용자 선택 
+
+new EC2에서 
+sudo apt update
+sudo apt install awscli 
+aws configure 키관리자로 설정 
+sudo apt install python3-pip 
+pip install aws-encrytion-sdk 
+
+vi encrypting.py
+
+import aws_encrytion_sdk
+from aws_encrytion_sdk import CommitmentPolicy
+
+client = aws_encrytion_sdk.EncryptionSDKClient(commitment_policy=CommitmentPolicy.REQUIRE_ENCRYPT_REQUIRE_DECRYPT)
+key_arn = ""
+
+source_plaintext = 'hi'
+
+kms_kwargs = dict(key_ids=[key_arn])
+master_key_provider = aws_encrytion_sdk.StrictAwsKmsMasterKeyProvider(**kms_kwargs)
+ciphertext, encryptor_header = client.encrypt(source=source_plaintext, key_provieder=master_key_provider)
+
+print(ciphertext)
+
+cycled_plaintext, decrypted_header = client.decrypt(source=ciphertext, key_provieder=master_key_provider)
+
+
+
+##################################################
+AWS CodeCommit 
+##################################################
+IAM 사용자 생성 
+administratorAccess 
+codecommit fullaccess 
+id,key 생성 
+
+사용자 보안자격증명에서 AWS codecommit https git 자격증명 생성, 자격증명 다운로드(user name, password)
+ec2에서 aws configure 위에서 생성한 IAM 사용자로 설정 
+
+CodeCommit에서 레포지토리 생성. 
+git clone 레포지토리https주소 
+다운받은 자격증명의 username, password입력 
+
+레포폴더로 들어가서 
+git config --local user.name "hongsa"
+git config --local user.email bippr0901@gmail.com 
+git init 
+git add .
+git commit -m "first commit" 
+git push -u origin
+
+
+
+##################################################
+AWS CodeDeploy
+##################################################

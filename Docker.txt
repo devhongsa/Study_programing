@@ -275,6 +275,7 @@ nginx
 docker run \ 
 -i    호스트의 표준 입력을 컨테이너와 연결
 -t    TTY 할당
+-it   : -i 와 -t 옵션을 합쳐놓은거, 이 옵션을 넣어야 컨테이너안에서 터미널 실행 가능 
 --rm  컨테이너 실행 종료 후 자동 삭제 
 -d    백그라운드 모드로 실행 
 --name hello-world  컨테이너 이름 지정 
@@ -396,7 +397,8 @@ repository 새로 생성. (my-docker)
 
 docker images  로 내가 push할 이미지 확인
 
-docker tag [imageName]:[TAG] devhongsa/my-docker:[tagname]
+docker tag [imageName]:[TAG] devhongsa/my-docker:[tagname]       
+  #[TAG]는 docker images 쳤을때 나오는 이미지의 TAG 적어야함. devhongsa/my-docker 는 도커레포지토리 이름 [tagname]은 자유 
 docker push devhongsa/my-docker:[tagname]
 docker pull devhongsa/my-docker:[tagname]
 
@@ -407,3 +409,234 @@ AWS ECR(Elastic Container Registry) 저장소 이용하기
 private repository 생성 
 aws 자격증명 및 docker 로그인 
 푸시명령보기에서 자세한 내용 확인(위의 내용과 거의 동일)
+
+docker tag [imageName]:[TAG] ***.amazonaws.com/[ECR repository Name]:latest
+docker push ***.amazonaws.com/[ECR repository Name]:latest
+
+
+
+##############################################
+docker 이미지 경량화 하기 
+##############################################
+꼭 필요한 패키지 및 파일만 추가 
+
+컨테이너 레이어 수 줄이기 
+  Dockerfile 의 지시어 수가 곧 레이어이기 때문에 지시어를 줄이면 경량화된다. RUN 같은 지시어를 한번만 쓰도록 설계 
+  RUN \
+    apk add --no-cache bash curl git && \
+    git clone https://github.com/course-hero/slacktee/slacktee && \
+    apk del --no-cache git 
+  && 으로 여려 명령어를 합치기
+  --no-cache 옵션으로 불필요한 캐시 지워서 경량화하기 
+
+경량 베이스 이미지 선택 
+  slim, alpine
+  FROM node:16-slim 
+  FROM node:16-alpine 
+
+
+멀티 스테이지 빌드 사용
+  FROM node:16-alpine AS base 
+  LABEL maintainer="FastCampus Park <fastcampus@fastcampus.com>"
+
+  WORKDIR /app 
+
+  COPY package*.json ./
+
+  FROM base AS build 
+  RUN npm install 
+
+  FROM base AS release 
+  COPY --from=build /app/node_modules ./node_modules
+  COPY . .
+  EXPOSE 8080 
+  CMD ["node", "server.js"]
+
+##############################################
+docker 데몬 디버깅 
+##############################################
+docker system events : container의 생성과 삭제까지의 로그들을 실시간으로 보여줌 
+docker system df : 도커의 디스크 사용량 현황 
+docker system df -v : 상세한 내용 확인가능 
+docker system prune : 사용되지않고있는 컨테이너, 네트워크 , 이미지 , 캐시 모두 삭제 가능 
+docker stats : 컨테이너들이 cpu, memory를 얼마나 사용하고 있는지 확인 가능 
+
+
+
+##############################################
+docker-compose 사용하기 
+##############################################
+docker-compose? 
+단일 서버에서 여러 컨테이너를 프로젝트 단위로 묶어서 관리 
+docker-compose.yml 파일을 통해서 명시적으로 관리 
+프로젝트 단위로 도커 네트워크와 볼륨 관리 
+프로젝트 내 서비스 간 의존성 정의 가능 
+프로젝트 내 서비스 디스커버리 자동화 
+손 쉬운 컨테이너 수평 확장 
+
+docker-compose.yml 구조 
+version: '3.9'
+services:
+  db:
+    image: mysql:5.7
+    volumes:
+    - db:/var/lib/mysql
+    restart: always
+    environment:
+    - MYSQL_ROOT_PASSWORD=wordpress
+    - MYSQL_DATABASE=wordpress 
+    - MYSQL_USER=wordpress 
+    - MYSQL_PASSWORD=wordpress
+    networks:
+    - wordpress 
+
+  wordpress:
+    depends_on:
+    - db
+    image: wordpress:latest 
+    ports:
+    - "8000:80"
+    restart: always 
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+networks 
+volumes 
+
+docker-compose -p my-project up -d : -p는 프로젝트명, -d는 백그라운드 실행 
+docker-compose ls -a : 도커컴포즈 목록 
+docker-compose down -v : volume까지 모두 삭제 
+docker-compose -p my-project up --scale web=3 -d : my-project의 web 서비스 컨테이너를 3개로 늘리기.
+
+docker-compose -p my-project logs 
+docker-compose -p my-project events 
+docker-compose -p my-project images 
+docker-compose -p my-project ps 
+docker-compose -p my-project top 
+
+
+
+####### 실습 #########
+mkdir grafana-test 
+cd grafana-test
+touch docker-compose.yml
+
+version: '3.9'
+##############
+services:
+  grafana:
+    image: grafana/grafana:8.2.2
+    restart: unless-stopped
+    environment:
+      GF_INSTALL_PLUGINS: grafana-clock-panel
+    ports:
+    - 3000:3000
+    volumes:
+    - ./files/grafana.ini:/etc/grafana/grafana.ini:ro
+    - grafana-data:/var/lib/grafana
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "8m"
+        max-file: "10"
+
+volumes:
+  grafana-data: {}
+##############
+
+mkdir files
+cd files 
+touch grafana.ini 
+##############
+app_mode = production
+instance_name = ${HOSTNAME}
+
+[server]
+protocol = http
+http_addr = 
+http_port = 3000
+
+[log]
+mode = console
+level = info
+
+[alerting]
+enabled = true
+##############
+docker-compose up -d 
+
+
+
+
+### mysql 연결한 grafana 버전 ### 
+docker-compose.yml 
+##############
+version: '3.9'
+
+services:
+  db:
+    image: mysql:5.7
+    restart: unless-stopped
+    environment:
+      MYSQL_PASSWORD: grafana
+      MYSQL_DATABASE: grafana
+      MYSQL_USER: grafana
+      MYSQL_PASSWORD: grafana
+    volumes:
+    - mysql-data:/var/lib/mysql
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "8m"
+        max-file: "10"
+
+  grafana:
+    depends_on:
+    - db
+    image: grafana/grafana:8.2.2
+    restart: unless-stopped
+    environment:
+      GF_INSTALL_PLUGINS: grafana-clock-panel
+    ports:
+    - 3000:3000
+    volumes:
+    - ./files/grafana.ini:/etc/grafana/grafana.ini:ro
+    - grafana-data:/var/lib/grafana
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "8m"
+        max-file: "10"
+
+volumes:
+  mysql-data: {}
+  grafana-data: {}
+##############
+
+grafana.ini
+##############
+app_mode = production
+instance_name = ${HOSTNAME}
+
+[server]
+protocol = http
+http_addr = 
+http_port = 3000
+
+[database]
+type = mysql
+host = db:3306
+name = grafana 
+user = grafana
+password = grafana
+
+[log]
+mode = console
+level = info
+
+[alerting]
+enabled = true
+##############
+docker-compose up -d 
+
