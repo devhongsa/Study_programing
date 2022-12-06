@@ -1,0 +1,96 @@
+cloudAMqp 사이트 들어가서 회원가입 후 
+create instance 
+free version 
+AMQP URL 복사
+
+마이크로서비스
+
+###서비스1 프로젝트 폴더안에 producer.py 생성
+##########################################################
+import pika   
+# rabbitmq 사용을 위한 pika
+
+params = pika.URLParameters('amqps://thlmkgtt:pPlvNZ7obshfnwvIPzt6MZOHsZNxbMLx@dingo.rmq.cloudamqp.com/thlmkgtt')
+connection = pika.BlockingConnection(params)    ## broker server와 연결
+
+channel = connection.channel()  ## channel 생성
+
+def publish():
+    channel.basic_publish(exchange='', routing_key='order', body='hello')       
+    ## routing_key 어디로 메세지를 publish할지 정함, body 보낼 메세지 
+##########################################################
+
+###서비스1 프로젝트 폴더의 views.py 혹은 api 작업하는 파일에서 from .producer import publish 
+api 로직에서 publish() 넣기 , 그러면 예를들어 유저가 /api/shop get요청을 해왔을때 pulish()가 실행되고, consumer에게 메세지가 전달됨.
+
+
+서비스2 프로젝트 폴더안에 consumer.py 생성
+##########################################################
+import pika   
+# rabbitmq 사용을 위한 pika
+
+params = pika.URLParameters('amqps://thlmkgtt:pPlvNZ7obshfnwvIPzt6MZOHsZNxbMLx@dingo.rmq.cloudamqp.com/thlmkgtt')
+connection = pika.BlockingConnection(params)
+
+channel = connection.channel()
+
+channel.queue_declare(queue='order')  ## consumer 이름? 선언
+
+def callback(ch,method,properties,body):
+    print('Received in order')
+    print(body)
+    
+channel.basic_consume(queue='order', on_message_callback=callback, auto_ack=True)  ## producer에서 오는 메세지를 callback함수에서 처리
+## auto_ack는 다시빌드했을때 queue에 쌓여있는 메세지를 없애줌.
+
+print('Started consuming')
+
+channel.start_consuming()  ## 메세지 컨슈밍 시작 
+
+channel.close()
+##########################################################
+python consumer.py  해야 메세지 받는거 시작됨.
+
+
+docker-compose.yml 수정
+##########################################################
+version: "3.9"
+services:
+  backend:
+    container_name: backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "python manage.py runserver 0.0.0.0:8000"
+    ports:
+      - 8000:8000
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "python consumer.py"
+    depends_on:
+      - db
+
+  db:
+    container_name: mysql
+    image: mysql:8.0
+    platform: linux/amd64
+    restart: always
+    environment:
+      MYSQL_DATABASE: fastcampus
+      MYSQL_USER: hongsa
+      MYSQL_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: rootadmin
+    volumes:
+      - .dbdata:/var/lib/mysql
+    ports:
+      - 33066:3306
+##########################################################
+queue 추가. 
+Dockerfile에서 CMD 부분 없애고 docker-compose.yml에서 command 명령으로 처리

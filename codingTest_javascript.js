@@ -147,6 +147,10 @@ let copylst = lst;
 //이렇게 했을 떄 copylst는 lst의 메모리 주소를 받았기 때문에 lst를 변경하면 copylst도 같이 변경됨.
 let copylst2 = [...lst]; // 이렇게 해야 새로운 메모리 주소로 받아짐.
 
+//사칙연산
++ - * /   
+**  %
+
 //연산
 nums = [-1, 2, 6, 7, 4, 23];
 Math.max(1, -1, 3, 5, 6);
@@ -217,6 +221,8 @@ const arr = ["there", "are", "you", "are", "how", "hello!"];
 let arr2 = arr.map((item) => item.toUpperCase()); // ["THERE", "ARE", ...]
 
 //reduce
+//array를 돌면서 누적값을 구하는 함수
+nums = [12, 3, 45, 2, 25];
 let sum = nums.reduce(function (accumulator, item, index, array) {
   console.log(accumulator, item, index);
   call_count++;

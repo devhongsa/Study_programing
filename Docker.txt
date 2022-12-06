@@ -515,6 +515,8 @@ docker-compose -p my-project images
 docker-compose -p my-project ps 
 docker-compose -p my-project top 
 
+docker-compose up --build
+
 
 
 ####### 실습 #########

@@ -331,6 +331,10 @@ stringTime = dt.strftime("%Y-%m-%d")   #인자는 어떤 포맷으로 바꿀 것
 # at, iat은 df.at[3:100, 'column'] 이런게 안된다. 
 
 
+
+df.at['indexname','columnName']  #at은 인덱스이름, 컬럼이름을 인자로 받음
+df.iat[0, 1]   # iat은 indexNumber, columnIndexNumber를 인자로 받기때문에 무조건 int형으로 넣어야함 indexNumber는 행의 몇번째 위치인지를 뜻함.고유위치
+
 import pandas as pd
 
 

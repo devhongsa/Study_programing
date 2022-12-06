@@ -1,0 +1,91 @@
+Redis(Remote Dictionary Server)
+redis 특징
+Redis는 in-memory db 이기 때문에, 디스크에 저장하지 않고 메모리에 저장함.
+메모리는 읽고 쓰는 속도가 디스크보다 약 40배가량 빠르지만 휘발성이라는 단점이 있음. 
+
+디스크에 저장하는 데이터는 영속성을 유지해야하는 데이터를 위주로 저장하고(회원정보와 같은)
+Redis는 로그인세션과 같이, 데이터가 날아가도 유저에게 치명적이지 않은 데이터를 위주로 저장하게 된다.
+
+key-value store 방식 
+    hash를 이용해 값을 바로 읽으므로 속도가 빠름 
+    수평적 확장성이 뛰어남.(관계형 DB같은 경우 서로 연관이 있는 table들이 많아서 DB를 여러 서버에 나눈다고 했을 때, 이런 연관성때문에 수평적 확장이 어려움.)
+    단점 key를 통해서만 값을 읽을 수가 있음
+    범위 검색과 같은 복잡한 쿼리가 불가능 
+
+
+redis 설치 
+linux 
+sudo apt-get update 
+sudo apt-get upgrade 
+sudo apt-get install redis-server
+redis-server --version
+
+macos 
+brew install redis
+
+docker 
+docker pull redis
+docker run --name my-redis -p 6379:6379 redis
+docker stop my-redis
+docker start my-redis 
+docker exec -it my-redis /bin/sh  : redis서버 커멘트쉘 실행 
+redis-cli : redis 클라이어튼 커맨트창 실행 
+
+
+
+################ redis 기본 명령어 모음 #################
+set key1 banana  : key-value 쓰기 
+get key1 : key-value 읽기
+keys * : 모든 키 보기 
+dbsize : key 몇개 있는지 
+flushall : 모든 key-value 지우기 
+
+incr mycount : value값이 int로 취급하여 1 증가시키기 (데이터 원자성 보장, value가 int가 아니면 오류)
+decr mycount : 1감소시키기 
+mset key1 milk key2 coffe : 여러 키에 대한 값을 한번에 저장
+mget key1 key2 : 여러 키 값 한번에 get 
+
+lpush mylist apple : list 왼쪽에 요소 삽입
+rpush mylist banana 
+llen mylist : list의 길이
+lrange 0 -1 : 특정 범위를 반환 -1은 맨 오른쪽 
+lpop mylist : list 맨 왼쪽요소 추출 (맨왼쪽요소를 리스트에서 삭제하고 나서 가져옴)
+rpop mylist 
+
+sadd myset apple : set에 데이터 추가 (set은 위치인덱스로 데이터를 찾을 수 없음)
+srem myset apple : 데이터 삭제 
+scard myset : set의 저장된 아이템 개수 반환 
+smembers myset : 저장된 아이템들 반환 
+sismember myset apple : 특정값이 set에 포함되어 있는지 확인 (있으면 1 없으면 0)
+#####################################################
+
+
+################ redis conf 설정 #####################3
+# vi 편집기로 설정 파일 조회(redis.conf)
+sudo vi /etc/redis/redis.conf
+
+# 최대 메모리 사양
+# ->    최대 사용 메모리 사양을 256mb로 설정한다. 단위는 mb나 g 등 필요에 맞춰 적어주면된다.
+maxmemory 256mb            
+
+# 메모리 초과 사용 시 후처리 방식 설정
+# ->    지금 설정한 allkeys-lru 옵션은 가장 오래된 데이터를 삭제하고, 새로운 데이터를 저장하는 옵션이다.
+maxmemory-policy allkeys-lru
+
+# 프로세스 포트
+# ->    port 부분은 초기에 주석처리가 되어 있는데, 디폴트 값으로 6379 포트에서 동작한다. 
+# ->    만약, 6379가 아닌 다른 포트를 설정하고 싶다면 주석을 해제하고 포트번호를 입력하면된다.
+port 1234
+
+# 외부접속 허용
+# ->    기본 실행 환경은 localhost(127.0.0.1)로 되어있다.
+# ->    만약, 모든 외부접속에 대한 허용을 하고 싶다면, 0.0.0.0 으로 변경하면 된다.
+bind 0.0.0.0
+
+# 비밀번호 설정
+# ->    서버 접속에 비밀번호를 적용시키고 싶다면 아래와 같이 수정하자.
+requirepass [접속 패스워드 입력]
+
+# 암호화된 비밀번호가 필요하다면, 터미널에 다음 명령어로 생성 가능하다.
+echo "MyPassword" | sha256sum
+####################################################################

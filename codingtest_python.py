@@ -1,3 +1,8 @@
+#사칙연산
++ - * / 
+% **
+// : 나누고 나머지 뺀 정수
+
 # 리스트 list
 list1 = [1, 2, 3]
 [*list1]  ##리스트 언팩킹 
@@ -5,10 +10,14 @@ letters = ["A", "B", "C"]
 lst1 = ['A', 'B', 'C', 'D']
 lst2 = ['C', 'D', 'E', 'F']
 
+a= 'a'
+if a == 'a' or a =='b' or a == 'c':
+    print('true')
+
 ethWalletList = [address for address in ethWalletList if(address != None)]
 verb = 'buy' if amount>=0 else 'sell'
 
-set(list1)
+list1 = list(set(list1))  # 중복 제거
 list1.index(1)
 {x: 0 for x in list1}
 list1.count(1)  # 요소값이 1인 갯수 세기
@@ -26,7 +35,6 @@ list1.clear()  # 아예 리스트 비우기
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
 
-list1 = list(set(list1))  # 중복값 제거
 
 if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
     print('aaa exist')
@@ -58,3 +66,31 @@ string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
+
+
+
+
+
+
+
+############################################################################################
+############################################################################################
+############################################################################################
+############################################################################################
+
+# 경우의 수
+# 숫자가 적혀있는 N개의 카드중에 3개를 뽑아 숫자를 더한값의 모든 경우의 수 (N개중에 3개를 뽑는 모든 경우의 수)
+lst = []
+resultSet = set()
+n = 10
+for i in range(n):
+    for j in range(i+1, n):
+        for m in range(j+1, n):
+            resultSet.add(lst[i] + lst[j] + lst[m])
+
+# 최소값 구하기 
+arr = []
+arrMin = float('inf')
+for num in arr:
+    if num<arrMin:
+        arrMin = num
