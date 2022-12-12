@@ -254,11 +254,14 @@ with Hello() as h :
 
 ############ API requests ##############
 import requests
+import json 
 
 url = ""
 
 response = requests.get(url).json()   #.json()으로 받아오기/// .text  // .content
 
+json.dumps(obj) # 딕셔너리를 스트링으로 변환
+json.loads(strObj) # 스트링 형태의 딕셔너리를 json으로 반환
 
 url = "https://restapi.nftscan.com/gw/token?apiKey=gotcha"
 headers = {'Content-Type': 'application/json', 'charset': 'UTF-8', 'Accept': '*/*'}

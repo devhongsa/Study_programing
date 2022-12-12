@@ -14,7 +14,9 @@ a= 'a'
 if a == 'a' or a =='b' or a == 'c':
     print('true')
 
-ethWalletList = [address for address in ethWalletList if(address != None)]
+ethWalletList = [address for address in ethWalletList if(address != None)] #ethWalletList안에 요소들중 None값이 아닌것만 리스트로 리턴
+lst = [int(num) for num in lst]  #lst안에 있는 스트링 숫자를 인트로바꿔서 리스트로 리턴
+lst = [int(num) for num in lst if (num == '2')] #lst안에 요소에 2인것만 정수형으로 변환해서 리스트로 리턴
 verb = 'buy' if amount>=0 else 'sell'
 
 list1 = list(set(list1))  # 중복 제거
@@ -34,6 +36,12 @@ list1.clear()  # 아예 리스트 비우기
 
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
+
+min(list1)
+max(list1)
+sum(list1) #숫자로 이루어진 리스트의 요소들의 합
+
+round(3.12333,2)
 
 
 if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
@@ -66,6 +74,9 @@ string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
+list(string1) #문자열을 한글자로 분리시켜서 리스트로 리턴
+for char in string1:    #문자열 인덱스위치로 값리턴
+    print(char)
 
 
 
@@ -94,3 +105,31 @@ arrMin = float('inf')
 for num in arr:
     if num<arrMin:
         arrMin = num
+        
+
+# 정다면체
+두 개의 정N면체와 정M면체 주사위를 던져서 나올 수 있는 눈의 합 중 가장 확률이 높은 숫자를 출력하는 프로그램을 작성
+정답이 여러개일 경우 오름차순으로 출력
+
+두개의 주사위 값의 합은 최대 M+N이다. 
+lst = [0]*(M+N)
+for i in range(1,N+1):
+    for j in range(1, M+1):
+        lst[i+j] += 1
+이렇게 하면 리스트의 인덱스 값이 두 숫자의 합이 되고, 인덱스에 위치해 있는 값이 그 합이 나온 횟수를 나타내게 된다.
+
+
+#자연수x의 각 자릿수의 합
+sum = 0
+while x>0:
+    sum+=x%10
+    x=x//10
+
+# 1부터 n까지의 정수중 소수의 개수 구하기 
+lst = [0]*(n+1)
+cnt = 0
+for i in range(2,n+1):
+    if lst[i]==0:
+        cnt += 1
+        for j in range(i, n+1, i):
+            lst[j] = 1

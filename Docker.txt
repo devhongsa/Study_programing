@@ -224,6 +224,7 @@ docker run -i -t --net none ubuntu:focal   : none네트워크
 ####################################
 Docker 기본 명령어 
 ####################################
+docker search mysql (이미지 검색, official인게 안전한 이미지)
 docker run [image] 
 docker create [image] 
 docker start [container] 
@@ -273,13 +274,13 @@ nginx
 
 
 docker run \ 
--i    호스트의 표준 입력을 컨테이너와 연결
--t    TTY 할당
+-i    호스트의 표준 입력을 컨테이너와 연결, 다른컨테이너와 상호작용
+-t    TTY 할당, bash쉘을 쓸수있게하는 옵션
 -it   : -i 와 -t 옵션을 합쳐놓은거, 이 옵션을 넣어야 컨테이너안에서 터미널 실행 가능 
 --rm  컨테이너 실행 종료 후 자동 삭제 
 -d    백그라운드 모드로 실행 
 --name hello-world  컨테이너 이름 지정 
--p 80:80    호스트:컨테이너 간 포트 바인딩 
+-p 80:80    호스트:컨테이너 간 포트 바인딩  host server에 80번포트로 요청이 오면 컨테이너 서버에 80번포트로 요청을 전달하겠다는 뜻
 -v /opt/example:/example  호스트:컨테이너 간 볼륨 바인딩 (호스트볼륨)
   #호스트볼륨 
   host-volume.sh 파일에
@@ -328,7 +329,7 @@ docker run \
 container-volume은 volume역할을 host 서버가 아닌 볼륨전용 컨테이너를 만들어서 이 컨테이너를 다른 컨테이너들과 바인딩시키는 것을 말함.
 docker inspect [container] 에서 Mounts 부분이 어떤 디렉토리를 볼륨마운트하고 있는지 나옴.
 
--v /opt/example:/example:ro  :  컨테이너가 호스트서버의 볼륨만 읽을 수 있고, 컨테이너에서는 writing이 안됨.
+-v /opt/example:/example:ro  :  read only. 컨테이너가 호스트서버의 볼륨만 읽을 수 있고, 컨테이너에서는 writing이 안됨.
 
 fastcampus/hello-world:latest   실행할 이미지 이름 
 my-command    컨테이너 내에서 실행할 명령어 
@@ -369,6 +370,9 @@ ARG user1=hongsa   #변수 설정하고 값 할당.
 
 CMD ["node", "server.js"]     # cmd 명령어 수행
 ##############################################
+
+touch .dockerignore  하고 안에 node_modules 추가
+
 
 Dockerfile이 있는 위치에서 명령어 수행
 docker build -t my_app:v1 .    : -t는 tag생성.

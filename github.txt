@@ -20,6 +20,13 @@ git checkout version2      // version2로 이동
 git branch -d version2     // branch 삭제 
 git push origin version2   // version2에 push 하기 
 git merge version2         // main branch에서 실행하면 version2 와 버전병합. 
+git reset                  // 특정 commit 삭제 
+git cherry-pick            // 다른 브랜치에서 특정 commit 가져옴 
+git status 
+git tag 
+git log 
+
+git rebase는 merge와 기능은 동일하지만 branch줄기를 하나의 줄기로 합쳐줌.
 
 git config --global user.email "bippr0901@gmail.com"
 git config --global user.name "devhongsa"
@@ -62,3 +69,75 @@ git pull origin main
 충돌 상관없이 현재 commit된 내용 밀어넣기 
 git push origin main --force
 
+
+
+
+
+버전관리 Semver 
+
+1.0.0 
+major : 하위버전과 호환성을 보장하지 않는 API 변경이 발생
+minor : 하위버전과 호환되며 API 및 기능이 추가 됨.
+patch : 하위버전과 호환되며 버그가 수정된 것
+
+
+소프트웨어 생명 주기
+alpha
+     조직 내부적으로 이뤄지는 버전 테스트 시작 단계
+     더이상 기능이 추가되지 않을 때 alpha 종료
+beta
+    public한 사용자의 테스트로 이뤄지는 버전
+    기능 개발은 완료됐지만 어떤 문제가 있을지 모르는 단계
+RC(Release Candidate)
+    최종 제품이 될 가능성이 있는 베타버전
+    릴리스 후보는 프로덕션 배포용이 아니라 테스트용 
+    부하 테스트 등 모든 테스트 종류의 최종 단계가 이루어짐
+
+1.0.0-alpha
+1.0.0-alpha.1
+1.0.0-beta 
+1.0.0-beta.2
+1.0.0-rc.1
+1.0.0
+1.2.1
+
+
+caret ^
+^1.2.3   major버전이 바뀌지 않는한에서 모두 호환. 2.0.0부터 호환x
+~1.2.3   1.2.3 <= v < 1.3.0
+~1.3     1.3.0 <= v < 1.4.0
+~1       1.0.0 <= v < 2.0.0
+
+
+
+버전관리 브랜치 전략
+
+## git flow 
+
+main : 여기서는 코드 수정작업x 모두 검증된 코드만 merge
+hotfix : 버그 수정
+develop : 기능 개발
+feature : develop브랜치에서 나온 브랜치 기능 개발 종류별로 나눠서 브랜치 형성, 오직develop브랜치에만 연결되어있음
+release : develop브랜치에서 나온 브랜치 ,QA 각종 테스트를 거치는 작업
+
+## trunk based 
+
+하나의 긴 main 브랜치가 있고 기능을 개발할때마다 브랜치를 생성하고 기능이 개발되면 main에 merge하는 방식 
+
+
+github releases 기능
+깃헙 레포지토리 옆쪽에 릴리스하기 있음 여기서 버전마다 릴리스가능 
+
+
+
+github 오픈소스 기여하기 
+github 오픈소스 레포지토리로 가면 
+issues : 커뮤니케이션 하는 장소. 버그를 제보하거나, 기능추가를 제안하거나 하는 장소
+pull requests : 내가 특정 버그에대해서 수정작업을 했거나, 기능추가를 했으면 pull requests가능 
+위쪽에 fork라는 버튼이 있는데, 이는 오픈소스 레포지토리를 복사해서 내레포지토리로 만드는 것임. 여기서 브랜치를 따서 수정작업을 하고 pull requests 가능
+
+
+
+github action 
+CI/CD 작업을 도와주는 기능.
+내가 미리 짜놓은 testcode를 가동해주고, 특정서버에 배포해주는 등 코드배포를 자동화해주는 기능이다.

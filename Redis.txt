@@ -3,6 +3,12 @@ redis 특징
 Redis는 in-memory db 이기 때문에, 디스크에 저장하지 않고 메모리에 저장함.
 메모리는 읽고 쓰는 속도가 디스크보다 약 40배가량 빠르지만 휘발성이라는 단점이 있음. 
 
+redis의 가장 중요한 기능은 cache이다 이는 대규모 I/O처리에 적합한데
+웹서버가 만약 수천만명의 요청에 의해 매번 데이터베이스에서 데이터를 꺼내온다면 퍼포먼스가 현저하게 떨어질것이다.
+근데 그 데이터가 만약 자주 변경이 일어나지 않는 데이터라면 cache에 저장해놓고 바로바로 꺼내다가 쓰면 디비의 부하도 낮추고
+요청응답시간도 현저하게 줄어들 것이다. 또한 좋아요나 채팅같은 대규모 요청이 있는 앱같은경우에도 cache에 데이터를 쌓아놓다가 
+일정주기마다 데이터베이스에 업데이트해주면, 디비의 부하를 낮출 수 있게된다. 
+
 디스크에 저장하는 데이터는 영속성을 유지해야하는 데이터를 위주로 저장하고(회원정보와 같은)
 Redis는 로그인세션과 같이, 데이터가 날아가도 유저에게 치명적이지 않은 데이터를 위주로 저장하게 된다.
 
@@ -23,7 +29,7 @@ redis-server --version
 macos 
 brew install redis
 
-docker 
+docker로 설치
 docker pull redis
 docker run --name my-redis -p 6379:6379 redis
 docker stop my-redis
@@ -34,17 +40,19 @@ redis-cli : redis 클라이어튼 커맨트창 실행
 
 
 ################ redis 기본 명령어 모음 #################
-set key1 banana  : key-value 쓰기 
-get key1 : key-value 읽기
 keys * : 모든 키 보기 
 dbsize : key 몇개 있는지 
 flushall : 모든 key-value 지우기 
 
+** Strings
+set key1 banana  : key-value 쓰기 
+get key1 : key-value 읽기
 incr mycount : value값이 int로 취급하여 1 증가시키기 (데이터 원자성 보장, value가 int가 아니면 오류)
 decr mycount : 1감소시키기 
 mset key1 milk key2 coffe : 여러 키에 대한 값을 한번에 저장
 mget key1 key2 : 여러 키 값 한번에 get 
 
+** Lists
 lpush mylist apple : list 왼쪽에 요소 삽입
 rpush mylist banana 
 llen mylist : list의 길이
@@ -52,11 +60,34 @@ lrange 0 -1 : 특정 범위를 반환 -1은 맨 오른쪽
 lpop mylist : list 맨 왼쪽요소 추출 (맨왼쪽요소를 리스트에서 삭제하고 나서 가져옴)
 rpop mylist 
 
+** Sets
 sadd myset apple : set에 데이터 추가 (set은 위치인덱스로 데이터를 찾을 수 없음)
 srem myset apple : 데이터 삭제 
 scard myset : set의 저장된 아이템 개수 반환 
 smembers myset : 저장된 아이템들 반환 
 sismember myset apple : 특정값이 set에 포함되어 있는지 확인 (있으면 1 없으면 0)
+
+** Sorted Sets
+zadd mysset 1 apple : sorted set은 score값을 함께 넣어줘야함. score는 set에 순서를 부여해줌.
+zrange 0-1 withscores : score가 큰순서대로 정렬
+zpopmin
+zpipmax
+
+** hash 
+hset 
+hmset 
+hget 
+hdel 
+hincrby
+
+** Streams
+xadd 
+xlen
+xrange
+xread
+xdel
+
+
 #####################################################
 
 
@@ -89,3 +120,56 @@ requirepass [접속 패스워드 입력]
 # 암호화된 비밀번호가 필요하다면, 터미널에 다음 명령어로 생성 가능하다.
 echo "MyPassword" | sha256sum
 ####################################################################
+
+
+
+
+
+####################################################################
+redis server 만들기
+####################################################################
+
+프로젝트폴더 생성
+npx express-generator
+npm install 
+DEBUG=redis-server:* npm start
+npm install redis
+npm install axios
+
+redis-server : redis 서버 가동 
+
+////app.js
+const express = require("express");
+const redis = require("redis");
+const redisClient = redis.createClient();
+const axios = require("axios").default;
+
+const app = express();
+
+(async () => {
+  redisClient.on("error", (err) => console.log("Redis Client Error", err));
+  await redisClient.connect();
+})();
+
+
+const redisSet = async (key, value) => {
+  await redisClient.set(key, JSON.stringify(value));
+};
+
+//middleware
+const redisGet = async (req, res, next) => {
+  const { id } = req.params;
+  const data = await redisClient.get(id);
+  console.log(data);
+  data !== null ? res.send(JSON.parse(data)) : next();
+};
+
+app.get("/redis/:id", redisGet, async (req, res) => {
+  const { id } = req.params;
+  const { data } = await axios.request({
+    method: "get",
+    url: `https://reqres.in/api/product/${id}`,
+  });
+  redisSet(id, data);
+  res.send(data);
+});

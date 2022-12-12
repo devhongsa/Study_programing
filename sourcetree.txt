@@ -1,3 +1,0 @@
-커밋할 대상 폴더 제외하는 방법  : https://xctt.tistory.com/23
-
-merge할때는 main을 기준으로 main으로 checkout 한다음에 다른 브랜치 병합하기. 

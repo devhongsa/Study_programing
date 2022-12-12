@@ -3,6 +3,15 @@
 이를 위해 message broker(rabbitMQ, kafka)와 같은 중개자 역할의 기술이 필요하다.
 
 
+마이크로 서비스 초기설계 
+마이크로서비스 구분(독립성이 최우선) : 마이크로서비스는 각 서비스마다 독립적인 db를 가지고 있기 때문에 만약 서비스간의 공통된 데이터가 많으면
+그만큼 db에도 중복적인 데이터가 저장된다는 것이고, 이는 sync맞추는데도 큰 작업이 따르게 된다. 그렇기 때문에 서비스는 각각의 최대한 독립적으로 
+운영될 수 있는 환경이 구성되어야 한다.
+
+
+
+
+
 MicroService 폴더생성
 django-admin startproject serviceName
 서비스 폴더안에서 requirements.txt 생성 

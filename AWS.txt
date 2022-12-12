@@ -29,6 +29,8 @@ brew update      // homebrew 업데이트
 - ECS CLI Compose
 - AWS KMS(Key Management Service)
 - AWS CodeCommit 
+- AWS IAM 보안
+- 부하 테스트
 
 ###################네트워크 기본#########################
 
@@ -1059,7 +1061,21 @@ git commit -m "first commit"
 git push -u origin
 
 
-
 ##################################################
 AWS CodeDeploy
 ##################################################
+
+
+##################################################
+AWS IAM 보안
+##################################################
+Root 계정
+IAM - User, Role 
+STS(Security Token Service)
+
+
+##################################################
+부하 테스트
+##################################################
+npm install loadtest
+npm install -g artillery

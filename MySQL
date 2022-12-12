@@ -14,14 +14,66 @@ brew services list
 mysql -uroot :콘솔 접속
 exit 
 
+user목록보기
+use mysql 
+select user from user
+
+계정 생성
+
+create user 계정@호스트 identified by 패스워드;
+
+create user dbuser@localhost identified by 'password'; -- 로컬에서만 접근 가능
+create user dbuser@192.168.1.72 identified by 'password'; -- 특정 IP에서 접근 가능
+
+create user dbuser@'%' identified by 'password'; -- 어디에서나 접근 가능
+
+#계정비밀번호 변경
+alter user 'root'@'localhost' IDENTIFIED BY 'password';   기존유저 비밀번호 변경 
+
+ 
+계정 삭제
+
+drop user 계정@호스트;
+
+drop user dbuser@localhost;
+
+drop user dbuser@192.168.1.72;
+
+drop user dbuser@'%';
+
+ 
+권한 조회
+
+show grants for 계정;
+
+show grants for dbuser;
+
+
+계정 권한 부여
+
+grant 권한 on 데이터베이스.테이블 to 계정@호스트;
+
+grant all privileges on *.* to dbuser@'%'; -- 모든 권한 부여
+
+grant all privileges on sampledb.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 모든 권한 부여
+
+grant select, insert, update, delete on amumal.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 특정 권한 부여
+
+
+계정 권한 삭제
+
+revoke 권한 on 데이터베이스.테이블 from 계정@호스트;
+
+revoke all privileges on *.* from dbuser@'%'; -- 모든 권한 삭제
+
+revoke all privileges on sampledb.* from dbuser@'%' ; -- 특정 DB의 모든 테이블에 모든 권한 삭제
+
+revoke select, insert, update, delete on amumal.* from dbuser@'%' ;  -- 특정 DB의 모든 테이블에 특정 권한 삭제
+
+
+
 CREATE DATABASE hongsa;
 DROP DATABASE hongsa; 
-
-CREATE USER 'hongsa'@'localhost' IDENTIFIED BY 'nfttest2';    유저생성
-ALTER USER 'root'@'localhost' IDENTIFIED BY 'password';   기존유저 비밀번호 변경 
-DROP USER hongsa@localhost;    유저삭제
-
-SET PASSWORD = PASSWORD('your_password');
 
 SHOW DATABASES;
 USE hongsa;
