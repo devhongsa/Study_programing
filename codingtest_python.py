@@ -74,6 +74,7 @@ string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
+string1[::-1] # 문자열 뒤집기
 list(string1) #문자열을 한글자로 분리시켜서 리스트로 리턴
 for char in string1:    #문자열 인덱스위치로 값리턴
     print(char)
@@ -133,3 +134,59 @@ for i in range(2,n+1):
         cnt += 1
         for j in range(i, n+1, i):
             lst[j] = 1
+            
+# 자연수 n을 뒤집은 자연수, 첫째자리가 0이면 생략 
+n = 9010
+res = 0 
+
+while n>0:
+    add=n%10
+    res = res*10 + add 
+    n=n//10
+    
+# 자연수 n이 소수인지 판별
+def isPrime(x):
+    if x==1:
+        return False 
+    for i in range(2, x//2+1):
+        if x%i == 0:
+            return False
+    else:
+        return True
+
+# 주사위 3개를 던졌을때, 숫자 3개가 같은경우, 2개가 같은경우, 모두 다른 경우
+
+if lst[0] == lst[1] and lst[0] == lst[2]:
+    prize = 10000+lst[0]*1000
+elif lst[0] == lst[1] or lst[0] == lst[2]:
+    prize = 1000+lst[0]*100
+elif lst[1] == lst[2]:
+    prize = 1000+lst[1]*100
+else:
+    prize = max(lst)*100
+    
+# 점수 계산 : n개의 문제가 있고 한 문제당 점수 1점 연속으로 맞출수록 가산점 1점씩 추가
+lst = [1,0,1,1,1,0,0,1,1,0]
+n = 10
+score = 1
+res = 0
+for i in range(n):
+    if lst[i] == 0:
+        score = 1
+        continue
+    else:
+        res += score
+        score += 1
+        
+# 회문 문자열 검사  : 똑바로 읽어도 거꾸로 읽어도 똑같은 문자열 
+str1 = "moon"
+str1 = str1.upper()
+str1[::-1] #문자열 뒤집기, 쉬운방법
+
+# for문 돌리는 방법
+for i in range(len(str1)//2):
+    if str1[i] != str1[-1-i]:
+        print('NO')
+        break
+else:
+    print('YES')
