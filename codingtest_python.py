@@ -74,6 +74,7 @@ string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
+string1.isdecimal() # 문자가 숫자인지 아닌지 true false, isdigit도 있음.
 string1[::-1] # 문자열 뒤집기
 list(string1) #문자열을 한글자로 분리시켜서 리스트로 리턴
 for char in string1:    #문자열 인덱스위치로 값리턴
@@ -120,13 +121,13 @@ for i in range(1,N+1):
 이렇게 하면 리스트의 인덱스 값이 두 숫자의 합이 되고, 인덱스에 위치해 있는 값이 그 합이 나온 횟수를 나타내게 된다.
 
 
-#자연수x의 각 자릿수의 합
+## 자연수x의 각 자릿수의 합
 sum = 0
 while x>0:
     sum+=x%10
     x=x//10
 
-# 1부터 n까지의 정수중 소수의 개수 구하기 
+## 1부터 n까지의 정수중 소수의 개수 구하기 
 lst = [0]*(n+1)
 cnt = 0
 for i in range(2,n+1):
@@ -135,7 +136,7 @@ for i in range(2,n+1):
         for j in range(i, n+1, i):
             lst[j] = 1
             
-# 자연수 n을 뒤집은 자연수, 첫째자리가 0이면 생략 
+## 자연수 n을 뒤집은 자연수, 첫째자리가 0이면 생략 
 n = 9010
 res = 0 
 
@@ -144,7 +145,7 @@ while n>0:
     res = res*10 + add 
     n=n//10
     
-# 자연수 n이 소수인지 판별
+## 자연수 n이 소수인지 판별
 def isPrime(x):
     if x==1:
         return False 
@@ -154,7 +155,7 @@ def isPrime(x):
     else:
         return True
 
-# 주사위 3개를 던졌을때, 숫자 3개가 같은경우, 2개가 같은경우, 모두 다른 경우
+## 주사위 3개를 던졌을때, 숫자 3개가 같은경우, 2개가 같은경우, 모두 다른 경우
 
 if lst[0] == lst[1] and lst[0] == lst[2]:
     prize = 10000+lst[0]*1000
@@ -165,7 +166,7 @@ elif lst[1] == lst[2]:
 else:
     prize = max(lst)*100
     
-# 점수 계산 : n개의 문제가 있고 한 문제당 점수 1점 연속으로 맞출수록 가산점 1점씩 추가
+## 점수 계산 : n개의 문제가 있고 한 문제당 점수 1점 연속으로 맞출수록 가산점 1점씩 추가
 lst = [1,0,1,1,1,0,0,1,1,0]
 n = 10
 score = 1
@@ -178,7 +179,7 @@ for i in range(n):
         res += score
         score += 1
         
-# 회문 문자열 검사  : 똑바로 읽어도 거꾸로 읽어도 똑같은 문자열 
+## 회문 문자열 검사  : 똑바로 읽어도 거꾸로 읽어도 똑같은 문자열 
 str1 = "moon"
 str1 = str1.upper()
 str1[::-1] #문자열 뒤집기, 쉬운방법
@@ -190,3 +191,35 @@ for i in range(len(str1)//2):
         break
 else:
     print('YES')
+    
+
+## 스왑 
+lst = [1,2,3,4,5]
+
+lst[0],lst[4] = lst[4], lst[0]
+
+
+## 이미 정렬되어있는 리스트 2개를 합쳐서 다시 정렬하기 
+lst = [1,2,3,4]
+lst2 = [4,7,8,9,10]
+
+result = []
+
+p1 = 0
+p2 = 0
+
+while p1<len(lst) and p2<len(lst2):
+    if lst[p1]<lst2[p2]:
+        result.append(lst[p1])
+        p1+=1
+    else:
+        result.append(lst2[p2])
+        p2+=1
+
+if p1<len(lst):
+    result += lst[p1:]
+else:
+    result += lst2[p2:]
+
+print(result)
+

@@ -1,6 +1,11 @@
 import java.util.ArrayList;
 
-//jdk download 검색 후 설치
+// jdk download 검색 후 설치 : java SE , java EE 따로있음. SE는 standard edition, ee는 enterprise edition. EE버전이 SE위에 더 기능을 추가한 버전이라고 생각하면 됨.
+// java EE 설치 : temurin 검색후 lts 버전 설치 
+// tomcat : WAS  tar파일 받은후 bin폴더 경로로 가서  ./startup.sh 실행 localhost:8080 으로 접속가능 // ./shutdown.sh 으로 종료
+// gradle : brew install gradle (npm과 같은 패키지,빌드 매니저 )
+// start.spring.io
+// intellij settings에서 gradle 검색후 build and run을 inellij 로 변경하면 더 빨리 빌드하고 실행됨.
 
 //class이름은 대문자로 시작, 파일이름과 동일해야함.
 public class Java{
@@ -163,7 +168,7 @@ public class Student{
 // 클래스(객체)들 간의 협업 : 특정 클래스의 메서드안에서 다른 클래스의 메서드를 호출, 사용해서 그 클래스의 멤버변수에 영향을 끼치는 작업들.
 
 // static? 변수 : 클래스 변수라고도 함. 다른클래스들이 공유할 수 있는 변수. 이 변수는 인스턴스가 생성되지 않아도. 클래스명.변수명으로 사용이 가능함.
-// static 메소드 : 마찬가지로 static으로 만들어진 메서드는 인스턴스가 생성되지않아도 사용이 가능함. 그래서 static으로 생성된 메서드 안에서는 인스턴스 변수, 즉 멤버변수를 사용하지 못함.
+// static 메소드 : 마찬가지로 static으로 만들어진 메서드는 인스턴스가 생성되지않아도 사용이 가능함. 그래서 static으로 생성된 메서드 안에서는 인스턴스 변수, 즉 멤버변수를 사용하지 못함. 멤버변수는 인스턴스가 생성될때 메모리가 잡히기 때문
 // static으로 선언된 변수는 데이터 메모리, 멤버 변수는 힙 메모리, 지역변수(메서드안에서 생성된 변수)와 인스턴스는 스택메모리에 저장됨.
 // 순서는 객체를 생성했을때 스택메모리에 인스턴스 저장, 이후 생성자 실행되면서 멤버변수들이 힙메모리에 저장, static은 객체를 생성하지않아도 데이터 영역에 저장.
 // 자바는 메모리 해제를 가비지컬렉터가 자동으로 해주는데, 데이터 메모리 영역은 프로그램이 끝날때까지 메모리 할당이 유지 되기 때문에, static으로 선언하는 변수에 너무 큰 메모리를 할당하면 안됨.
@@ -188,6 +193,7 @@ public class Company {
 // 만약 기존에 구현되어있던 Customer class에 기능을 추가하게된다면 if 등급==vip  else if 등급==gold 이런식으로 코드가 난잡하게 만들어지게 되고, 
 // vip 손님에게만 존재하는 멤버변수들이 Customer class에 존재하게 되버린다. 
 // 이를 위해 customer를 상속받는 새로운 Vip class를 만들면 유지관리가 훨씬 편리해진다.
+// 상속 키워드 extends는 하나의 클래스만 상속받을 수 있다. 2개이상 X (다이아몬드 문제)
 
 // 자식클래스의 객체를 생성하게 되면, 부모클래스의 생성자가 먼저 실행되고, 자식클래스의 생성자가 실행된다.
 
@@ -248,5 +254,66 @@ public class AnimalTest {
         // Animal animal = new Eagle()
         // 이런식으로 코드가 실행되고, 이는 각각의 Human Tiger Eagle 클래스에서 구현된 virtual method를 실행시키게된다.
         // 이는 animal.move()의 한줄의 코드가 각기 다른 method를 실행시키는 결과로 이어진다. 이것이 다형성이다.
+
+
+        //downcasting 다운캐스팅 : 하위클래스에 상위클래스에는 없는 메서드가 있고 그걸 써야될 경우 다운캐스팅을 해야 쓸 수 있음.
+        if ( animal instanceof Human){ //animal이 Human객체로 생성되었다면 
+            Human human = (Human)animal;    //다운캐스팅
+            human.readBook();
+        }
     }
+}
+
+
+// 추상클래스 : 추상클래스는 현재 클래스에서는 어떻게 구현할지는 모르고, 하위클래스에서 구현이 가능할때 쓴다.
+// 하위클래스가 추상클래스를 상속받으면 하위클래스에서는 abstract로 선언된 메서드들을 반드시 구현을 해야한다.
+// 만약 메서드를 일부만 구현한다면 그 클래스도 abstract로 선언해줘야한다.
+// 추상클래스는 객체를 생성할 수 없다 (new Computer() 불가)
+public abstract class Computer {
+    public abstract void display();
+    public abstract void typing();
+
+    public void turnOn(){
+        System.out.println("computer is turned on");
+    }
+
+    public void washCar(){} // 여기서는 구현이 안되어있지만, 필요에 따라 하위클래스에서 구현이 가능함. 구현을 안한 하위클래스에서는
+    // 밑에 run() 했을때 아무것도 실행안하고 넘어갈 것이고, 구현한 하위클래스에서는 실행이 될것임. abstract메서드는 하위클래스에서 무조건 구현을 해줘야하지만
+    // 이렇게 하면 구현을 해도되고 안해도 됨.
+
+    // 만약 run() 메서드가 하위클래스에서 오버라이딩되면 안되는, 고정된 기능이어야 하면 final로 확정을 해준다. 이를 템플릿 메서드라고 함.
+    // 미리 메서드의 시나리오를 정해놓고, 바뀌면 안되는 메서드를 말함.
+    public final void run(){
+        display();
+        typing();
+        turnOn();
+        washCar();
+    }
+}
+
+
+// 인터페이스 : 내부적으로는 추상클래스로 동작함. 모든 메서드가 추상 메서드로 이루어진 클래스를 말함. 형식선언만 하고 구현은 없음.
+// 인터페이스 키워드 implements는 여러개를 상속받을 수 있다. 인터페이스 클래스는 구현된 부분이 없어서 다이아몬드 문제가 발생하지 않기 때문
+public interface Calc{
+
+    double PI = 3.14;
+    // 컴파일 단계에서 public static final double로 자동 선언이 됨.
+
+    int add(int num1, int num2);
+    // 얘도 public abstract가 앞에 생략이 되어있는 상태임.
+
+    // 원래 인터페이스 클래스에서는 구현메서드가 없어야 하지만 default로 선언해주면 만들 수 있다. 오버라이딩도 가능.
+    default void description(){
+        System.out.println("디폴트 메서드");
+    }
+
+    // static 메서드도 가능.
+    static int total(int[] arr){
+        
+    }
+}
+
+// 인터페이스를 상속받을때는 extends가 아닌 implements를 쓴다.
+public class Calculator implements Calc{
+
 }
