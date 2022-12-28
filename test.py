@@ -1,26 +1,14 @@
 n = 5
+count = 0
 
-lst = [[10,13,10,12,15],[12,39,30,23,11],[11,25,50,53,15],[19,27,29,37,27],[19,13,30,13,19]]
+dx=[-1,0,1,0]
+dy=[0,1,0,-1]
 
-result = []
+lst = [[n for n in range(5)] for _ in range(n)]
 
-print(result)
+print(lst)
 
-column = [0 for _ in range(n)]
-x = 0
-x2 = 0
-
-for i in range(n):
-    result.append(sum(lst[i]))
-    for j in range(n):
-        column[j] += lst[i][j]
-        
-    x += lst[i][i]
-    x2 += lst[i][-1-i]
-    
-result.append(x)
-result.append(x2)
-result += column
-
-print(result)
-    
+for i in range(1,n):
+    for j in range(1,n):
+        if all(lst[i][j]>lst[i+dx[k]][j+dy[k]] for k in range(4)):
+            count+=1

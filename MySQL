@@ -44,7 +44,7 @@ drop user dbuser@'%';
  
 권한 조회
 
-show grants for 계정;
+show grants for 계정@호스트;
 
 show grants for dbuser;
 
@@ -53,11 +53,16 @@ show grants for dbuser;
 
 grant 권한 on 데이터베이스.테이블 to 계정@호스트;
 
-grant all privileges on *.* to dbuser@'%'; -- 모든 권한 부여
+grant all on 'board'.* to 'hongsa'@'localhost' with grant option; -- board 데이터베이스의 모든 테이블에 대해서 hongsa에게 모든 권한을 줌.(로컬호스트에서 접근할때만), grant option은 hongsa가 다른 유저에게도 권한을 줄 수 있게해줌.
+
+grant all privileges on *.* to dbuser@'%'; -- 모든 권한 부여 (어디에서 접근하든지 권한허용)
 
 grant all privileges on sampledb.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 모든 권한 부여
 
 grant select, insert, update, delete on amumal.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 특정 권한 부여
+
+flush privileges; --권한 부여한 내용들을 적용시켜줌.    
+
 
 
 계정 권한 삭제

@@ -1,0 +1,72 @@
+링크
+    start.spring.io 
+    gitignore.io 
+    https://docs.google.com/spreadsheets/d/1fmNCfJAUOZylJW3n9nEYk8f_hsRYFai0aiKGJTwA1kY/edit#gid=1930466401  : api 설계 예시
+
+
+개발 기술 정리하기 : 필요할때마다 하나하나씩 추가
+    Java
+    SpringBoot
+    Spring Web
+    Spring Data JPA, H2 DataBase, Mysql Driver
+    Rest Repositories,
+    Thymeleaf
+    BootStrap
+    Spring Security
+    Lombok, Spring Boot DevTools
+    ...
+
+start.spring.io
+    Dependencies : Spring Web, Spring Data JPA, H2 DataBase, MySQL Driver, Rest Repositories, Rest Repositories HAL Explorer, Thymeleaf, Validation, Spring Security, Lombok, Spring Boot DevTools, Spring Boot Actuator
+
+github 레포지토리 생성
+gitignore.io : java, intellij+all, gradle, macos
+    gitignore에서 codeStyles, runConfigurations 도 제외해주기 
+gitkraken에서 레포지토리 clone하기 
+레포지토리 프로젝트 일정 생성하기
+
+프로젝트 시작
+브랜치 전략 세우기 
+    gitkraken  command + ,  누르고 gitflow 전략으로 이동
+    dummy 브랜치를 하나 생성해놓고 gitflow의 master를 dummy브랜치로 develop을 main으로 설정해서 initialize
+    feature 브랜치에서 개발을 진행하고 develop(main)브랜치로 머지 할것임.
+
+    브랜치 진행 과정 
+        1. feature 브랜치 생성. 이때 브랜치 이름은 #이슈번호-이슈내용 
+        2. 만든 브랜치에서 작업 시작. 
+        3. 작업이 완료되면 커밋후에 푸쉬(origin에 브랜치 추가됨.)
+        4. origin/main 에 pull request 
+        5. 코드 리뷰 후에 merge 수락 
+
+유스케이스 작성하기 
+    draw.io 
+    svg 파일로 저장 
+이슈생성으로 할일 목록 구성, 이슈번호(#2) 커밋메세지 제목에 활용 필수
+feature 브랜치에서 작업이 완료되고 pull requests -> main브랜치에 merge완료되면 꼭 feature브랜치 지워주기
+
+api 설계하기 (https://docs.google.com/spreadsheets/d/1fmNCfJAUOZylJW3n9nEYk8f_hsRYFai0aiKGJTwA1kY/edit#gid=1930466401)
+    endpoints
+        종류 / url / method / 기능 / 설명 
+    api spec 
+        url / method / 입력 데이터 구상
+
+spring boot 프로젝트 시작하기 
+    환경 구성 : initializer 이용 
+
+DB 연동 
+    - mysql download 
+    - Intellij database항목에서 DataSource mysql 추가. root 사용자, 비밀번호는 처음에는 없음. 기존에 설정해놓은 비밀번호있으면 입력 
+    - Test Connection 후에 apply
+    - 이후 db 계정, 권한 설정
+        create database board;
+        show databases;
+        create user 'hongsa'@'localhost' identified by 'Dnjfchs23';
+        select user from mysql.user;
+        show grants for 'hongsa'@'localhost';
+        grant all on board.* to 'hongsa'@'localhost' with grant option;
+        flush privileges;
+
+application 설정 세팅
+    src.main.resources.application.properties 파일을 application.yaml 파일로 변경
+    
+    

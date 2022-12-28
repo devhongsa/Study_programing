@@ -184,7 +184,7 @@ str1 = "moon"
 str1 = str1.upper()
 str1[::-1] #문자열 뒤집기, 쉬운방법
 
-# for문 돌리는 방법
+# for문으로 돌리는 방법
 for i in range(len(str1)//2):
     if str1[i] != str1[-1-i]:
         print('NO')
@@ -223,3 +223,61 @@ else:
 
 print(result)
 
+
+## 다이아몬드 탐색, 이중 리스트 , 이중 for문 탐색
+n = 5
+s=e=n//2
+for i in range(n):
+    for j in range(s, e+1):
+        res+=a[i][j]
+    if i<n//2:
+        s-=1
+        e+=1
+    else:
+        s+=1
+        e-=1
+
+## 리스트 요소 회전시키기 (요소들 자리를 한칸씩 옮기기)
+# pop(), insert(), append()
+rolling = [[1,0,3],[2,1,3]]
+lst = [[12,39,30,23,11],[1,4,6,2,5]]
+
+for roll in rolling: 
+    if roll[1] == 0:
+        for _ in range(roll[2]):
+            pop = lst[roll[0]-1].pop(0)
+            lst[roll[0]-1].append(pop)
+    else:
+        for _ in range(roll[2]):
+            pop = lst[roll[0]-1].pop()
+            lst[roll[0]-1].insert(0,pop)
+            
+## 이중 리스트에서 상하좌우에 있는 값 비교 
+# all()
+n = 5
+count = 0
+
+dx=[-1,0,1,0]
+dy=[0,1,0,-1]
+
+lst = [[n for n in range(5)] for _ in range(n)]
+
+print(lst)
+
+for i in range(1,n):
+    for j in range(1,n):
+        if all(lst[i][j]>lst[i+dx[k]][j+dy[k]] for k in range(4)):
+            count+=1
+            
+            
+## 7*7 격자판에서 5개의 연속되는 수가 (가로, 세로) 회문수인 경우의 수
+for i in range(3):
+    for j in range(7):
+        tmp=board[j][i:i+5]
+        if tmp == tmp[::-1]:
+            cnt+=1
+        for k in range(2):
+            if board[i+k][j]!=board[i+5-k-1][j]:
+                break
+        else:
+            cnt+=1

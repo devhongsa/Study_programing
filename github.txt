@@ -112,7 +112,7 @@ caret ^
 
 버전관리 브랜치 전략
 
-## git flow 
+## gitflow 
 
 main : 여기서는 코드 수정작업x 모두 검증된 코드만 merge
 hotfix : 버그 수정
