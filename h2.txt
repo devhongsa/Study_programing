@@ -5,6 +5,8 @@ bin 경로에서
 chmod 755 h2.sh
 ./h2.sh 
 
+localhost:8080/h2-console 
+
 url에 ip빼고 localhost넣으면 정상접속됨.
 connect 누르고 
 이후 접속시에는 jdbc url :  jdbc:h2:tcp://localhost/~/test 으로 수정후 접속 

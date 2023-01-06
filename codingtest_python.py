@@ -281,3 +281,26 @@ for i in range(3):
                 break
         else:
             cnt+=1
+            
+
+## 이분검색, 이분탐색 (up down할때 빨리 찾는법)
+lst = [23,87,65,12,57,32,99,81,31]
+
+lst.sort()
+
+m = 32
+
+lt = 0
+rt = len(lst)-1
+
+while lt<=rt:
+    mid = (lt+rt)//2
+    if m<lst[mid]:
+        rt= mid-1
+    elif m>lst[mid]:
+        lt= mid+1
+    else:
+        result = mid+1
+        break
+    
+print(result)

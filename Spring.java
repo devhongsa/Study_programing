@@ -74,5 +74,7 @@
 // 즉 Controller -> Service -> Repository는 DI 관계가 형성되어있고 Spring boot는 @Controller @Service 클래스의
 // 생성자에 @Autowired 태그를 달아서 자동의존관계로 연결을 해줌.(스프링 빈 등록)
 
-
 // 일급 컬렉션(클래스) : object(딕셔너리) 라고 생각하면됨. key,value를 인스턴스변수로 갖는 클래스 A를 List<A> 변수로 가지고 있는 클래스
+
+// jpa auditing : Entity에서 데이터타입이 localDatetime인 컬럼에 자동으로 시간 넣으주는 기능 https://webcoding-start.tistory.com/53
+// @EnableJpaAuditing, @EntityListeners(AuditingEntityListener.class) 으로 사용한다. 

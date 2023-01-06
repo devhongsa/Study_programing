@@ -1,14 +1,20 @@
-n = 5
-count = 0
+lst = [802,743,457,539]
 
-dx=[-1,0,1,0]
-dy=[0,1,0,-1]
+first = 1
+last = 802
 
-lst = [[n for n in range(5)] for _ in range(n)]
+n = 11
 
-print(lst)
+result = 0
 
-for i in range(1,n):
-    for j in range(1,n):
-        if all(lst[i][j]>lst[i+dx[k]][j+dy[k]] for k in range(4)):
-            count+=1
+while first<=last:
+    mid = (first+last)//2
+    res = sum([num//mid for num in lst])
+    
+    if res<n:
+        last = mid-1
+    else:
+        first = mid + 1
+        result = mid
+        
+print(result)
