@@ -93,7 +93,11 @@ public class Java{
 
 
 
-/// 클래스 
+/// 클래스 , 객체지향
+/// 객체 지향 클래스 만드는 규칙
+    // 객체를 정의
+    // 각 객체의 속성을 멤버변수로, 역할을 메서드로 구현
+    // 각 객체간의 협력을 구현
 
 public class Student{
     //멤버 변수 정의
@@ -103,7 +107,7 @@ public class Student{
     String address;
 
     //Array 리스트 
-    int[] numbers = new int[10];   // numbers[0] = 1;
+    int[] numbers = new int[10];   // 요소10개가 들어올 수 있는 배열 생성. 0으로 모두 초기화해서 만들어짐. numbers[0] = 0;
     int[] numbers2 = new int[]{0,1,2,3};
     int[] numbers3 = {0,1,2,3};
 
