@@ -321,3 +321,80 @@ public interface Calc{
 public class Calculator implements Calc{
 
 }
+
+
+
+
+
+
+
+
+// 객체 class 설계하기 
+// 객체의 3가지 요소
+    // 상태유지 : 객체의 상태정보를 저장할 수 있어야하고, 이러한 속성은 변수로 정의되어진다. 
+    // 기능제공 : 객체의 행위에 대한 method가 정의되어야 한다.
+    // 고유 식별자 제공 : 객체의 고유한 식별자를 가지고 있어야한다.
+
+// 객체 설계 5원칙
+    // 객체간의 결합도는 낮아야한다. (객체끼리 서로 의존성이 있게되면 한 객체가 수정될때, 의존관계에 있는 객체들을 모두 수정해야됨)
+    // 객체의 응집도가 높아야한다. 
+    // 개방폐쇄 원칙 : interface를 이용
+    // 리스코프 치환 원칙 : 자식 클래스는 언제나 부모클래스타입으로 치환이 가능해야함. 
+        // 공중유닛 - 정찰기 o
+        // 아반떼 - 그랜저 x
+
+// 자신의 코드에 if/else, switch가 난무하고있지 않은가
+// 책임과 역할이 다른 코드가 하나의 클래스에 다 들어가 있지 않은가
+// 절차지향적으로 한 개의 파일에 모든 코드를 넣고 있지 않은가
+// 내가 만든 객체가 재사용이 가능한가
+
+
+// 디자인 패턴 
+// 생성패턴 (객체 생성과 관련된 패턴)
+    // Factory Method
+    // Singleton : 객체를 하나만 생성해야할때
+    // Prototype
+    // Builder
+    // Abstract Factory
+    // Chaining
+
+// 구조패턴 (프로그램 내의 자료구조나 인터페이스 구조 등 프로그램 구조를 설계할때 활용되는 패턴)
+    // Adapter : 파라미터 객체타입이 맞지 않아 활용을 못할때 어댑터 클래스를 만들어서 객체타입이 맞지않아도 활용할 수 있게 해줌
+    // Composite
+    // Bridge
+    // Decorator : 원본클래스 인터페이스는 유지하고 거기에 다양한 데코레이터 클래스를 입혀서 확장된 형태의 객체를 만드는 방식
+    // Facade
+    // Flyweight
+    // Proxy : interpace를 상속하는 프록시(대리인) 클래스를 만들어서 cache처럼 활용가능. AOP 접목해서 활용 많이 함.
+
+// 행위패턴 (반복적으로 사용되는 객체들의 상호작용을 패턴화)
+    // Template Method
+    // Interpreter
+    // Iterator
+    // Observer : 변화가 일어 났을 때, 미리 등록된 다른 클래스에 통보해주는 패턴
+    // Strategy
+    // Visitor
+    // Chain of responsibility
+    // Command
+    // Mediator
+    // State
+    // Memento
+
+
+// Singleton
+public class SocketClient {
+
+    private static SocketClient socketClient = null;
+
+    private SocketClient(){
+
+    }
+
+    public static SocketClient getInstance(){
+        if(socketClient == null){
+            socketClient = new SocketClient();
+        }
+
+        return socketClient;
+    }
+}

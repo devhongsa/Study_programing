@@ -87,7 +87,9 @@ ORDER BY user_num DESC;
 CREATE TABLE "public"."newAddressSchedule2" AS SELECT * FROM "public"."newAddressSchedule"
 
 
-
+## index 인덱스 설정 (postgresql)
+create index [index_names] on [table_name] ([column_name], [column_name2]);  //멀티인덱스 설정
+create index [index_names] on [table_name] ([column_name]) // 단일 인덱스 설정
 
 
 
