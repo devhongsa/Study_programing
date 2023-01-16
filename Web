@@ -24,6 +24,9 @@ url인코딩 이란?
     예를 들어 특정 사이트의 비밀번호를 ?가 포함되게 만들었다면 이것이 서버측으로 전달될때는 예약문자로 인식하게되버린다. 
     이를 막기 위해 ?는 %3F로 변환해서 보내면 서버는 예약문자가아닌 문자 ?로 인식하게 된다. 이렇게 변환하는 것을 url인코딩이라고 한다.
 
+URL vs URI 
+URL은 서버의 특정파일이 어디에 위치하는지 식별하는 주소이고, URI는 특정자원을 나타내는 주소값을 말한다.(uri는 API개발을 통해 나오는 주소)
+
 Http message구조 
 HTTP/1.1 200 OK              :  http버전 상태코드 응답문구 
 Content-Type: text/html      : 헤더 명 : 헤더 값
@@ -46,8 +49,8 @@ post방식에서는 파라미터부분이 바디에 실려서 가게 된다.
 302 Found
 304 Not Modified
 400 Bad request 클라이언트 요청에러
-403 Forbidden 접근권한 없음
-404 Not Found 존재하지 않음
+403 Forbidden 접근권한 없음, 로그인을 안했다거나
+404 Not Found 존재하지 않음, 없는 페이지를 요청함
 500 Internal Server Error 서버측에러
 
 
