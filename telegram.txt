@@ -1,0 +1,16 @@
+1. telegram에 BotFather 검색
+2. /newbot 입력
+3. bot의 이름 입력 
+4. bot의 태그아이디 입력 
+5. bot의 api 키 저장
+6. telegram에서 bot의 태그아이디 검색후 채팅시작
+7. https://api.telegram.org/bot[botApiKey]/getUpdates
+8. "chat":{"Id":chat_id값 저장}
+
+pip install python-telegram-bot --upgrade
+
+import telegram
+bot = telegram.Bot(token=apiKey)
+chat_id = chat_id
+
+bot.sendMessage(chat_id=chat_id, text="보낼 메세지")

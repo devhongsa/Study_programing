@@ -21,6 +21,7 @@ uname -r : 커널 버전확인
 diff 파일네임1 파일네임2  : 파일1과 파일2가 같은 파일인지 다른파일인지 비교, 같으면 아무것도 출력안함
 
 ubuntu 
+sudo lsof -PiTCP -sTCP:LISTEN  현재 사용되고 있는 port 목록 보여줌
 sudo lsof -i :80    80번포트를 사용하고 있는 작업들 보여줌 
 sudo kill -9 PID    작업죽이기 
 
@@ -58,11 +59,6 @@ a 모드
 + 권한주기
 - 빼기
 = 권한설정    chmod u=rx read.txt
-
-
-
-
-
 
 
 

@@ -84,8 +84,42 @@ ORDER BY user_num DESC;
 
 
 ###### 테이블 복사하기 #######
-CREATE TABLE "public"."newAddressSchedule2" AS SELECT * FROM "public"."newAddressSchedule"
+<테이블 복사할 때>
 
+CREATE TABLE 새로만들테이블명 AS
+
+SELECT * FROM 복사할테이블명 [WHERE 절]
+
+ 
+
+<테이블 구조만 복사할 때>
+
+CREATE TABLE 새로만들테이블명 AS
+
+SELECT * FROM 복사할테이블명 WHERE 1=2 [where에다가 참이 아닌 조건을 넣어줌]
+
+ 
+
+<테이블은 이미 생성되어 있고 데이터만 복사할 때>
+
+INSERT INTO 복사할테이블명 SELECT * FROM 복사할테이블명 [WHERE 절]
+
+ 
+
+<테이블 이름 변경>
+
+ALTER TABLE 구테이블명 RENAME TO 신테이블명
+
+
+## 컬럼 데이터타입 변경 
+alter table 테이블명 alter column 컬럼명 type VARCHAR(100)
+
+## 컬럼 autoincrement 설정
+create sequence feed.marketFeed_id_seq;   schema명.테이블명_컬럼명_seq
+nextval('feed.marketFeed_id_seq'::regclass)  // pgadmin 에서 테이블 프로퍼티들어간 후 default항목에 추가
+
+## autoincrement 값 초기화
+ALTER TABLE [TABLE명] AUTO_INCREMENT = [시작할 값];
 
 ## index 인덱스 설정 (postgresql)
 create index [index_names] on [table_name] ([column_name], [column_name2]);  //멀티인덱스 설정
@@ -97,7 +131,7 @@ create index [index_names] on [table_name] ([column_name]) // 단일 인덱스 �
 
 
 
-
+##################################################################################################
 
 https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  //sql문 테스트
 https://www.hackerrank.com/domains/sql

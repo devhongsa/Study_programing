@@ -411,8 +411,26 @@ public class SocketClient {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//implementation 'org.springframework.boot:spring-boot-starter-aop'
+//implementation 'org.springframework.boot:spring-boot-starter-validation'
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Spring
+
+// @SpringBootApplication : spring boot application으로 설정
+// @Controller : View를 제공하는 controller로 설정 
+// @RestController : REST API를 제공하는 controller로 설정
+// @RequestMapping : URL 주소를 맵핑
+// @GetMapping, PostMapping, PutMapping, DeleteMapping, : api method 설정 
+// @RequestParam : URL query parameter 맵핑.
+// @RequestBody : Http Body를 parsing 맵핑
+// @Valid : POJO Java class의 검증
+// @Configration : 1개 이상의 Bean을 등록할때 설정
+// @Component : 1개의 Class 단위로 등록할때 사용 
+// @Bean : 1개의 외부 library로부터 생성한 객체를 등록 시 사용 , 메소드에 사용
+// @Autowired : DI를 위한 곳에 사용 
+// @Qualifier : @Autowired 사용시 bean이 2개 이상 일때 명시적 사용 
+// @Resource : @Autowired + @Qualifier 의 개념으로 이해
+
 
 
 
@@ -511,3 +529,33 @@ public class SocketClient {
 // 예를 들어 DB를 연결하는 기능의 객체를 만들려고하는데, 하나는 mysql, 하나는 postgresql이 있다고 한다면 두 객체에서 모두 connect라는 method를 만들어야함. 그러면 이때 connect method를 가진 Idb 객체를 만들고. mysql과 postgresql 객체에서는 각자 connect 메서드를 오버라이드해서 구현을 한다. 
 // 그리고 DbConnector라는 DI 객체를 만들어서 DbConnector connertor = new DbConnector(new mysql()), connector.connect(mysql) 이렇게사용
 // Ioc 는 @Component 어노테이션으로 spring에게 객체를 관리해달라는 뜻임. Component 등록된 객체는 Spring container에서 관리하는 Bean이 됨.
+
+// AOP : 로그관련 기능 @Aspect, @Pointcut, @Before, @After
+
+// JPA 
+    // ORM (Object Relational Mapping) : Database의 테이블과, java에서의 객체 간의 관계를 정의해줌.
+    // JPA는 ORM역할을 하는 표준라이브러리라고 생각하면됨.
+    // Hibernate : JPA의 실제 구현체들을 말함. 
+    // Spring data jpa : Hibernate에서 자주쓰는 기능들을 좀더 사용하기 쉽게 Spring에서 제공해주는 라이브러리
+// @Entity : database의 table과 java의 객체를 이어주기 위해서 자바 객체에 선언 
+// @Id : table의 아이디로 설정
+// @GeneratedValue : auto increment
+
+
+// Lombok
+// @Getter
+// @Setter
+// @ToString // User라는 객체를 println 했을때, User의 멤버변수에 대한 값들을 출력해줌.
+// @NoArgsConstructor  // 인자가 없는 생성자 생성, 필수적으로 넣어줘야함
+// @AllArgsConstructor // 모든 멤버변수를 인자로 갖는 생성자 생성
+// @RequiredArgsConstructor // NonNull 멤버변수를 인자로 갖는 생성자 생성
+// @EqualsAndHashCode // 객체끼리의 비교연산을 위한 어노테이션
+// @Data // Getter + Setter + ToString + RequiredArgsConstructor + EqualsAndHashCode
+// @Builder // User.builder().name("martin").email("11@gs").build(); 이런식으로 이어쓰기위한 어노테이션
+
+
+// 프로젝트 구조 
+// package
+    // controller : API 로직 구현 부분. GET POST DELETE UPDATE 로직 구현
+    // domain : DB에서의 테이블 내용이라고 생각하면 됨. 
+    // repository : domain과 실제 DB를 연결. CRUD를 할때 이 repository를 통해 사용함. Interface로 작성

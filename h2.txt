@@ -5,7 +5,12 @@ bin 경로에서
 chmod 755 h2.sh
 ./h2.sh 
 
+spring web 실행
 localhost:8080/h2-console 
+spring web 실행시. h2 url 주소가 로그로 뜨는데 그 주소를 JDBC URL 주소에 넣고 connect 
+
+intellij에서 h2 연결하는방법은 
+Database -> datasource -> h2 -> URL: 복사한 url 주소 
 
 url에 ip빼고 localhost넣으면 정상접속됨.
 connect 누르고 

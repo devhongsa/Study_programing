@@ -6,6 +6,7 @@ https://tempdev.tistory.com/26?category=845382     ##멀티프로세싱
 https://tempdev.tistory.com/27?category=845382     ##멀티프로세싱 이게 좋네
 https://wikidocs.net/85603              ##멀티프로세싱 
 https://niceman.tistory.com/145         ##멀티프로세싱
+https://kminito.tistory.com/24          ##telegram 텔레그램 봇 bot
 
 #pip install 패키지명 --upgrade
 #python -m pip install --upgrade pip
