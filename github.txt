@@ -40,6 +40,7 @@ git remote set-url origin https://devhongsa@github.com/devhongsa/Study_programin
 git remote -v      작업폴더의 레포지토리 연결확인
 //git branch        branch 이름 확인 master면 
 //git branch -m master main      main branch로 변경 
+git config pull.rebase false
 git pull origin main --allow-unrelated-histories     깃허브 저장소에 있는 내용 한번 pull 해줘야 local 자료 push 할수 있음.
 git push -u origin main 
 
@@ -62,7 +63,7 @@ git clone https://devhongsa@github.com/devhongsa/Spread_python.git
 
 
 git pull 충돌시 
-git fetch --all
+git fetch --all   //fetch는 원격저장소의 변경사항이 있는지 새로고침해주는 역할임.
 git reset --hard origin/main
 git pull origin main
 

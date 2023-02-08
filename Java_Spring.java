@@ -430,6 +430,14 @@ public class SocketClient {
 // @Autowired : DI를 위한 곳에 사용 
 // @Qualifier : @Autowired 사용시 bean이 2개 이상 일때 명시적 사용 
 // @Resource : @Autowired + @Qualifier 의 개념으로 이해
+// @Transactional : 클래스나 메소드에 달아서 트랜잭션 생성 
+// @Transactional(prpagation = Required) : Required가 실무에서 가장 많이 쓰이고, Required-New가 가끔 쓰일수 있다.
+    // New는 Transactional메소드안에 다른 메소드가 존재하고 그 메소드를 Transactional New로 설정해주면 그 메소드만 따로 독립적인 Transaction을 갖게된다.
+// @Query(value = "select b from Book b where name = :name and createdAt >= :createdAt and updatedAt >= :updatedAt and category is null") :
+    // Query는 Repository 객체에서 쿼리메소드에 대한 어노테이션으로 붙는다. 쿼리메소드 naming이 너무 길어질때 쓴다. jpql문에서 :name은 쿼리메소드의 파라미터에서
+    // List<Book> findByNameRecently(@Param("name") String name, ...) 이렇게 Param 어노테이션을 사용해줘야지 쓸수 있다. 안그러면 ?1 이런식으로 파라미터 순서번호로 jpql에 넣어줘야한다.
+
+// cascade : orphanRemoval vs Remove vs Soft deleted(soft는 deleted컬럼을 생성후 이데이터가 삭제된 데이터인지 true false 표시, 이후 데이터를 지우려고 할때 deleted false인 데이터만 지우게 한다.)
 
 
 
@@ -502,6 +510,7 @@ public class SocketClient {
 // API 방식 : json데이터를 리턴해주는 방식
 
 // TDD : Test code를 먼저 구현하고, 그에 맞춰 로직을 구현하는 방식.
+// debug 모드 사용 : 브레이크포인트 찍고, debug모드로 test코드 실행. 
 
 // Controller -> Service -> Repository : 정형화된 DI(Denpendency Injection) 관계
 // Controller에서 Service기능을 써야하고, Service에서는 Repository 기능을 써야함.
@@ -525,9 +534,10 @@ public class SocketClient {
 
 // IoC, DI
 // Ioc(Inversion of Control) : 제어의 역전. java 객체를 개발자가 new로 생성하여 관리하는 것이 아닌 Spring Container에 모두 맡김.
-// DI(Dependency Injection) : 의존성으로 부터 격리시켜 코드 테스트에 용이하다. Mock
+// DI(Dependency Injection) : 객체간의 결합성을 낮춰주고, 유지보수가 좋은 코드로 만들어줌. 의존성으로 부터 격리시켜 코드 테스트에 용이하다. Mock
 // 예를 들어 DB를 연결하는 기능의 객체를 만들려고하는데, 하나는 mysql, 하나는 postgresql이 있다고 한다면 두 객체에서 모두 connect라는 method를 만들어야함. 그러면 이때 connect method를 가진 Idb 객체를 만들고. mysql과 postgresql 객체에서는 각자 connect 메서드를 오버라이드해서 구현을 한다. 
 // 그리고 DbConnector라는 DI 객체를 만들어서 DbConnector connertor = new DbConnector(new mysql()), connector.connect(mysql) 이렇게사용
+// 즉 DbConnector라는 객체안에서 new mysql()으로 객체를 생성하는 것이 아니라 밖에서 생성한 객체를 파라미터로 전달해 주입하는 형태를 말함.
 // Ioc 는 @Component 어노테이션으로 spring에게 객체를 관리해달라는 뜻임. Component 등록된 객체는 Spring container에서 관리하는 Bean이 됨.
 
 // AOP : 로그관련 기능 @Aspect, @Pointcut, @Before, @After
@@ -559,3 +569,4 @@ public class SocketClient {
     // controller : API 로직 구현 부분. GET POST DELETE UPDATE 로직 구현
     // domain : DB에서의 테이블 내용이라고 생각하면 됨. 
     // repository : domain과 실제 DB를 연결. CRUD를 할때 이 repository를 통해 사용함. Interface로 작성
+

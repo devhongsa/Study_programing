@@ -117,7 +117,7 @@ Phantom Read :
 격리레벨 
 Read Uncommitted : 아직 commit되지 않은 데이터도 읽을 것이다. (위에 3문제 모두 발생)
 Read Committed : commit된 데이터만 읽을 것이다. (Dirty Read 발생하지 않음. 나머지 2문제 발생)
-Repeatable Read : commit된 데이터만 읽고, 나보다 나중에 시작된 TX의 커밋된 데이터는 읽지 않음.(Non Repeatable Read 발생하지 않음)
+Repeatable Read : commit된 데이터만 읽고, 나보다 나중에 시작된 TX의 커밋된 데이터는 읽지 않음.(Non Repeatable Read 발생하지 않음), mysql default 값
 Serializable Read : 모든 Isolation 문제 발생하지 않음.
 
 주로 실무에서는 Read Committed, Repeatable Read 격리레벨을 사용함 Read Committed를 제일 많이 사용. Serializable Read는 동시 처리량을 너무 낮추기때문에 성능 저하가 심하고 Read Uncommitted는 이상현상이 너무 많이 발생하기 때문.
