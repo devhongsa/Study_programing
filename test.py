@@ -1,3 +1,8 @@
-num = 12345.2324
+num = 9977252641
+m = 5
 
-print(format(num,','))
+stack = []
+lst = list(str(num))
+
+print(lst.index(0))
+

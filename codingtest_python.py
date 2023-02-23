@@ -30,12 +30,20 @@ list1.append('yellow')
 list1.insert(1, 'black')  # index 1에 black 요소 추가
 list1.extend(b)  # 리스트 a와 b를 합침
 
-list1.index(30)  # 요소 값이 30인 index
-list1.pop(3)  # index 3 요소 삭제
+list1.index(30)  # 요소 값이 30인 index값 리턴
+list1.pop(3)  # index 3 요소 삭제, 삭제된 요소 리턴
 list1.clear()  # 아예 리스트 비우기
 
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
+
+list1.reverse() # 리스트 뒤집기
+
+list2 = [[1,2],[4,3],[3,6]]
+list2.sort() ## 이중리스트를 정렬하면 리스트의 첫번째 요소 숫자를 기준으로 정렬함
+list2.sort(key=lambda x: (x[1],x[0])) ## 이렇게 하면 정렬기준을 리스트 2번째 요소를 기준으로 정렬함.
+
+
 
 min(list1)
 max(list1)
@@ -63,11 +71,15 @@ for i, val in enumerate(list1):
 
 # string 문자열
 string1 = "hi hello"
+list(string1) ## 문자열 한글자마다 잘라서 리스트로 만들어줌
+string1.startswith("hi")
+string1.endswith("hi")
 string1.split('.')  #'.' 를 기준으로 문자열 나누기 리스트로 반환
 string1.isalpha()
-string1.isdigit()
+string1.isdigit() # 문자열이 숫자로만 이루어져 있는지 T/F 판별. 양수만 판별가능
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
 ''.join(i for i in letters)  # 리스트 요소 사이사이에 '' 요게 들어감.
+''.join(letters) # 위에랑 똑같은 말임. 위는 리스트 요소마다 변화를 줄 수 있는 것이 차이점.
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
 string1.strip('h')
 string1.upper()
@@ -79,6 +91,23 @@ string1[::-1] # 문자열 뒤집기
 list(string1) #문자열을 한글자로 분리시켜서 리스트로 리턴
 for char in string1:    #문자열 인덱스위치로 값리턴
     print(char)
+    
+## 딕셔너리 
+obj = dict()
+
+del obj['key']  ## 딕셔너리 key,value 삭제하기 
+keylst = list(obj.keys())
+valuelst = list(obj.values())
+keyValuelst = list(obj.items())  ## [(key,value),(key2,value2),...]
+value = obj.get('key') ## obj['key'] 와 동일하지만 get은 오류를 일으키지않고 none값을 리턴함.
+
+## 딕셔너리안에 특정 key값이 존재하는지 확인
+if 'key' in obj:
+    print(True)
+
+for key,val in obj.items():
+    print(key,val)
+
 
 
 
@@ -253,7 +282,7 @@ for roll in rolling:
             lst[roll[0]-1].insert(0,pop)
             
 ## 이중 리스트에서 상하좌우에 있는 값 비교 
-# all()
+# all() 인자로 리스트를 받고 리스트 요소들이 모두 True일때만 True 반환
 n = 5
 count = 0
 
@@ -304,3 +333,29 @@ while lt<=rt:
         break
     
 print(result)
+
+## 그리디 : 현재 단계에서 가장 좋은 선택을 하는 과정. 정렬이 동반됨, 리스트를 정렬후 순회하면서 조건대로 풀어내기
+
+## 스택 (list) : 후입선출 나중에 들어간게 먼저 나온다, 리스트에 먼저들어간 요소가 조건에 안맞으면 pop해서 제거 
+num = 5276823
+m = 3
+
+stack = []
+lst = list(str(num))
+
+for x in lst:
+    while stack and m>0 and stack[-1]<x :
+        stack.pop()
+        m -= 1
+    stack.append(x)
+    
+if m!= 0:
+    stack = stack[:-m]
+    
+print(stack)
+
+## 큐 (deque): 선입선출 , 들어간 순서대로 나옴. 먼저들어간 요소들이 popleft로 차례대로 나오면서, 다시 append로 들어감. 조건에 맞춰서 pop만 시킬 요소 가려내기
+
+## 해시 (dict) : key, value로 이루어진 자료구조를 말한다.
+
+## 힙 : 이진트리 구조. 부모노드가 자식노드값보다 크거나 작아야함. 같을 수 는 없음.ㅋ
