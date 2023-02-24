@@ -1,8 +1,3 @@
-num = 9977252641
-m = 5
+string = "aaabbbbcccc"
 
-stack = []
-lst = list(str(num))
-
-print(lst.index(0))
-
+print(len(string))

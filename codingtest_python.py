@@ -71,6 +71,7 @@ for i, val in enumerate(list1):
 
 # string 문자열
 string1 = "hi hello"
+string1[0] # h 
 list(string1) ## 문자열 한글자마다 잘라서 리스트로 만들어줌
 string1.startswith("hi")
 string1.endswith("hi")
@@ -129,6 +130,26 @@ for i in range(n):
     for j in range(i+1, n):
         for m in range(j+1, n):
             resultSet.add(lst[i] + lst[j] + lst[m])
+            
+# 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!
+# 중복 순열 : n^r
+# 원 순열 : 원 모양의 테이블에 n개의 원소를 나열하는 경우의 수 : (n-1)!
+# 조합 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) : n!/(n-r)!r!
+
+#재귀함수 : 어떤 함수내에서 자기 자신함수를 호출하여 작업을 계속 수행하는 방식
+
+#복잡도 
+    # 시간 복잡도 : 알고리즘의 필요 연산 횟수 
+    # 공간 복잡도 : 알고리즘의 필요 메모리 
+    # 두 복잡도는 trade off 관계에 있다.
+
+#이진 탐색 트리 : 왼쪽 자식노드는 부모보다 작고, 오른쪽 자식 노드는 부모보다 큼
+
+# 수열
+    # 등차 수열 일반항 : an = a1 + (n-1)*d       # d는 등차값 
+    # 등차 수열 합 : n(a1 + an)/2
+    # 등비 수열 일반항 : an = a1 * r^(n-1)
+    # 등비 수열 합 : a1 * (1-r^n)/(1-r)
 
 # 최소값 구하기 
 arr = []
