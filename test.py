@@ -1,8 +1,3 @@
-num = 9977252641
-m = 5
+string = "ohelloworld"
 
-stack = []
-lst = list(str(num))
-
-print(lst.index(0))
-
+print(string.rfind("o",0,6))
