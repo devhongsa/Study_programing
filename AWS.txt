@@ -240,8 +240,8 @@ aws 액세스키 생성하기
 ### 자격증명하기 
 vi ~/.aws/credentials 
 [default]
-aws_access_key_id=AKIAIOSFODNN7EXAMPLE
-aws_secret_access_key=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+aws_access_key_id=
+aws_secret_access_key=
 
 vi ~/.aws/config
 [default]
