@@ -49,8 +49,6 @@ github settings 들어가서 pages 클릭
 Source none에서 main으로 변경 save 
 url 만들어짐.  https://devhonglion.github.io/10000hours_web/
 
-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
-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
 
 소스트리 저장소 -> 저장소 설정 -> 편집 -> https://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@github.com/devhongsa/Testing_code.git
 
