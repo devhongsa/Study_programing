@@ -91,7 +91,7 @@ string1.isalpha()
 string1.isdigit() # 문자열이 숫자로만 이루어져 있는지 T/F 판별. 양수만 판별가능
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
-string1.strip('h')
+string1.strip('hi') ## hi를 인자로 전달하면 h,i 문자를 제거함.
 string1.upper()
 string1.isupper()
 string1.lower()
@@ -261,7 +261,7 @@ for i in range(2,n+1):
         for j in range(i, n+1, i):
             lst[j] = 1
             
-## 자연수 n을 뒤집은 자연수, 첫째자리가 0이면 생략 
+## 자연수 n을 뒤집은 자연수, 첫째자리가 0이면 생략 , 숫자 뒤집기
 n = 9010
 res = 0 
 
