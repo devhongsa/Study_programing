@@ -114,7 +114,9 @@ value = obj.get('key') ## obj['key'] 와 동일하지만 get은 오류를 일으
 ## 딕셔너리안에 특정 key값이 존재하는지 확인
 if 'key' in obj:
     print(True)
-
+if 'key' not in obj:
+    print(True)
+    
 for key,val in obj.items():
     print(key,val)
 
@@ -202,6 +204,14 @@ if __name__ == "__main__":
     print(cnt)
     
 # 원 순열 : 원 모양의 테이블에 n개의 원소를 나열하는 경우의 수 : (n-1)!
+
+# 요세푸스 문제 (원 순열 java version)
+# int idx = 0;
+# while (!list.isEmpty()) {
+#     idx = (idx + k - 1) % list.size();
+#     list.append(list.remove(idx))
+# }
+
 # 조합 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) : n!/(n-r)!r!
 
 #재귀함수 : 어떤 함수내에서 자기 자신함수를 호출하여 작업을 계속 수행하는 방식

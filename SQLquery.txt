@@ -18,6 +18,137 @@ windows
 \l : db목록보기  \du : 유저목록보기  \dt : 테이블목록보기  \dn : 스키마목록보기 
 \connect [dbname] : db 접속 
 
+
+http://localhost:8080/swagger-ui/index.html
+window 버전
+mysql community edition download 
+mysql community server download 
+**이거말고 bitnamy wamp 설치하면 mysql 쉽게 설치 가능 . 설치중에 cloud어쩌고 하는거는 체크해제 
+윈도우 + R 키 cmd 
+mysql 설치된 경로(C/bitnamy/wamp/mariadb/bin)로 가서 ,  mysql -uroot -p 치면 비밀번호입력하라고 나옴.   -uroot란 root라는 사용자로 접속하겠다는 뜻.
+
+mac 버전 
+brew install mysql
+brew services start mysql 
+brew services stop mysql 
+brew services list 
+mysql -uroot :콘솔 접속
+exit 
+
+user목록보기
+use mysql 
+select user from user
+
+계정 생성
+
+create user 계정@호스트 identified by 패스워드;
+
+create user dbuser@localhost identified by 'password'; -- 로컬에서만 접근 가능
+create user dbuser@192.168.1.72 identified by 'password'; -- 특정 IP에서 접근 가능
+
+create user dbuser@'%' identified by 'password'; -- 어디에서나 접근 가능
+
+#계정비밀번호 변경
+alter user 'root'@'localhost' IDENTIFIED BY 'password';   기존유저 비밀번호 변경 
+
+ 
+계정 삭제
+
+drop user 계정@호스트;
+
+drop user dbuser@localhost;
+
+drop user dbuser@192.168.1.72;
+
+drop user dbuser@'%';
+
+ 
+권한 조회
+
+show grants for 계정@호스트;
+
+show grants for dbuser;
+
+
+계정 권한 부여
+
+grant 권한 on 데이터베이스.테이블 to 계정@호스트;
+
+grant all on 'board'.* to 'hongsa'@'localhost' with grant option; -- board 데이터베이스의 모든 테이블에 대해서 hongsa에게 모든 권한을 줌.(로컬호스트에서 접근할때만), grant option은 hongsa가 다른 유저에게도 권한을 줄 수 있게해줌.
+
+grant all privileges on *.* to dbuser@'%'; -- 모든 권한 부여 (어디에서 접근하든지 권한허용)
+
+grant all privileges on sampledb.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 모든 권한 부여
+
+grant select, insert, update, delete on amumal.* to dbuser@'%' ; -- 특정 DB의 모든 테이블에 특정 권한 부여
+
+flush privileges; --권한 부여한 내용들을 적용시켜줌.    
+
+
+
+계정 권한 삭제
+
+revoke 권한 on 데이터베이스.테이블 from 계정@호스트;
+
+revoke all privileges on *.* from dbuser@'%'; -- 모든 권한 삭제
+
+revoke all privileges on sampledb.* from dbuser@'%' ; -- 특정 DB의 모든 테이블에 모든 권한 삭제
+
+revoke select, insert, update, delete on amumal.* from dbuser@'%' ;  -- 특정 DB의 모든 테이블에 특정 권한 삭제
+
+
+
+CREATE DATABASE hongsa;
+DROP DATABASE hongsa; 
+
+SHOW DATABASES;
+USE hongsa;
+SHOW TABLES;
+
+RENAME TABLE topic TO topic_backup;
+
+구글에 mysql sql cheatsheet 치면 잘나옴.
+
+
+datatype docs https://www.w3schools.com/sql/sql_datatypes.asp
+CREATE TABLE tableName( 
+    id INT(11) NOT NULL AUTO_INCREMENT              // 11자리 정수까지만 출력, 비어있으면안됨, 자동으로 1씩 증가.
+    title VARCHAR(100) NOT NULL,                    // 100글자가 넘어가면 짜름.
+    description TEXT NULL,
+    created DATETIME NOT NULL,                      // DATETIME 데이터타입, 구글에 데이터타입검색하면 다 나옴. 
+    author VARCHAR(15) NULL,
+    profile VARCHAR(200) NULL,
+    PRIMARY KEY(id));                               
+
+    //PRIMARY KEY는 행을 구분하는 식별자 역할을 정해줌. 
+
+DESC tablename;         //테이블 구조가 나옴.
+
+
+INSERT INTO tablename (title, description, created,...) VALUES('MYSQL','MYSQL is ...', NOW(),...);
+
+SELECT * FROM tablename;
+SELECT id,title,created,author FROM topic WHERE author='egoing' ORDER BY id DESC LIMIT 2;  
+토픽이라는 테이블로부터 컬럼 id,title,crated,autor 만 뽑을건데 그중에 author가 'egoing'인거 가져와 근데 id값을 기준으로 내림차순으로 2개행만 가져와
+
+구글에 mysql select syntax 검색하면 문법 나옴. FROM WHERE GROUP BY 등등  [] 안에 있는 것들은 생략가능하다는 뜻
+
+
+UPDATE topic SET description='Oracle is...', title='Oracle' WHERE id=2;
+
+DELETE FROM topic WHERE id = 5;
+
+
+SELECT * FROM topic LEFT JOIN author ON topic.author_id = author.id;
+
+
+
+/// workbench ///
+
+mysql -uroot -p -hlocalhost          //여기서 -h는 host의 약자를 의미하고 localhost는 내 컴퓨터 서버에 접속하겠다는 뜻. -p까지만 쳐도 됨.
+                                    // 만약 다른 컴퓨터 서버에 접속하려고 하면, 다른 컴퓨터 서버 도메인을 적으면 됨. 
+
+
 CREATE USER [유저이름] WITH PASSWORD 'password';   // 새 유저 만들기 
 GRANT ALL PRIVILEGES ON DATABASE [db이름] TO [username]     // 특정유저에게 디비에 대한 모든 권한 주기. 
 GRANT SELECT ON [테이블이름] TO [유저이름]   //특정유저에게 테이블 접근권한 주기  SELECT 대신 ALL PRIVILEGES 쓰면 모든권한 

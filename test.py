@@ -1,3 +1,4 @@
+import math
 def DFS(v):
     global cnt
     if v == m :
@@ -14,11 +15,5 @@ def DFS(v):
                 print("checkList reset")
 
 if __name__ == "__main__":
-    n = 4
-    m = 3
-    cnt = 0
-    checkList = [0]*(n+1)
-    res = [0]*m
-    
-    DFS(0)
-    print(cnt)
+    lst = [0,2,3]
+    print(lst.count(1))
