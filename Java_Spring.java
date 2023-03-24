@@ -15,6 +15,7 @@ public class Java {
         //입출력
         //print(), println()   println은 자동줄바꿈을 해줌.
         System.out.println("hellow world"); 
+
         // Scanner
         Scanner sc = new Scanner(System.in);
         System.out.print("입력1 :");
@@ -22,6 +23,11 @@ public class Java {
         System.out.println(sc.nextInt()); // 숫자만 입력가능
         System.out.println(sc.nextLine()); // 입력받은값 출력, 공백포함 
         sc.nextLine(); // 엔터키 소진
+
+        // BufferedReader : 입력값이 많을때 Scanner보다 성능이 훨씬 뛰어남.
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); // 선언
+        String s = br.readLine();
+        int i = Integer.parseInt(br.readLine()); //int형으로 받고싶을때는 형변환 필요
 
         // format 
         // %d 정수, %f float, %.2f 자리수조절, %s 문자열, %o %x 8진수 16진수
@@ -48,6 +54,12 @@ public class Java {
         byte n = 123;
         int n2 = 12345;
         long n3 = 12345567L;
+
+        // 비트연산
+        // & : 두 비트값이 모두 1일때만 1
+        // | : 두 비트 값중 하나라도 1이면 1
+        // ^ : 두개의 비트값이 다르면 1, 같으면 0
+        // ~ : 하나의 비트값을 바꾸는 연산자 , 0이면 1로 1이면 0으로
 
         //Unicode : 한글과 같은 복잡한 언어를 표현하기 위한 표준 인코딩 , java에서는 표준인코딩 utf-16 사용 
 

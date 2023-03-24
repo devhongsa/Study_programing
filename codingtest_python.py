@@ -33,7 +33,6 @@ list1.extend(b)  # 리스트 a와 b를 합침
 list1.index(30)  # 요소 값이 30인 index값 리턴
 list1.pop(3)  # index 3 요소 삭제, 삭제된 요소 리턴
 list1.clear()  # 아예 리스트 비우기
-
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
 
@@ -50,7 +49,8 @@ min(list1)
 max(list1)
 sum(list1) #숫자로 이루어진 리스트의 요소들의 합
 
-
+# map(함수, 리스트) : 리스트 요소를 하나씩 순회하면서 함수에 적용, 함수에 적용된 요소들이 리스트로 리턴.
+lst = map(lambda x: x**2, lst)
 
 from itertools import combinations
 items = [1,2,3,4,5,6,7]
@@ -80,18 +80,19 @@ for i, val in enumerate(list1):
 
 # string 문자열
 string1 = "hi hello"
-string1.find()
+string1.find("h") #문자열에 h가 있는지 , 있으면 index리턴 , 여러개있으면 제일 첫번째꺼 리턴, 없으면 -1 리턴
 string1.rfind("h",0,6) # 오른쪽부터 h 찾기시작. 인덱스 0부터 6까지(6은미포함) 탐색, 찾은 인덱스 리턴
 string1[0] # h 
 list(string1) ## 문자열 한글자마다 잘라서 리스트로 만들어줌
-string1.startswith("hi")
+string1.startswith("hi") #문자열이 "hi"로 시작하는지 T/F
 string1.endswith("hi")
 string1.split('.')  #'.' 를 기준으로 문자열 나누기 리스트로 반환
 string1.isalpha()
 string1.isdigit() # 문자열이 숫자로만 이루어져 있는지 T/F 판별. 양수만 판별가능
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
-string1.strip('hi') ## hi를 인자로 전달하면 h,i 문자를 제거함.
+string1.strip() ## 문자열 앞뒤 공백제거
+string1.strip('hi') ## hi를 인자로 전달하면 문자열의 앞뒤에 있는 h,i 문자를 제거함. h,i가 안나올때까지 계속 지움.
 string1.upper()
 string1.isupper()
 string1.lower()
@@ -465,6 +466,13 @@ print(stack)
 
 ## 해시 (dict) : key, value로 이루어진 자료구조를 말한다.
 
+## 이진 트리 : 각 노드가 최대 2개의 자식노드만 가질 수 있는 트리, 자식노드의 좌우를 구분함.
+    ## 포화 이진 트리 : 모든 레벨에서 노드가 꽉차있는 트리
+    ## 완전 이진 트리 : 마지막 레벨을 제외하고 노드들이 모두 채워져있는 트리
+    ## 정 이진 트리 : 자식 노드를 0개 또는 2개를 가지고 있는 트리
+    ## 편향 트리 : 한쪽으로 기울어진 트리
+    ## 균현 이진 트리 : 모든 노드의 좌우 서브 트리 높이가 1이상 차이 나지 않는 트리 
+
 ## 힙 : 이진트리 구조. 부모노드가 자식노드값보다 크거나 작아야함. 같을 수 는 없음.
 
 ## 이진트리순회 (DFS) :깊이 우선 탐색, 부모노드부터 시작해서 왼쪽 노드로 계속 탐색. 경우의 수 같은 문제에 쓸 수 있음.
@@ -473,8 +481,9 @@ def DFS(v):
     if v>7:
         return 
     else:
-        DFS(v*2)
-        DFS(v*2+1)
-        print(v, end= " ") # print 구문이 어디 들어가냐에따라 전위순회, 중위순회, 후위순회로 나뉨. 어떤 노드부터 탐색할것이냐.
+        DFS(v*2) #왼쪽노드
+        DFS(v*2+1) #오른쪽노드
+        print(v, end= " ") #현재노드
+        # print 구문이 어디 들어가냐에따라 전위순회(현재노드->왼쪽노드->오른쪽노드), 중위순회(왼쪽->현재->오른쪽), 후위순회(왼쪽->오른쪽->현재)로 나뉨. 어떤 노드부터 탐색할것이냐. 이방식은 후위순회임.
 
 ## 이진트리순회 (BFS) : 넓이 우선 탐색, level순으로 탐색

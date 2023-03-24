@@ -1,44 +1,31 @@
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 import java.util.Stack;
 
 public class test_java {
     public static void main(String[] args) {
-        HashMap<String, Integer> hm = new HashMap<>();
-        hm.put("I", 1);
-        hm.put("V", 5);
-        hm.put("X", 10);
-        hm.put("L", 50);
-        hm.put("C", 100);
-        hm.put("D", 500);
-        hm.put("M", 1000);
+        ArrayList<Integer> arr = new ArrayList<>();
+        ArrayList<Integer> arr2 = new ArrayList<>();
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        Stack<Integer> stack = new Stack<>();
+        String s = "hi hello";
 
-        Scanner sc = new Scanner(System.in);
-        String s = sc.nextLine();
+        arr.add(1);
+        arr.add(2);
+        arr.add(13);
+        arr2.add(14);
+        arr2.add(11);
+        arr2.add(12);
+        Collections.frequency(arr, "A");
+        arr.addAll(arr2);
 
-        for (int i = 0; i < s.length(); i++) {
-            Integer num = hm.get(s.substring(i, i + 1));
-            if (stack.empty()) {
-                stack.add(num);
-            } else {
-                if (num > stack.peek()) {
-                    stack.add(num - stack.pop());
-                } else {
-                    stack.add(num);
-                }
-            }
-        }
+        arr.sort(Comparator.reverseOrder());
 
-        int answer = 0;
-
-        for (Integer n : stack) {
-            answer += n;
-        }
-
-        System.out.println(answer);
+        System.out.println(arr);
     }
 }
