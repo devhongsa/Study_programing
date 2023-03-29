@@ -1,3 +1,9 @@
+# RunTime error 이유 : 0으로 나눴을때, index에러, 선언하지않은 변수를 사용할때,
+# 3차원 배열 선언시 주의 사항 : *로 배열을 늘리면, 얕은 복사때문에 한 요소가 변경되면 다른 요소도 자동으로 변경됨.
+# 3차원 배열 선언 : 3d_array = [[[0 for _ in range(column)] for _ in range(row)] for _ in range(level)]
+# dfs 쓸때 : sys.setrecursionlimit(10**6)
+# dfs 쓸때 : nonlocal 변수 선언 필요할때 있음
+
 #사칙연산
 + - * / 
 % **
@@ -156,8 +162,21 @@ for i in range(n):
     for j in range(i+1, n):
         for m in range(j+1, n):
             resultSet.add(lst[i] + lst[j] + lst[m])
-            
-# 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!
+# 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) 재귀함수
+def DFS(v,index):
+    global cnt
+    if v == m :
+        print(res)
+        cnt+=1
+        return
+    else:
+        for i in range(index,n+1):
+            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
+                res[v] = i
+                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
+                DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 
+                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
+# 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!, 재귀함수
 def DFS(v):
     global cnt
     if v == m :
