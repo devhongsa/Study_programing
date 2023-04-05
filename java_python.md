@@ -8,7 +8,7 @@
 |                | [*list]                                     |                                                           |   |   |
 |                | list(set(lst))                              | HashSet<Integer> hashset = new HashSet<Integer>(lst)      |   |   |
 |                |                                             | ArrayList<Integer> arr = new ArrayList<Integer>(hashset)  |   |   |
-|                | lst.index(1)                                | arrList.indexOf(1)                                        |   |   |
+|                | lst.index(value:1)                          | arrList.indexOf(1)                                        |   |   |
 |                | if value in lst:                            |                                                           |   |   |
 |                | lst.count(1)                                | Collections.frequency(arrList,1)                          |   |   |
 |                | lst.remove(value:1)                         | arrList.remove(Integer.valueOf(1))                        |   |   |
@@ -28,6 +28,8 @@
 |                | max(lst)                                    | Collections.max(arrList)                                  |   |   |
 |                | sum(lst)                                    | arrList.stream().mapToInt(Integer::intValue).sum();       |   |   |
 |                | round(3.12333,2)                            | Math.round(3.12333)/100.0;                                |   |   |
+|                | math.ceil                                   |                                                           |   |   |
+|                |                                             |                                                           |   |   |
 |                | if 'aaa' in str                             | str.contains("aaa")                                       |   |   |
 |                |                                             | str.indexOf("aaa")                                        |   |   |
 |                | inter = (set(lst1) & set(lst2))             | arrList.retainAll(arrList2)                               |   |   |
@@ -83,7 +85,7 @@
 |                |                                             | int n = sc.nextInt()                                      |   |   |
 |                | import sys                                  |                                                           |   |   |
 |                | lst = map(int,sys.stdin.readline().split()) | BufferedReader br =                                       |   |   |
-|                |                                             | new BufferedReader(new InputStreamReader(System.in));     |   |   |
+|                | data = sys.stdin.readline().rstrip()        | new BufferedReader(new InputStreamReader(System.in));     |   |   |
 |                |                                             | int i = Integer.parseInt(br.readLine())                   |   |   |
 |                |                                             | StringTokenizer st = new StringTokenizer(br.readLine())   |   |   |
 |                |                                             | int N = Integer.parseInt(st.nextToken())                  |   |   |

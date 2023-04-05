@@ -162,7 +162,7 @@ for i in range(n):
     for j in range(i+1, n):
         for m in range(j+1, n):
             resultSet.add(lst[i] + lst[j] + lst[m])
-# 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) 재귀함수
+# 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) 재귀함수, 여기서 checkList 조건뺴면 (순서 x, 중복 o)
 def DFS(v,index):
     global cnt
     if v == m :
@@ -176,6 +176,7 @@ def DFS(v,index):
                 checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
                 DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 
                 checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
+                
 # 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!, 재귀함수
 def DFS(v):
     global cnt
@@ -201,7 +202,7 @@ if __name__ == "__main__":
     DFS(0)
     print(cnt)
     
-# 중복 순열 : n^r, 재귀함수 활용
+# 중복 순열 : n^r, 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 o) 재귀함수 활용
 def DFS(v):
     global cnt
     if v == m :
