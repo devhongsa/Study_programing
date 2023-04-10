@@ -67,6 +67,9 @@
 |                |                                             |                                                           |   |   |
 | ASCII          | chr(65), ord("A")                           | (char)num, (int)ch                                        |   |   |
 |                |                                             |                                                           |   |   |
+| deque          | import collections from deque               |                                                           |   |   |
+|                | q = deque(lst)                              |                                                           |   |   |
+|                | q.appendleft, q.popleft, q.rotate(2 or -2)  |                                                           |   |   |
 |                |                                             |                                                           |   |   |
 | Priority Queue | import heapq                                | PriorityQueue<Integer> pq = new PriorityQueue<>()         |   |   |
 | heap           | heapq.heappush(lst,value)                   | New PriorityQueue<>(Collections.reverseOrder())           |   |   |

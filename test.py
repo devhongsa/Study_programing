@@ -1,6 +1,7 @@
 import sys
 import heapq
 import math
+import copy
 
 def DFS(x):
     if x == 0:
@@ -451,18 +452,325 @@ def solution12345():
     print(max(dList[0][n-1],dList[1][n-1]))
     
 
-def solution():
-
-    def dfs(n):
-        if n // 2 == 0:
-            print(n%2, end='')
-            return 
-        dfs(n//2)
-        print(n%2, end='')
+def solution222():
+    lst = [3,1,2,4]
+    ch = [0]*5
+    res = [0]*4
+    answer = 0
+    def dfs(l):
+        nonlocal answer
+        if len(l) == 1 :
+            answer =  l[0]
+        else:
+            lst_ = []
+            for i in range(len(l)-1):
+                lst_.append(l[i]+l[i+1])
+            dfs(lst_)
+            
     
-    dfs(11)
+    def dfs2(v):
+        if v==4:
+            dfs(res)
+            if answer == 16:
+                print(res)
+            return
+        else:
+            for i in range(1,5):
+                if ch[i] == 0:
+                    res[v] = i 
+                    ch[i] = 1
+                    dfs2(v+1)
+                    ch[i] = 0
+    dfs2(0)
+
+
+def solution13134():
+    n = int(input())
+    lst = []
+    res = 0
+    for i in range(n):
+        lst.append(list(map(int,input().split())))
+    print(lst)
+    
+    def dfs(v, sum):
+        nonlocal res
+        if v >= n :
+            if sum>res:
+                res = sum
+            
+        else:
+            dfs(v+lst[v][0], sum+lst[v][1])
+            dfs(v+1, sum)
+            
+    dfs(0,0)
+    print(res)
+
+#동전 바꿔주기(DFS)
+def solution9876():
+    m = int(input())
+    n = int(input())
+    lst = []
+    
+    for i in range(n):
+        lst.append(list(map(int,input().split())))
+    
+    def dfs(v,sum):
+        if sum==m:
+            print('20 done')
+        elif v==n:
+            return
+        else:
+            for i in range(lst[v][1]+1):
+                dfs(v+1,sum+lst[v][0]*i)
+    
+    dfs(0,0)
+
+#동전 분배하기(DFS)
+def solution33443():
+    n = int(input())
+    lst = []
+    sumList = [0,0,0]
+    for i in range(n):
+        lst.append(int(input()))
+        
+    subMin = float("inf")
+    
+    def dfs(v):
+        nonlocal subMin
+        if v == n:
+            if len(list(set(sumList))) == 3 and subMin>max(sumList)-min(sumList) :
+                subMin = max(sumList)-min(sumList)
+        else:
+            for i in range(3):
+                sumList[i] += lst[v]
+                dfs(v+1)
+                sumList[i] -= lst[v]
+    
+    dfs(0)
+    print(subMin)
+
+#알파코드(DFS)
+def solutionAlpha():
+    code = str(input())
+    lst = []
+    
+    def dfs(s):
+        if s=="":
+            print(lst)
+        else:
+            if int(s[:2]) <= 26 and len(s)>=2:
+                lst.append(int(s[:2]))
+                dfs(s[2:])
+                lst.pop()
+            lst.append(int(s[0]))
+            dfs(s[1:])
+            lst.pop()
+            
+    dfs(code)
+    
+
+def solution2255():
+    s, e = map(int,input().split())
+    
+    visit = [False for _ in range(e+1)]
+    move = [-1,1,5]
+    L = 0 
+    
+    def bfs(v):
+        nonlocal L
+        que = []
+        que.append(v)
+        visit[v] = True
+        
+        while que:
+            for i in range(len(que)):
+                x = que.pop(0)
+                if x == e:
+                    print(L)
+                    return
+                
+                for m in move:
+                    nx = x + m 
+                    if nx<=e and nx>=1 and not visit[nx]:
+                        que.append(nx)
+                        visit[nx] = True
+            L += 1
+    
+    bfs(s)
+    
+
+# 사격연습 BOJ 27958 (제로베이스 미니 코딩 대회)
+def solution27958():
+    n = int(input())
+    b = int(input())
+    lst = []
+    for i in range(n):
+        lst.append(list(map(int,input().split())))
+        
+    bullet = list(map(int,input().split()))
+    
+    #lst = [[0,0,7,0,0],[0,0,5,20,20],[0,6,7,0,0],[0,1,0,0,0],[0,0,2,0,0]]
+    #lst = [[0,0,0,0,0],[10,0,4,0,0],[0,0,7,0,0],[0,0,0,0,0],[0,0,2,0,0]]
+    #bullet = [2,3,1,1,1]
+    #bullet = [1,5,1]
+    maxSum = 0
+    
+    def shot(b, index, startTarget, scoreBoard):
+        target = copy.deepcopy(startTarget)
+        newScoreBoard = copy.deepcopy(scoreBoard)
+        move = [[1,0],[-1,0],[0,1],[0,-1]]
+        score = 0
+        for i in range(len(target[index])):
+            if target[index][i] != 0:
+                if target[index][i] >= 10 :
+                    score = target[index][i]
+                    target[index][i] = 0
+                    newScoreBoard[index][i] = 0
+                else:
+                    if target[index][i]-b <= 0:
+                        target[index][i] = 0
+                        score = newScoreBoard[index][i]
+                        
+                        for m in move:
+                            nx = index + m[0]
+                            ny = i + m[1]
+                            if 0<= nx < n and 0<= ny < n and target[nx][ny] == 0:
+                                target[nx][ny] = lst[index][i]//4
+                                newScoreBoard[nx][ny] = newScoreBoard[index][i]//4
+                                newScoreBoard[index][i] = 0
+
+                    else:
+                        target[index][i] -= b
+                break
+        return score, target, newScoreBoard
+    
+    def dfs(v, startTarget, sum, scoreBoard):
+        nonlocal maxSum
+        #target = copy.deepcopy(startTarget)
+        if v == len(bullet):
+            if sum>maxSum:
+                maxSum = sum
+        else:
+            for i in range(len(lst)):
+                score, newTarget, newScoreBoard = shot(bullet[v], i, startTarget, scoreBoard)
+                dfs(v+1, newTarget, sum+score, newScoreBoard)
+                
+        
+    dfs(0,lst,0,lst)
+    print(maxSum)
+    
+# LIS 최대증가수열
+def solutionLIS():
+    lst = [2,7,5,8,6,4,7,12,3]
+    lst = [5,3,7,8,6,2,9,4]
+    d = [0]*len(lst)
+    
+    d[0] = 1
+    d[1] = 1
+    
+    for i in range(2,len(lst)):
+        maxLen = 0
+        for j in range(i):
+            if lst[j] < lst[i]:
+                if maxLen<d[j]+1:
+                    maxLen = d[j] + 1
+        d[i] = maxLen
+
+    print(max(d))
+
+# LIS 최대증가수열
+def solutionLIS2():
+    lst = [[25,3,4],[4,4,6],[9,2,3],[16,2,5],[1,5,2]]
+    d = [0]*len(lst)
+    
+    d[0] = 3
+    d[1] = 4
+    
+    for i in range(2,len(lst)):
+        maxHigh = 0
+        for j in range(i):
+            if lst[i][0]<lst[j][0] and lst[i][2] < lst[j][2] and maxHigh < d[j] + lst[i][1]:
+                maxHigh = d[j] + lst[i][1]
+        d[i] = maxHigh
+    
+    print(max(d))
+    
+# 알리바바 40인 
+def solutionAli():
+    lst = [[3,7,2,1,9],[5,8,3,9,2],[5,3,1,2,3],[5,4,3,2,1],[1,7,5,2,4]]
+    
+    d = [[0 for _ in range(5)] for _ in range(5)]
+    d[0][0] = 3
+    
+    for i in range(5):
+        for j in range(5):
+            up = i - 1
+            left = j - 1
+            if i==0 and j==0:
+                d[i][j] = lst[i][j]
+                continue
+                
+            if up>=0 and left>=0 : 
+                d[i][j] = min(d[up][j],d[i][left]) + lst[i][j]
+            elif up<0 :
+                d[i][j] = d[i][left] + lst[i][j]
+            else:
+                d[i][j] = d[up][j] + lst[i][j]
+    
+    print(d[4][4])
+    
+
+def solution22113():
+    d = [0]*12
+    lst = [[5,12],[3,8],[6,14],[4,8]]
+    
+    for v in lst:
+        d[v[0]] = v[1]
+    
+    for i in range(1,12):
+        maxW = 0
+        for j in range(i//2+i%2,i+1):
+            if d[j] + d[i-j] > maxW:
+                maxW = d[j] + d[i-j]
+        d[i] = maxW
+        
+    print(d[11])
+ 
+# 냅색알고리즘  선택지 중복선택 O
+def solutionNS():
+    d = [0]*12
+    lst = [[5,12],[3,8],[6,14],[4,8]]
+    
+    for v in lst:
+        for j in range(v[0],len(d)):
+            if d[j] < d[j-v[0]] + v[1]:
+                d[j] = d[j-v[0]] + v[1]
+    
+    print(d[11])
+
+# 냅색알고리즘 최대점수 구하기, 선택지 중복선택 X
+def solution():
+    limit = 20
+    lst = [[10,5],[25,12],[15,8],[6,3],[7,4]]
+    
+    d = [0]*21
+    
+    for q in lst:
+        for i in range(q[1],len(d)):
+            if i == i-q[1] :
+                d[i] = max(d[i],max(d[:i])+q[0])
+            else:
+                d[i] = max(d[i-q[1]] + q[0],d[i])
+                
+    print(d[20])
 if __name__ == "__main__":
     sys.setrecursionlimit(10**6)
+
+    #solution()
     
-    solution()
+    lst = [1]
+    
+    print(lst.index(2))
+ 
+    
     

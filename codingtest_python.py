@@ -36,11 +36,14 @@ list1.append('yellow')
 list1.insert(1, 'black')  # index 1에 black 요소 추가
 list1.extend(b)  # 리스트 a와 b를 합침
 
-list1.index(30)  # 요소 값이 30인 index값 리턴
+list1.index(30)  # 요소 값이 30인 index값 리턴  
 list1.pop(3)  # index 3 요소 삭제, 삭제된 요소 리턴
 list1.clear()  # 아예 리스트 비우기
 list1.sort()  # 올림차순
 list1.sort(reverse=True)  # 내림차순
+
+L = [{'name':'John','score':83},{'name':'hong','score':93}]
+list1.sort(key=lambda x: x['score'], reverse= True) ## lambda x에서 x는 리스트의 각 요소를 말함. key를 지정할때 x['score']를 기준으로 정렬해주는것임.
 
 list1.reverse() # 리스트 뒤집기
 
