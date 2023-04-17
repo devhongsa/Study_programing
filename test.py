@@ -2,6 +2,7 @@ import sys
 import heapq
 import math
 import copy
+from collections import deque
 
 def DFS(x):
     if x == 0:
@@ -749,7 +750,7 @@ def solutionNS():
     print(d[11])
 
 # 냅색알고리즘 최대점수 구하기, 선택지 중복선택 X
-def solution():
+def solution9987():
     limit = 20
     lst = [[10,5],[25,12],[15,8],[6,3],[7,4]]
     
@@ -763,14 +764,80 @@ def solution():
                 d[i] = max(d[i-q[1]] + q[0],d[i])
                 
     print(d[20])
+    
+class ArrayStack:
+
+    def __init__(self):
+        self.data = []
+
+    def size(self):
+        return len(self.data)
+
+    def isEmpty(self):
+        return self.size() == 0
+
+    def push(self, item):
+        self.data.append(item)
+
+    def pop(self):
+        return self.data.pop()
+
+    def peek(self):
+        return self.data[-1]
+
+prec = {
+    '*': 3, '/': 3,
+    '+': 2, '-': 2,
+    '(': 1
+}
+
+def solution12321(S):
+    opStack = ArrayStack()
+    answer = ''
+    for s in S:
+        if s == '+' or s == '-' or s == '*' or s == '/':
+            if opStack.size()!=0 and prec[opStack.peek()]>=prec[s]:
+                answer += opStack.pop()
+                opStack.push(s)
+            else:
+                opStack.push(s)
+        elif s == '(':
+            opStack.push(s)
+        elif s == ')':
+            while True:
+                p = opStack.pop()
+                if p == '(':
+                    break
+                else:
+                    answer += p
+        else:
+            answer += s
+            
+    if opStack.size() != 0:
+        while opStack.size() != 0:
+            answer += opStack.pop()
+                
+    return answer
+
+
+def solution():
+    
+    def dfs(n):
+        if n==2:
+            
+
 if __name__ == "__main__":
     sys.setrecursionlimit(10**6)
 
-    #solution()
+    #print(solution("(A+B)*(C+D)"))
     
-    lst = [1]
+    lst = [6,4,3,2,5,1]
+    lst2 = [3,4]
+    for i in lst2:
+        lst_ = [i*x for x in lst]
+        print(lst_)
+
     
-    print(lst.index(2))
  
     
     

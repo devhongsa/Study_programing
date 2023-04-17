@@ -54,7 +54,7 @@ post방식에서는 파라미터부분이 바디에 실려서 가게 된다.
 500 Internal Server Error 서버측에러
 
 
-Cookie 와 Session 
+Cookie 와 Session 쿠키 세션
 Cookie,Session : 상태 유지 및 관리, 사용자 인증 수단
 
 Cookie 원리
@@ -86,6 +86,9 @@ session의 단점
     DB서버에 엄청난 부하를 주게 되고 서버 성능 저하를 일으킨다.
 
 즉 웹 서비스의 규모와 인프라 구성에 맞게 세션과 쿠키를 알맞게 사용해야한다.
+cookie 와 session의 유효기간
+    expires 설정이 있으면, 로컬 디스크에 저장 및 유효기간 경과시 삭제
+    expires 설정이 없으면, 메모리에 저장 및 브라우저 종료시 삭제
 
 
 

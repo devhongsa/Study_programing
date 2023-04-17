@@ -67,7 +67,7 @@
 |                |                                             |                                                           |   |   |
 | ASCII          | chr(65), ord("A")                           | (char)num, (int)ch                                        |   |   |
 |                |                                             |                                                           |   |   |
-| deque          | import collections from deque               |                                                           |   |   |
+| deque          | from collections import deque               |                                                           |   |   |
 |                | q = deque(lst)                              |                                                           |   |   |
 |                | q.appendleft, q.popleft, q.rotate(2 or -2)  |                                                           |   |   |
 |                |                                             |                                                           |   |   |
@@ -76,6 +76,7 @@
 |                | heapq.heappush(lst, -value)                 | PriorityQueue<int[]> pq =                                 |   |   |
 |                | heapq.heappush(lst,(priority,value))        | new PriorityQueue<>((o1, o2) -> o1[0] - o2[0])            |   |   |
 |                | heapq.heappop(lst)                          |                                                           |   |   |
+|                | heapq.heapify(lst)                          |                                                           |   |   |
 |                |                                             |                                                           |   |   |
 | binary search  |                                             | Arrays.binarySearch(arr, value) : return index(or -index) |   |   |
 |                |                                             |                                                           |   |   |
