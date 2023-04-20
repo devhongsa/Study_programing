@@ -40,6 +40,8 @@
 | hashTable      | dict(sorted(obj.items()))                   |                                                           |   |   |
 |                | dict(sorted(obj.items(),reverse=True))      |                                                           |   |   |
 |                | len(obj)                                    |                                                           |   |   |
+|                | obj.pop(key,None)                           |                                                           |   |   |
+|                | del obj[key]                                |                                                           |   |   |
 |                |                                             |                                                           |   |   |
 | String         | str.find("h")                               | str.indexOf("h")                                          |   |   |
 |                | str.rfind("h")                              | str.lastIndexOf("h")                                      |   |   |

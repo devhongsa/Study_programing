@@ -1,52 +1,54 @@
-https://www.zerocho.com/category/HTTP/post/5b3ba2d0b3dabd001b53b9db   //api 헤더에 관한 내용 
-https://developer.mozilla.org/ko/docs/Web/HTML   html doc
-ctrl + shift + i = 크롬 개발자 도구
-html 파일있는 경로복사해서 url 창에 넣으면 들어가짐
+https://www.zerocho.com/category/HTTP/post/5b3ba2d0b3dabd001b53b9db //api 헤더에
+관한 내용 https://developer.mozilla.org/ko/docs/Web/HTML html doc ctrl + shift +
+i = 크롬 개발자 도구 html 파일있는 경로복사해서 url 창에 넣으면 들어가짐 * html
+validator : https://validator.w3.org/ 코드검사하는 사이트 * css validator :
+https://jigsaw.w3.org/css-validator/
 
-* html validator : https://validator.w3.org/             코드검사하는 사이트
-* css validator : https://jigsaw.w3.org/css-validator/
+<!-- -->
+//주석달기 ! + tab : html 스트럭쳐 생성 h1 + tab table>tr>td + tab
+table>(tr>td*4)*3 + tab h1{hello} + tab google에 reset css 검색하면 코드를 찾을
+수 있는데 이거를 그대로 복사해서 가져와서 head에 link로 불러오기. reset css는
+우리가 우리의 웹페이지를 만들때 구조를 새로짜기 좋은 상태로 만들어줌.
 
-
-
-<!-- -->   //주석달기
-! + tab   : html 스트럭쳐 생성
-h1 + tab  
-table>tr>td + tab 
-table>(tr>td*4)*3 + tab 
-h1{hello} + tab 
-
-google에 reset css 검색하면 코드를 찾을 수 있는데 이거를 그대로 복사해서 가져와서 head에 link로 불러오기. 
-reset css는 우리가 우리의 웹페이지를 만들때 구조를 새로짜기 좋은 상태로 만들어줌. 
-
-<!DOCTYPE html>     // html 버전이라고 생각하면됨 html5 html 문서맨앞에 작성
-<html>    head태그와 body태그 감싸는 태그
-<head>    본문이 아닌 부문
-  <title>Home</title>    홈페이지 이름 설정
-  <meta charset="utf-8">  언어 인코딩
-  <link rel="stylesheet" href="style.css">     <!--rel : 문서와의 관계를 나타냄, href : css파일 경로-->
-</head>
-<body>      본문부문
-</body>
+<!DOCTYPE html> // html 버전이라고 생각하면됨 html5 html 문서맨앞에 작성
+<html>
+  head태그와 body태그 감싸는 태그
+  <head>
+    본문이 아닌 부문
+    <title>Home</title>
+    홈페이지 이름 설정
+    <meta charset="utf-8" />
+    언어 인코딩
+    <link rel="stylesheet" href="style.css" />
+    <!--rel : 문서와의 관계를 나타냄, href : css파일 경로-->
+  </head>
+  <body>
+    본문부문
+  </body>
 </html>
 
+<h1>W3C</h1>
+제목, h6까지있음 숫자커질수록 글자 작아짐. 일반텍스트와 구분되어짐.
 
-<h1>W3C</h1>  제목, h6까지있음 숫자커질수록 글자 작아짐. 일반텍스트와 구분되어짐.
-
-<ul> 그룹핑
-  <li>C++</li>      목록생성
+<ul>
+  그룹핑
+  <li>C++</li>
+  목록생성
   <li>python</li>
   <li>javascript</li>
   <li>solidity</li>
 </ul>
 
-<ol> 숫자 그룹핑
-  <li>C++</li>      목록생성
+<ol>
+  숫자 그룹핑
+  <li>C++</li>
+  목록생성
   <li>python</li>
   <li>javascript</li>
   <li>solidity</li>
 </ol>
 
-<br/>줄바꿈
+<br />줄바꿈
 
 <p>단락구분</p>
 
@@ -54,77 +56,91 @@ reset css는 우리가 우리의 웹페이지를 만들때 구조를 새로짜�
 <ins>밑줄</ins>
 <del>글씨중간에 밑줄</del>
 
-<hr /> 줄 긋기
+<hr />
+줄 긋기
 
 <q>"인용하기"</q>
 <blockquote>긴 문장 인용하기</blockquote>
 
-<strong>creating web pages</strong>     //글씨 진하게지만 b태그와 달리 strong은 이 글씨가 중요하다는 의미도 내포. 검색엔진이 인식
-<b>글씨진하게</b>                       // 글씨 진하게
+<strong>creating web pages</strong> //글씨 진하게지만 b태그와 달리 strong은 이
+글씨가 중요하다는 의미도 내포. 검색엔진이 인식 <b>글씨진하게</b> // 글씨 진하게
 
 <i>글씨 기울임</i>
-<em>글씨 기울임</em>    // em은 글씨가 중요하다는 의미 내포.
+<em>글씨 기울임</em> // em은 글씨가 중요하다는 의미 내포.
 
-<span>인라인태그</span>    //span은 딱 인라인태그라는 문자열의 작은 영역을차지, 인라인태그는 p태그안에 들어갈수있음
+<span>인라인태그</span> //span은 딱 인라인태그라는 문자열의 작은 영역을차지,
+인라인태그는 p태그안에 들어갈수있음
 
-<div id="first" class="title bold">블록태그</div>  
-// div는 블록태그라는 문자열의 영역뿐만아니라 전체영역을 차지. 자동으로 줄바꿈, id는 해당 블록에 id 지정 전체문서에서 id이름중복 불가.
-// class 태그도 이름을 붙여주는거랑 같지만 id와 다르게 여러 태그에 중복으로 다는것이 가능. class속성안에서 띄워쓰기로 구분해서 중복 적용가능.
-// id와 class는 css나 javascript에서 태그를 불러와서 쓸때 사용함. id불러올때는 #first, class불러올때는 .title로 불러온다.
+<div id="first" class="title bold">블록태그</div>
+// div는 블록태그라는 문자열의 영역뿐만아니라 전체영역을 차지. 자동으로 줄바꿈,
+id는 해당 블록에 id 지정 전체문서에서 id이름중복 불가. // class 태그도 이름을
+붙여주는거랑 같지만 id와 다르게 여러 태그에 중복으로 다는것이 가능.
+class속성안에서 띄워쓰기로 구분해서 중복 적용가능. // id와 class는 css나
+javascript에서 태그를 불러와서 쓸때 사용함. id불러올때는 #first, class불러올때는
+.title로 불러온다.
 
 <style>
   .title {
     color: red;
   }
   .bold {
-    font-weight:bold;
+    font-weight: bold;
     font-size: 2em;
   }
-  #first {                  
+  #first {
     background-color: blue;
   }
 </style>
 
-<a href="#top">맨위로이동</a>   // #top 하면 화면 맨위로 이동.
-<a href="#first">바로가기</a>   // 이렇게하면 id가 first인 태그로 화면 이동.
-<a href="링크" target="_blank" title = "문구">이순신</a>
-하이퍼텍스트 링크 걸기 ,target 속성 _blank는 새페이지로 열기, title 속성 : 마우스 갖다대면 나오는 문구박스
+<a href="#top">맨위로이동</a> // #top 하면 화면 맨위로 이동.
+<a href="#first">바로가기</a> // 이렇게하면 id가 first인 태그로 화면 이동.
+<a href="링크" target="_blank" title="문구">이순신</a>
+하이퍼텍스트 링크 걸기 ,target 속성 _blank는 새페이지로 열기, title 속성 :
+마우스 갖다대면 나오는 문구박스
 
-<script src="app.js"></script>  //javascript 언어 가져오기. 보통 body의 맨끝에 붙인다.
+<script src="app.js"></script>
+//javascript 언어 가져오기. 보통 body의 맨끝에 붙인다.
 
-<link>
-<img width="200px" height="300px" src="./img/cat.jpeg" alt="Cat" />  
-src는 경로, . 은 현재 이 html 파일이 있는 위치를 말함 .. 현재위치에서 뒤로한번 돌아간 위치를 말함.
-alt는 이미지 파일이 깨졌을때, 대체해서 들어가는 문구를 말함. width는 가로길이 height 세로길이
+<link />
+<img width="200px" height="300px" src="./img/cat.jpeg" alt="Cat" />
+src는 경로, . 은 현재 이 html 파일이 있는 위치를 말함 .. 현재위치에서 뒤로한번
+돌아간 위치를 말함. alt는 이미지 파일이 깨졌을때, 대체해서 들어가는 문구를 말함.
+width는 가로길이 height 세로길이
 
 <video controls width="500px" height="350px" src="./video/sample.mp4"></video>
-controls는 비디오재생프로그램 적용하는거. 이 밖에 autoplay, loop, poster, muted 속성들 다양함.
+controls는 비디오재생프로그램 적용하는거. 이 밖에 autoplay, loop, poster, muted
+속성들 다양함.
 
 <audio controls src="./video/sample.mp4"></audio>
 audio는 video태그랑 똑같음 비디오를 가져오면 audio부분만 떼서 보여줌
 
-
-<form action="abc.com" method="GET">  <!-- action은 어느 서버로 전송할것인지, method는 POST, GET 둘중에 한 방식 default는 GET-->
-  <label for="name">이름</label>  <!--name이라는 id를 가진 태그에 label(이름)을 붙여줌. 이름을 클릭하면 자동으로 name이라는 id를 가진 input으로 커서가 옮겨짐.-->
-  <input type="text" id="name" placeholder="이름">
-  <input type="email" placeholder="이메일">
-  <input type="password" placeholder="비밀번호">
-  <input type="submit" value="회원가입">   <!--submit: 서버에 정보 전송버튼, button, reset/ value : 버튼에 표시될 dafault 문구-->
-  <button>회원가입</button>   <!--button 태그는 submit기능과 동일하지만, 아이콘같은거를 추가할 수 있는등 스타일 변화가능-->
+<form action="abc.com" method="GET">
+  <!-- action은 어느 서버로 전송할것인지, method는 POST, GET 둘중에 한 방식 default는 GET-->
+  <label for="name">이름</label>
+  <!--name이라는 id를 가진 태그에 label(이름)을 붙여줌. 이름을 클릭하면 자동으로 name이라는 id를 가진 input으로 커서가 옮겨짐.-->
+  <input type="text" id="name" placeholder="이름" />
+  <input type="email" placeholder="이메일" />
+  <input type="password" placeholder="비밀번호" />
+  <input type="submit" value="회원가입" />
+  <!--submit: 서버에 정보 전송버튼, button, reset/ value : 버튼에 표시될 dafault 문구-->
+  <button>회원가입</button>
+  <!--button 태그는 submit기능과 동일하지만, 아이콘같은거를 추가할 수 있는등 스타일 변화가능-->
 
   <label for="man">남</label>
-  <input id="man" type="radio" name="gender">       <!--raido : 단일체크박스 name: 똑같은 그룹임을 나타낼때 하나의 그룹안에서 하나만 체크가능-->
+  <input id="man" type="radio" name="gender" />
+  <!--raido : 단일체크박스 name: 똑같은 그룹임을 나타낼때 하나의 그룹안에서 하나만 체크가능-->
   <label for="woman">여</label>
-  <input id="woman" type="radio" name="gender">
-  <!--type="checkbox" 이거는 radio와 동일하지만, 하나의 그룹안에서 여러가지 요소를 체크할 수 있다.-->  
-  <textarea>asdf</textarea>     <!-- 여러줄을 입력할 수 있는 text박스 -->
+  <input id="woman" type="radio" name="gender" />
+  <!--type="checkbox" 이거는 radio와 동일하지만, 하나의 그룹안에서 여러가지 요소를 체크할 수 있다.-->
+  <textarea>asdf</textarea>
+  <!-- 여러줄을 입력할 수 있는 text박스 -->
 </form>
-// form태그는 사용자의 입력을 받아서 데이터를 웹서버로 보내는 역할 form태그안에 하나 이상의 input태그로 구성된다.
-// input태그에는 type: 무엇을 입력받을것인지(text, number, tel, radio, password, button, email, checkbox, file등), placeholder는 참고문구 입력
-// submit : form 내용을 서버로 전송, button : 기본행동이 지정되지 않은 버튼, reset : form 내용 모두 초기값으로 되돌림.
-
-
-//의미론적 태그. 
+// form태그는 사용자의 입력을 받아서 데이터를 웹서버로 보내는 역할 form태그안에
+하나 이상의 input태그로 구성된다. // input태그에는 type: 무엇을
+입력받을것인지(text, number, tel, radio, password, button, email, checkbox,
+file등), placeholder는 참고문구 입력 // submit : form 내용을 서버로 전송, button
+: 기본행동이 지정되지 않은 버튼, reset : form 내용 모두 초기값으로 되돌림.
+//의미론적 태그.
 <div class="header"></div>
 <div class="contents"></div>
 <div class="footer"></div>
@@ -138,127 +154,149 @@ audio는 video태그랑 똑같음 비디오를 가져오면 audio부분만 떼�
 <article></article>
 
 <select>
-    <option>Minutes & Hours</option>
-    <option>Km & Miles</option>
+  <option>Minutes & Hours</option>
+  <option>Km & Miles</option>
 </select>
 <!-- select는 dropdown 박스를 만들어냄, option은 그안에 선택할 목록들.-->
 
-
-
 <table>
-<tr>
-<td>
+  <th>
+    <!-- 헤더 -->
+    <tr>
+    <!--행-->
+    <td>
+    <!--열-->
+</table>
 
+        <!-- 1만 시간의 법칙 html -->
+        <!DOCTYPE html>
+        <html lang="ko">
+          <head>
+            <meta charset="UTF-8" />
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1.0"
+            />
+            <link rel="shortcut icon" href="img/favicon.ico" />
+            <link rel="stylesheet" href="css/reset.css" />
+            <link rel="stylesheet" href="css/10000hours.css" />
+            <title>Document</title>
+          </head>
 
-<!-- 1만 시간의 법칙 html -->
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" href="img/favicon.ico">
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/10000hours.css">
-    <title>Document</title>
-</head>
-
-<body>
-    <section id="contents">
-        <div class="wrapper">
-            <div class="title">
-                <img src="./img/clock.png" alt="" class="clock_img">        //alt값은 시각장애인들을 위한 정보제공. 중요한정보가 아니면 보통비워둠.
-                <div class="title_img">
-                    <img src="./img/title.png" alt="1만 시간의 법칙">
+          <body>
+            <section id="contents">
+              <div class="wrapper">
+                <div class="title">
+                  <img src="./img/clock.png" alt="" class="clock_img" />
+                  //alt값은 시각장애인들을 위한 정보제공. 중요한정보가 아니면
+                  보통비워둠.
+                  <div class="title_img">
+                    <img src="./img/title.png" alt="1만 시간의 법칙" />
+                  </div>
                 </div>
-            </div>
-            <div class="intro">
-                <div class="intro_saying">"연습은 어제의 당신보다 당신을 더 낫게 만든다."</div>
-                <div class="explain">
+                <div class="intro">
+                  <div class="intro_saying">
+                    "연습은 어제의 당신보다 당신을 더 낫게 만든다."
+                  </div>
+                  <div class="explain">
                     <div class="quotes">
-                        <img src="img/quotes.png" alt="">
+                      <img src="img/quotes.png" alt="" />
                     </div>
                     <p>
-                        <span>1만 시간의 법칙</span>은<br>어떤 분야의 전문가가 되기
-                        위해서는<br>최소한 1만 시간의 훈련이 필요하다는 법칙이다.
+                      <span>1만 시간의 법칙</span>은<br />어떤 분야의 전문가가
+                      되기 위해서는<br />최소한 1만 시간의 훈련이 필요하다는
+                      법칙이다.
                     </p>
+                  </div>
                 </div>
-            </div>
-            <div class="inputs">
-                <div class="field">
+                <div class="inputs">
+                  <div class="field">
                     <p>나는</p>
-                    <input type="text" id="field_value" placeholder="예)프로그래밍">
+                    <input
+                      type="text"
+                      id="field_value"
+                      placeholder="예)프로그래밍"
+                    />
                     <p>전문가가 될 것이다.</p>
-                </div>
-                <div class="time">
+                  </div>
+                  <div class="time">
                     <p>그래서 매일 하루에</p>
                     <div>
-                        <input type="text" id="time_value" placeholder="예)5">
-                        <p>시간씩 훈련할 것이다.</p>
+                      <input type="text" id="time_value" placeholder="예)5" />
+                      <p>시간씩 훈련할 것이다.</p>
                     </div>
+                  </div>
                 </div>
-            </div>
-            <div class="start">
-                <div class="btn_wrap">
-                    <button class="start_btn">나는 며칠 동안 훈련을 해야 1만 시간이 될까?</button>
+                <div class="start">
+                  <div class="btn_wrap">
+                    <button class="start_btn">
+                      나는 며칠 동안 훈련을 해야 1만 시간이 될까?
+                    </button>
                     <div class="click_img">
-                        <img src="img/click.png" alt="클릭">
+                      <img src="img/click.png" alt="클릭" />
                     </div>
+                  </div>
                 </div>
-            </div>
-            <div class="result_loading">
-                <div class="img_wrap">
-                    <img src="img/loading.png" alt="로딩 중">
+                <div class="result_loading">
+                  <div class="img_wrap">
+                    <img src="img/loading.png" alt="로딩 중" />
+                  </div>
                 </div>
-            </div>
-            <div class="result">
-                <div class="result_wrap">
+                <div class="result">
+                  <div class="result_wrap">
                     <div>
-                        당신은 <span class="field_result"></span> 전문가가 되기 위해서
+                      당신은 <span class="field_result"></span> 전문가가 되기
+                      위해서
                     </div>
                     <div>
-                        대략 <span class="time_result"></span> 일 이상 훈련하셔야 합니다! :)
+                      대략 <span class="time_result"></span> 일 이상 훈련하셔야
+                      합니다! :)
                     </div>
-                </div>
-                <div class="buttons">
+                  </div>
+                  <div class="buttons">
                     <div class="go">
-                        <button class="modal_btn">훈련하러 가기 GO!GO!</button>
+                      <button class="modal_btn">훈련하러 가기 GO!GO!</button>
                     </div>
                     <div class="share">
-                        <button class="share_btn">공유하기</button>
+                      <button class="share_btn">공유하기</button>
                     </div>
+                  </div>
                 </div>
-            </div>
-
-        </div>
-    </section>
-    <section id="modal">
-        <div class="modal_wrap">
-            <div class="cheer">
-                <h1>화이팅!♥♥♥</h1>
-                <h3>당신의 꿈을 응원합니다!</h3>
-            </div>
-            <div class="licat_img">
-                <img src="img/licat.png" alt="라이캣 응원">
-            </div>
-            <div class="btn">
-                <button class="close_btn">종료하고 진짜 훈련하러 가기 GO!GO!</button>
-                <p>(그냥 닫기 버튼입니다.)</p>
-            </div>
-        </div>
-    </section>
-    <footer id="copyright">
-        <div class="log_img">
-            <img src="img/logo.png" alt="weniv">
-        </div>
-        <p>
-            본 서비스 내 이미지 및 콘텐츠의 저작권은 주식회사 Weniv에 있습니다. <br>
-            수정 및 재배포, 무단 도용 시 법적인 문제가 발생할 수 있습니다.
-        </p>
-    </footer>
-    <script type="text/javascript" src="js/10000hours.js"></script>
-</body>
-
-</html>
-<!-- ----------------------------------------------------------------------- -->
+              </div>
+            </section>
+            <section id="modal">
+              <div class="modal_wrap">
+                <div class="cheer">
+                  <h1>화이팅!♥♥♥</h1>
+                  <h3>당신의 꿈을 응원합니다!</h3>
+                </div>
+                <div class="licat_img">
+                  <img src="img/licat.png" alt="라이캣 응원" />
+                </div>
+                <div class="btn">
+                  <button class="close_btn">
+                    종료하고 진짜 훈련하러 가기 GO!GO!
+                  </button>
+                  <p>(그냥 닫기 버튼입니다.)</p>
+                </div>
+              </div>
+            </section>
+            <footer id="copyright">
+              <div class="log_img">
+                <img src="img/logo.png" alt="weniv" />
+              </div>
+              <p>
+                본 서비스 내 이미지 및 콘텐츠의 저작권은 주식회사 Weniv에
+                있습니다. <br />
+                수정 및 재배포, 무단 도용 시 법적인 문제가 발생할 수 있습니다.
+              </p>
+            </footer>
+            <script type="text/javascript" src="js/10000hours.js"></script>
+          </body>
+        </html>
+        <!-- ----------------------------------------------------------------------- -->
+      </td>
+    </tr>
+  </th>
+</table>

@@ -819,23 +819,121 @@ def solution12321(S):
                 
     return answer
 
-
-def solution():
+# BOJ 11725
+def solution11725():
+    n = int(input())
+    lst = [[] for _ in range(n+1)]
+    parent = [0]*(n+1)
+    visit = [0]*(n+1)
+    for _ in range(n-1):
+        p, c = map(int,input().split())
+        lst[p].append(c)
+        lst[c].append(p)
     
-    def dfs(n):
-        if n==2:
+    def dfs(v):
+        visit[v] = 1
+        for i in lst[v]:
+            if visit[i] == 0:
+                parent[i] = v
+                dfs(i)
             
+    dfs(1) 
+    for i in range(2,len(parent)):
+        print(parent[i])
+            
+# BOJ 1068 
+def solution1068():
+    n = int(input())
+    if n==1:
+        print(0)
+        return
+    lst = list(map(int,input().split()))
+    node = int(input())
+    leaf = [x for x in range(n)]
+    obj = {}
+    
+    for i in range(len(lst)):
+        if lst[i] == -1:
+            continue
+        if lst[i] in obj:
+            obj[lst[i]].append(i)
+        else:
+            obj[lst[i]] = [i]
+            
+    for k in obj.keys():
+        leaf.remove(k)
+
+    deleteNode = [node]
+    
+    for key,value in obj.items():
+        if node in value and len(value) == 1:
+            leaf.append(key)
+        
+    def dfs(v):
+        if v not in obj:
+            return 
+        else:
+            for c in obj[v]:
+                deleteNode.append(c)
+                dfs(c)
+    
+    dfs(node)
+    result = list(set(leaf)-set(deleteNode))
+    print(len(result))
+    
+def solutionpp():
+    code = "2{l2{e}l}"
+    def dfs(num,index):
+        string = ""
+        while code[index]!="}":
+            if code[index].isdigit():
+                str_, index2 = dfs(code[index],index+2)
+                string += str_
+                index = index2
+            else:
+                string += code[index]
+                index += 1
+        return string*int(num), index+1
+    answer = ""
+    check = 0
+    for i in range(len(code)):
+        if code[i].isdigit() and i>=check:
+            mid, index_ = dfs(code[i],i+2)
+            answer += mid
+            check = index_
+        elif i>=check:
+            answer += code[i]
+    return answer
+
+def solution(delay, capacity, times):
+    answer = 0
+    time = 0
+    que = 0
+    
+    for t in times:
+        if time == delay:
+            que -= 1
+            time = 0
+        if t==0:
+            que += 1
+            if que-capacity >0:
+                answer += que-capacity
+                que = capacity
+        else:
+            time += t
+            que += 1
+            if que-capacity >0:
+                answer += que-capacity
+                que = capacity
+        
+
+    return answer
 
 if __name__ == "__main__":
     sys.setrecursionlimit(10**6)
 
-    #print(solution("(A+B)*(C+D)"))
+    solution(5,5,[3,2,0,0,2,3,0,0,2,2,5])
     
-    lst = [6,4,3,2,5,1]
-    lst2 = [3,4]
-    for i in lst2:
-        lst_ = [i*x for x in lst]
-        print(lst_)
 
     
  

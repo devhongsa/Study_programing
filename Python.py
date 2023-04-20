@@ -547,10 +547,94 @@ res = requests.get('view-source:https://opensea.io/rankings?sortBy=seven_day_vol
 print(res.text)
 
 
-soup = BeautifulSoup(res.content, 'html.parser')
+soup = BeautifulSoup(res.text, 'html.parser')
+print(soup.prettify())
+soup.title 
+soup.body
+soup.head
 mydata = soup.find('title')
+h1 = soup.find('h1')
+soup.find('h1', id="results") #태그 아이디로 추출하기 
+soup.find('h1', "page-header") #태그 클래스 이름으로 추출하기 
+h1.a.title # h1 태그안에 있는 a 태그의 타이틀 내용 추출
+mydata.name 
+mydata.text
+soup.find_all('h1') #리스트로 반환
 print(mydata.get_text())
 
+#css selector
+soup = BeautifulSoup(res.content,'html.parser')
+items = soup.select("css selector")
+
+
+######################################### 셀레니움 selenium ###########################################
+# pip install selenium
+# pip install webdriver-manager  웹과 연동을 하기 위한 라이브러리
+
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver import ActionChains
+
+# with A as B 구문 뜻 : B=A 이고, with 구문에 있는 코드가 다 끝나면 알아서 객체를 소멸시켜라(종료)의 뜻임.
+with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
+    driver.get("url address")
+    print(driver.page_source)
+    print(driver.find_element(By.TAG_NAME, "p"))
+    for element in driver.find_elements(By.TAG_NAME,"p"):
+        print(element.text)
+
+# wait and call
+# implicit wait : 명시적 기다림, 웹페이지가 다 로딩이 될때까지 n초 동안 기다려
+# explicit wait : 암묵적 기다림, 특정태그를 가져올 수 있을때 까지 기다려
+
+# Xpath : 태그기준이 아닌, 위치기반으로 스크래핑. css selector 처럼 Xpath를 복사해올 수 있음.
+# 명시적 기다림
+driver.get("url")
+driver.implicitly_wait(10) # 최대 10초를 기다리는데 get요청에대한 응답이 다오면 기다리는거 취소하고 다음 코드 진행, 10초되면 그냥 다음코드 진행
+print(driver.find_element(By.XPATH, 'Xpath경로').text)
+
+# 암묵적 기다림
+driver.get("url")
+element = WebDriverWait(driver,10).until(EC.presence_of_element_located((By.XPATH, 'Xpath경로'))) # 특정태그가 로딩되면 바로 element로 넣음
+print(element.text)
+
+# 마우스 클릭하기 
+driver.get("url")
+driver.implicitly_wait(10)
+button = driver.find_element(By.CLASS_NAME, "nav-link.nav-signin")
+ActionChains(driver).click(button).perform() # perform()전에 click하고 뭐하고 동작 계속 추가가능 click().click().perform()
+
+# 키보드 누르기
+driver.get("url")
+driver.implicitly_wait(10)
+input_ID = driver.find_element(By.ID, "user_id")
+input_PW = driver.find_element(By.ID, "user_password")
+ActionChains(driver).send_keys_to_element(input_ID,"id").perform()
+ActionChains(driver).send_keys_to_element(input_PW,"password").perform()
+
+######################################### jupyterlab #########################################
+# pip3 install jupyterlab 또는
+# python -m pip install jupyterlab 
+# 터미널에서 jupyter lab 치면 창이 뜸
+
+# 명령모드(ESC) 입력모드(Enter)
+# code cell(Y) / markdown cell(M) : 코드 셀은 코드 입력하는 셀, 마크다운 셀은 필기,메모 입력하는 셀  
+# A : 현재 셀위에 새로운 셀 만듬 B: 밑에 만듬. dd: 셀 삭제
+# cmd/ctrl + Enter : 셀 코드 실행
+
+# 마크다운 
+# header(#, ##, ###) (글씨 크기)
+# *...* , _..._ (기울림체)
+# **...** , __...__ (글씨 굵게)
+# ~...~ (취소선 표시)
+# - ..., * ...  (리스트 표시)
+# `...` (마크다운 셀에 코드작성)
+# ```...``` (코드 블록)
+# 스페이스 두번 (줄바꿈)
 
 ######################################### 비동기 async  #########################################
 https://github.com/amamov/teaching-async-python     ##소스코드 

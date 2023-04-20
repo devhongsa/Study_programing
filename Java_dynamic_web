@@ -1,0 +1,5 @@
+// intellij 기본 프로젝트 생성
+// 프로젝트이름 우클릭 Add framework
+// web app 추가 -> web 폴더 생성
+// tomcat 서버 추가 -> 메뉴 Run -> edit configuration -> + -> tomcat server local 추가 -> tomcat 설치폴더 지정.
+// development 탭 artifact 추가 explode -> 경로 / 으로 수정

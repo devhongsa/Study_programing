@@ -34,6 +34,10 @@ Content-Type: text/html      : 헤더 명 : 헤더 값
 <html>                       : 바디 
 </html>
 
+user-agent : 내가 http 요청을 보낼때의 주체가 되는 프로그램
+
+robots.txt : 웹사이트에서 특정 크롤러봇을 막기위해 설정해놓은 파일 / 특정웹사이트의 robots.txt 호출방법 : url/robots.txt 
+
 get방식에서는 파라미터부분이 헤더에 실리지만
 post방식에서는 파라미터부분이 바디에 실려서 가게 된다.
 
