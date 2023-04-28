@@ -929,10 +929,62 @@ def solution(delay, capacity, times):
 
     return answer
 
+def solution(x1, y1, x2, y2):
+    chul = [x1,y1]
+    young = [x2,y2]
+    chulMove = [[1,0],[-1,0],[0,1],[0,-1]]
+    youngMove = [[1,1],[-1,1],[1,-1],[-1,-1]]
+    L = 0
+
+    def bfs():
+        nonlocal L
+        que = []
+        lst = minMove(x1,y1,x2,y2)
+        for l in lst:
+            que.append(l)
+        while True:
+            nextList = []
+            for i in range(len(que)):
+                st = que.pop(0)
+                if st[0]==st[2] and st[1]==st[3]:
+                    return
+                else:
+                    next_ = minMove(st[0],st[1],st[2],st[3])
+                    for l in next_:
+                        nextList.append(l)
+            for l in nextList:
+                que.append(l)
+            L+=1
+    
+    def minMove(c1,c2,y1,y2):
+        chulNext = []
+        youngNext = []
+        minimum = 5000
+        answer = []
+        for m in chulMove:
+            chulNext.append([m[0]+c1,m[1]+c2])
+        for m2 in youngMove:
+            youngNext.append([m2[0]+y1,m2[1]+y2])
+        
+        for i in range(len(chulNext)):
+            for j in range(len(chulNext)):
+                dis = abs(chulNext[i][0]-youngNext[j][0])+abs(chulNext[i][1]-youngNext[j][1])
+                if dis<minimum:
+                    answer = []
+                    answer.append(chulNext[i]+youngNext[j])
+                    minimum = dis
+                elif dis==minimum:
+                    answer.append(chulNext[i]+youngNext[j])
+
+        return answer
+    bfs()
+
+    return L
+
 if __name__ == "__main__":
     sys.setrecursionlimit(10**6)
 
-    solution(5,5,[3,2,0,0,2,3,0,0,2,2,5])
+    solution(2,4,5,-3)
     
 
     

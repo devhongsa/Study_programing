@@ -1,0 +1,19 @@
+메모리 계층 
+    주기억장치(main memory)
+        SDRAM(Single Data Rate) : 클럭 신호 상승과 하강 한 사이클에 하나의 데이터를 전송
+        DDR(Double Data Rate) : 클럭 신호 상승과 하강 모두에서 데이터를 전송/ DDR,DDR2,DDR3,DDR4 순으로 작동전압이 낮아지고 성능도 좋아짐
+    보조기억장치(Auxiliary memory)
+        SSD(Solid State Drive) : 플래시 메모리로 구성, 제로스핀 시스템, HDD보다 파일 입출력 속도가 훨씬 빠름
+        HDD : 자기 디스크로 구성
+        RAID : 여러 HDD를 모아서 병렬로 연결하여 하나인 것처럼 쓰는 방식
+            RAID 0 : 병렬로 연결된 A,B 하드디스크에 데이터를 번갈아가면서 저장하는 방식. 접근속도가 빨라진다.
+            RAID 1 : 병렬로 연결된 A,B 하드디스크 두개가 똑같은 데이터를 저장함. 한쪽이 망가져도 복구 쉬움.
+    캐쉬메모리(Cache memory)
+
+System Bus
+    컴퓨터의 구성요소를 연결하고 데이터 전달
+    주소버스, 데이터버스, 제어버스로 구성
+    address bus : 메모리주소 전달
+    data bus : 데이터 전달
+    control bus : Read Write 신호 전달
+

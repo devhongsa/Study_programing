@@ -174,7 +174,7 @@ field4    varchar(1000)
 ALTER TABLE Temp_Table ADD field5 char(10);
 ALTER TABLE Temp_Table DROP COLUMN field5 ;
 
-ALTER TABLE foo ADD UNIQUE (thecolumn);   //unique key 설정하기
+
 
 UPDATE table SET column = '홍길동' WHERE U_ID = 'roqkfwk';
 
@@ -258,11 +258,28 @@ create index [index_names] on [table_name] ([column_name], [column_name2]);  //�
 create index [index_names] on [table_name] ([column_name]) // 단일 인덱스 설정
 
 
+## uinque 키 설정
+ALTER TABLE 테이블이름 MODIFY COLUMN 필드이름 필드타입 UNIQUE;
+ALTER TABLE 테이블이름 ADD UNIQUE (컬럼이름);  
+
+## unique 키 설정해제
+DROP INDEX 컬럼이름 ON 테이블이름;
+
+## foreign 키 설정하기
+ALTER TABLE 자식테이블이름
+ADD CONSTRAINT 제약조건이름(내가짓는거)
+FOREIGN KEY (자식컬럼이름) REFERENCES 부모테이블(부모컬럼) ON DELETE CASCADE; 
+(ON UPDATE CASCADE는 부모의 primary키가 수정되면 자식도 같이 수정되면서 참조무결성 유지)
 
 
 
-
-
+##################################################################################################
+##################################################################################################
+##################################################################################################
+##################################################################################################
+##################################################################################################
+##################################################################################################
+##################################################################################################
 ##################################################################################################
 
 https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  //sql문 테스트
@@ -312,7 +329,7 @@ SUM(visits)
 AVG(visits)   // 이경우에는 null 값이 포함되어있으면 없는걸로 취급함. null값을 0으로 생각하고 계산하고싶으면 SUM(visits)/COUNT(*)  이렇게 해줘야함.
 MIN()
 MAX()
-
+ABS() //절대값
 
 ///// GROUP BY 
 SELECT supplierID, AVG(price) AS avg_price              // AS는 별명으로 부르겠다는 뜻 

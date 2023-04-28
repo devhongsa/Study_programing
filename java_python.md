@@ -22,6 +22,10 @@
 |                | lst.sort(reverse=True)                      | arrList.sort(Comparator.reverseOrder())                   |   |   |
 |                | lst.sort(key=lambda x: (x[1],x[0]))         | Collections.sort(arrList)                                 |   |   |
 |                |                                             | Collections.sort(arrList, Collections.reverseOrder())     |   |   |
+|                |                                             | Collections.sort(list, (c1, c2) -> c1.n - c2.n );         |   |   |
+|                |                                             |                                                           |   |   |
+|                |                                             |                                                           |   |   |
+|                |                                             |                                                           |   |   |
 |                | lst.reverse()                               | Collections.reverse(arrList)                              |   |   |
 |                | ','.join(lst)                               | String.join(",", arrList)                                 |   |   |
 |                | min(lst)                                    | Collections.min(arrList)                                  |   |   |
@@ -62,7 +66,10 @@
 |                | s[:i] + s[i+1:]                             | StringBuffer sb = new StringBuffer()                      |   |   |
 |                |                                             | sb.deleteCharAt(index)                                    |   |   |
 |                |                                             |                                                           |   |   |
-|                |                                             |                                                           |   |   |
+|                | str(123)                                    | String.valueOf(123)                                       |   |   |
+|                |                                             | Integer.toString(123)                                     |   |   |
+|                | int("string")                               | Integer.parseInt("string")                                |   |   |
+|                |                                             | Integer.valueOf("string")                                 |   |   |
 |                |                                             |                                                           |   |   |
 | binary         | int(String: binary, 2)                      | Integer.parseInt(String: s, 2)                            |   |   |
 |                | bin(1024), oct(),hex()                      | Integer.toBinaryString(1024)                              |   |   |

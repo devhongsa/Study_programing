@@ -32,6 +32,7 @@ public class Java {
         // format 
         // %d 정수, %f float, %.2f 자리수조절, %s 문자열, %o %x 8진수 16진수
         System.out.printf("%d", 10);
+        String.format("%d %s",i,str);
 
         // Random
         Random random = new Random();
