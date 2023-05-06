@@ -1,0 +1,19 @@
+AWS cloud 를 이용한 데이터 파이프라인 구축과정 
+
+1. 데이터 수집
+다양한 소스에서 데이터를 수집. AWS의 데이터 수집 서비스 중 하나인 Amazon Kinesis를 사용하여 스트리밍(실시간) 데이터를 수집.  
+
+2. 데이터 처리
+수집한 데이터를 처리. 이를 위해 AWS에서도 Apache Hadoop 및 Apache Spark와 같은 데이터 처리 도구를 제공함. 또는 Amazon EMR을 사용하여 대규모 데이터를 처리할 수 있음.
+
+3. 데이터 저장
+처리된 데이터를 저장. Amazon S3로 대규모 데이터 저장소로 사용 가능. 또는 Amazon Redshift라는 데이터 웨어하우스로 데이터 저장에 사용. Amazon DynamoDB는 NoSQL 데이터베이스로 사용될 수 있습니다.
+
+4. 데이터 분석
+저장된 데이터를 분석. AWS Glue(ELT), Amazon Athena(s3), Amazon QuickSight, AWS Redshift 등의 서비스를 사용하여 데이터를 분석할 수 있음.
+
+
+Kinesis : 대규모 실시간 데이터 스트리밍 처리를 위한 기술. 데이터 수집단계에서 사용
+
+
+

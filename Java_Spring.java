@@ -461,6 +461,23 @@ public class SocketClient {
     }
 }
 
+// json parser, http request
+public class Mission1 {
+
+    public static Integer getTotalCount(OkHttpClient client) throws IOException {
+        Request request = new Request.Builder()
+                .url("http://openapi.seoul.go.kr:8088/7275616250676d7233317868675579/json/TbPublicWifiInfo/1/1/")
+                .build();
+        try (Response response = client.newCall(request).execute()) {
+            JsonParser parser = new JsonParser();
+            Object obj = parser.parse(response.body().string());
+            JsonObject jsonObject = (JsonObject) obj;
+            Integer totalCount = jsonObject.getAsJsonObject("TbPublicWifiInfo").get("list_total_count").getAsInt();
+            return totalCount;
+        }
+    }
+}
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

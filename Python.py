@@ -540,6 +540,7 @@ finally:
 [trueValue] if [condition] else [falseValue]
 #########################################  #########################################
 크롤링 스크래핑 
+#pip install beautifulSoup
 import requests 
 from bs4 import BeautifulSoup
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
@@ -560,11 +561,47 @@ h1.a.title # h1 태그안에 있는 a 태그의 타이틀 내용 추출
 mydata.name 
 mydata.text
 soup.find_all('h1') #리스트로 반환
+soup.find_all('h1','classname') #특정클래스이름을 가진 h1태그 찾기
 print(mydata.get_text())
 
 #css selector
 soup = BeautifulSoup(res.content,'html.parser')
 items = soup.select("css selector")
+
+import aiohttp
+import asyncio
+
+# https://www.crummy.com/software/BeautifulSoup/bs4/doc/
+# pip install beautifulsoup4
+
+"""
+웹 크롤링 : 검색 엔진의 구축 등을 위하여 특정한 방법으로 웹 페이지를 수집하는 프로그램
+웹 스크래핑 : 웹에서 데이터를 수집하는 프로그램
+"""
+
+
+async def fetch(session, url, i):
+    print(i + 1)
+    async with session.get(url) as response:
+        html = await response.text()
+        soup = BeautifulSoup(html, "html.parser")
+        cont_thumb = soup.find_all("div", "cont_thumb")             #div 블록안에 cont_thumb 클래스를 가진 모든 태그 리스트로 불러와줌.
+        for cont in cont_thumb:
+            title = cont.find("p", "txt_thumb")
+            if title is not None:
+                print(title.text)
+
+
+async def main():
+    BASE_URL = "https://bjpublic.tistory.com/category/%EC%A0%84%EC%B2%B4%20%EC%B6%9C%EA%B0%84%20%EB%8F%84%EC%84%9C"
+    urls = [f"{BASE_URL}?page={i}" for i in range(1, 10)]
+    async with aiohttp.ClientSession() as session:
+        await asyncio.gather(*[fetch(session, url, i) for i, url in enumerate(urls)])
+
+#enumerate(list)  => [(index, value),(index,value), ...]
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 
 ######################################### 셀레니움 selenium ###########################################
@@ -581,7 +618,7 @@ from selenium.webdriver import ActionChains
 
 # with A as B 구문 뜻 : B=A 이고, with 구문에 있는 코드가 다 끝나면 알아서 객체를 소멸시켜라(종료)의 뜻임.
 with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as driver:
-    driver.get("url address")
+    driver.get("url address") # 크롬으로 이 url을 검색해서 켜줌.
     print(driver.page_source)
     print(driver.find_element(By.TAG_NAME, "p"))
     for element in driver.find_elements(By.TAG_NAME,"p"):
@@ -593,7 +630,7 @@ with webdriver.Chrome(service=Service(ChromeDriverManager().install())) as drive
 
 # Xpath : 태그기준이 아닌, 위치기반으로 스크래핑. css selector 처럼 Xpath를 복사해올 수 있음.
 # 명시적 기다림
-driver.get("url")
+driver.get("url") 
 driver.implicitly_wait(10) # 최대 10초를 기다리는데 get요청에대한 응답이 다오면 기다리는거 취소하고 다음 코드 진행, 10초되면 그냥 다음코드 진행
 print(driver.find_element(By.XPATH, 'Xpath경로').text)
 
@@ -615,6 +652,53 @@ input_ID = driver.find_element(By.ID, "user_id")
 input_PW = driver.find_element(By.ID, "user_password")
 ActionChains(driver).send_keys_to_element(input_ID,"id").perform()
 ActionChains(driver).send_keys_to_element(input_PW,"password").perform()
+
+
+######################################### Seaborn, matplotlib #########################################
+pip install seaborn 
+
+import seaborn as sns 
+import matplotlib as plt
+
+plt.figure(figsize=(20,10)) # plot사이즈 지정. 이코드가 앞에 있어야함.
+sns.lineplot(x=[],y=[])
+sns.barplot(x=[],y=[]) 
+plt.title("bar plot")
+plt.xlabel("x lable")
+plt.ylabel("y lable")
+plt.xlim(1,5) # x축 값범위 지정
+plt.show()
+
+######################################### wordcloud, konlpy #########################################
+pip install wordcloud
+pip install konlpy
+
+from wordcloud import WordCloud
+from konlpy.tag import Hannanum
+from collections import Counter
+
+1. konlpy 라이브러리로 한국어 문장을 전처리
+2. Counter를 이용해 빈도수 측정
+3. wordcloud를 이용해 시각화 
+
+anthem = """
+애국가 1절부터 4절
+"""
+hannanum = Hannanum()
+nouns = hannanum.nouns(anthem) # 명사들만 리스트에 넣어서 리턴
+
+counter = Counter(nouns) # 리스트에서 제일 많이 나온 단어를 딕셔너리로 정리해서 리턴
+
+wordcloud = WordCloud(font_path="font파일위치",background_color="white",width=1000,height=1000) # 한글폰트를 다운받아서 넣어줘야함
+img = wordcloud.generate_from_frequencies(counter)
+plt.imshow(img)
+
+
+######################################### venv 가상환경 #########################################
+
+홈 경로에서 python -m venv project-name 
+source project-name/bin/activate #가상환경 활성화
+deactivate #비활성화
 
 ######################################### jupyterlab #########################################
 # pip3 install jupyterlab 또는
@@ -855,44 +939,7 @@ if __name__ == "__main__":
     end = time.time()
     print(end - start)  # 22
 
-######################################### 웹 스크래핑 #########################################
-#pip install beautifulSoup
 
-from bs4 import BeautifulSoup
-import aiohttp
-import asyncio
-
-# https://www.crummy.com/software/BeautifulSoup/bs4/doc/
-# pip install beautifulsoup4
-
-"""
-웹 크롤링 : 검색 엔진의 구축 등을 위하여 특정한 방법으로 웹 페이지를 수집하는 프로그램
-웹 스크래핑 : 웹에서 데이터를 수집하는 프로그램
-"""
-
-
-async def fetch(session, url, i):
-    print(i + 1)
-    async with session.get(url) as response:
-        html = await response.text()
-        soup = BeautifulSoup(html, "html.parser")
-        cont_thumb = soup.find_all("div", "cont_thumb")             #div 블록안에 cont_thumb 클래스를 가진 모든 태그 리스트로 불러와줌.
-        for cont in cont_thumb:
-            title = cont.find("p", "txt_thumb")
-            if title is not None:
-                print(title.text)
-
-
-async def main():
-    BASE_URL = "https://bjpublic.tistory.com/category/%EC%A0%84%EC%B2%B4%20%EC%B6%9C%EA%B0%84%20%EB%8F%84%EC%84%9C"
-    urls = [f"{BASE_URL}?page={i}" for i in range(1, 10)]
-    async with aiohttp.ClientSession() as session:
-        await asyncio.gather(*[fetch(session, url, i) for i, url in enumerate(urls)])
-
-#enumerate(list)  => [(index, value),(index,value), ...]
-
-if __name__ == "__main__":
-    asyncio.run(main())
 
 
 #########################################  #########################################

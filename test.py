@@ -929,62 +929,175 @@ def solution(delay, capacity, times):
 
     return answer
 
-def solution(x1, y1, x2, y2):
-    chul = [x1,y1]
-    young = [x2,y2]
-    chulMove = [[1,0],[-1,0],[0,1],[0,-1]]
-    youngMove = [[1,1],[-1,1],[1,-1],[-1,-1]]
-    L = 0
-
-    def bfs():
-        nonlocal L
-        que = []
-        lst = minMove(x1,y1,x2,y2)
-        for l in lst:
-            que.append(l)
-        while True:
-            nextList = []
-            for i in range(len(que)):
-                st = que.pop(0)
-                if st[0]==st[2] and st[1]==st[3]:
-                    return
-                else:
-                    next_ = minMove(st[0],st[1],st[2],st[3])
-                    for l in next_:
-                        nextList.append(l)
-            for l in nextList:
-                que.append(l)
-            L+=1
+# boj1260 :DFS BFS
+def solution1260():
+    n, m, vv =  map(int,input().split())
+    lst = [[] for _ in range(n+1)]
+    for _ in range(m):
+        a, b = map(int,input().split())
+        lst[a].append(b)
+        lst[b].append(a)
     
-    def minMove(c1,c2,y1,y2):
-        chulNext = []
-        youngNext = []
-        minimum = 5000
-        answer = []
-        for m in chulMove:
-            chulNext.append([m[0]+c1,m[1]+c2])
-        for m2 in youngMove:
-            youngNext.append([m2[0]+y1,m2[1]+y2])
+    for l in lst:
+        l.sort()
         
-        for i in range(len(chulNext)):
-            for j in range(len(chulNext)):
-                dis = abs(chulNext[i][0]-youngNext[j][0])+abs(chulNext[i][1]-youngNext[j][1])
-                if dis<minimum:
-                    answer = []
-                    answer.append(chulNext[i]+youngNext[j])
-                    minimum = dis
-                elif dis==minimum:
-                    answer.append(chulNext[i]+youngNext[j])
+    visitD = [False]*(n+1)
+    visitB = [False]*(n+1)
+    dfsList = []
+    bfsList = []
+    
+    def dfs(v):
+        visitD[v] = True
+        dfsList.append(v)
+        for i in lst[v]:
+            if not visitD[i]:
+                dfs(i)
+    
+    def bfs(v):
+        que = deque([])
+        que.append(v)
+        visitB[v] = True
+        
+        while que:
+            x = que.popleft()
+            bfsList.append(x)
+            for i in lst[x]:
+                if visitB[i]:
+                    continue 
+                que.append(i)
+                visitB[i] = True
+    
+    dfs(vv)
+    bfs(vv)
+    
+    print(" ".join([str(x) for x in dfsList]))
+    print(" ".join([str(x) for x in bfsList]))
 
-        return answer
+
+def solution2667():
+    n = int(input())
+    mapList = []
+    for _ in range(n):
+        lst = [int(x) for x in list(input())]
+        mapList.append(lst)
+    
+    visit = [[False for _ in range(n)] for _ in range(n)]
+    danji = 0
+    numList = []
+    move = [[1,0],[-1,0],[0,1],[0,-1]]
+    
+    def bfs(x,y):
+        que = deque([])
+        que.append(x)
+        que.append(y)
+        visit[x][y] = True
+        total = 0
+        
+        while que:
+            a = que.popleft()
+            b = que.popleft()
+            total += 1
+            for m in move:
+                nx = m[0] + a
+                ny = m[1] + b
+                if 0<=nx<n and 0<=ny<n and not visit[nx][ny] and mapList[nx][ny]==1:
+                    que.append(nx)
+                    que.append(ny)
+                    visit[nx][ny] = True
+ 
+        return total
+    
+    for i in range(n):
+        for j in range(n):
+            if mapList[i][j]!=0 and not visit[i][j]:
+                numList.append(bfs(i,j))
+                danji += 1
+    
+    
+    print(danji)
+    numList.sort()
+    for n in numList:
+        print(n)
+        
+
+def solution3055():
+    r, c = map(int,input().split())
+    map1 = []
+    dist = [[0 for _ in range(c)] for _ in range(r)]
+    visit = [[0 for _ in range(c)] for _ in range(r)]
+    move = [[1,0],[-1,0],[0,1],[0,-1]]
+    D = []
+    S = []
+    
+    for _ in range(r):
+        map1.append(list(input()))
+    for i in range(r):
+        for j in range(c):
+            if map1[i][j] == "S":
+                S = [i,j]
+            elif map1[i][j] == "D":
+                D = [i,j]
+                
+    
+    def spread(lst):
+        water = []
+        
+        for i in range(len(lst)):
+            for j in range(len(lst[0])):
+                if lst[i][j] == "*":
+                    water.append([i,j])
+        
+        for w in water:
+            for m in move:
+                ni = w[0]+m[0]
+                nj = w[1]+m[1]
+                if 0<=ni<r and 0<=nj<c and lst[ni][nj]==".":
+                    lst[ni][nj] = "*"
+        return lst 
+    
+    def bfs():
+        nonlocal map1
+        visit[S[0]][S[1]] = 1
+        que = []
+        que.append(S)
+        
+        while que:
+            map1 = spread(map1)
+            for _ in range(len(que)):
+                l = que.pop(0)
+                x = l[0] 
+                y = l[1]
+    
+                if [x,y] == D:
+                    return 
+                for m in move:
+                    nx = x + m[0]
+                    ny = y + m[1]
+                    if 0<=nx<r and 0<=ny<c and visit[nx][ny] == 0 and (map1[nx][ny] == "." or map1[nx][ny] == "D"):
+                        que.append([nx,ny])
+                        visit[nx][ny] = 1
+                        dist[nx][ny] = dist[x][y] + 1
     bfs()
+    if dist[D[0]][D[1]] == 0:
+        print("KAKTUS")
+    else: print(dist[D[0]][D[1]])
+    
 
-    return L
-
+def solution():
+    n = int(input())
+    lst = [[1 for _ in range(10)] for _ in range(n+1)]
+    
+    for i in range(2,n+1):
+        for j in range(1,10):
+            lst[i][j] = (lst[i][j-1] + lst[i-1][j])%10007
+            
+    print(sum(lst[n])%10007)
+    
+    
 if __name__ == "__main__":
     sys.setrecursionlimit(10**6)
 
-    solution(2,4,5,-3)
+    solution()
     
 
     

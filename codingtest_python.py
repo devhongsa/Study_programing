@@ -3,7 +3,8 @@
 # 3차원 배열 선언 : 3d_array = [[[0 for _ in range(column)] for _ in range(row)] for _ in range(level)]
 # dfs 쓸때 : sys.setrecursionlimit(10**6)
 # dfs 쓸때 : nonlocal 변수 선언 필요할때 있음
-
+from collections import deque
+from collections import Counter
 #사칙연산
 + - * / 
 % **
@@ -121,6 +122,14 @@ valuelst = list(obj.values())
 keyValuelst = list(obj.items())  ## [(key,value),(key2,value2),...]
 value = obj.get('key') ## obj['key'] 와 동일하지만 get은 오류를 일으키지않고 none값을 리턴함.
 
+obj = dict(sorted(obj.items(),reverse=True))  # 딕셔너리 정렬
+obj = dict(sorted(obj.items(), key= lambda x: x[1],reverse=True))  # value기준 정렬, 딕셔너리 정렬
+
+counter = Counter(obj)
+counter2 = Counter(lst)
+counter.most_common(10) # value값이 가장 큰 10개 리스트로 출력 [(key,value),....]
+counter2.most_common(10) # value값이 가장 큰 10개 딕셔너리로 출력 {요소값:나온횟수}
+
 ## 딕셔너리안에 특정 key값이 존재하는지 확인
 if 'key' in obj:
     print(True)
@@ -165,67 +174,6 @@ for i in range(n):
     for j in range(i+1, n):
         for m in range(j+1, n):
             resultSet.add(lst[i] + lst[j] + lst[m])
-# 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 x, 중복 x) 재귀함수, 여기서 checkList 조건뺴면 (순서 x, 중복 o)
-def DFS(v,index):
-    global cnt
-    if v == m :
-        print(res)
-        cnt+=1
-        return
-    else:
-        for i in range(index,n+1):
-            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
-                res[v] = i
-                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
-                DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 
-                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
-                
-# 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!, 재귀함수
-def DFS(v):
-    global cnt
-    if v == m :
-        print(res)
-        cnt+=1
-        return
-    else:
-        for i in range(1,n+1):
-            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
-                res[v] = i
-                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
-                DFS(v+1)
-                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
-
-if __name__ == "__main__":
-    n = 4
-    m = 3
-    cnt = 0
-    checkList = [0]*(n+1)
-    res = [0]*m
-    
-    DFS(0)
-    print(cnt)
-    
-# 중복 순열 : n^r, 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 o) 재귀함수 활용
-def DFS(v):
-    global cnt
-    if v == m :
-        print(res)
-        cnt+=1
-        return
-    else:
-        for i in range(1,n+1):
-            # 중복순열에서는 뽑은거 다시 뽑아도 되기때문에 checkList없어도 됨.
-            res[v] = i
-            DFS(v+1)
-
-if __name__ == "__main__":
-    n = 4
-    m = 3
-    cnt = 0
-    res = [0]*m
-    
-    DFS(0)
-    print(cnt)
     
 # 원 순열 : 원 모양의 테이블에 n개의 원소를 나열하는 경우의 수 : (n-1)!
 
@@ -498,8 +446,18 @@ print(stack)
 
 ## 힙 : 이진트리 구조. 부모노드가 자식노드값보다 크거나 작아야함. 같을 수 는 없음.
 
-## 이진트리순회 (DFS) :깊이 우선 탐색, 부모노드부터 시작해서 왼쪽 노드로 계속 탐색. 경우의 수 같은 문제에 쓸 수 있음.
-# 예제는 1부터7까지의 숫자가 적힌 이진트리를 탐색하며 숫자출력하는 재귀함수 구현
+## 깊이우선탐색 (DFS?) : 이진트리의 경우 부모노드부터 시작해서 왼쪽 노드로 계속 탐색. 경우의 수 같은 문제에 쓸 수 있음.
+# 그래프에서의 DFS 탐색 (인접리스트 탐색) : 모든 정점을 방문하는 방법, 만약 visit리스트에 False가 남아있다면 출발지점에서 시작해서 그 정점에 방문할수 없다는뜻.
+lst = [[], [2, 3, 4], [1, 4], [1, 4], [1, 2, 3]] # 0번 정점은 없다고 가정한것임.
+visit = [False]*(n+1)
+def dfs(v):
+    visit[v] = True
+    print(v) # 정점에 방문하면 정점출력
+    for i in lst[v]:
+        if not visit[i]:
+            dfs(i)
+            
+# 1부터7까지의 숫자가 적힌 이진트리를 탐색하며 숫자출력하는 재귀함수 구현
 def DFS(v):
     if v>7:
         return 
@@ -509,4 +467,66 @@ def DFS(v):
         print(v, end= " ") #현재노드
         # print 구문이 어디 들어가냐에따라 전위순회(현재노드->왼쪽노드->오른쪽노드), 중위순회(왼쪽->현재->오른쪽), 후위순회(왼쪽->오른쪽->현재)로 나뉨. 어떤 노드부터 탐색할것이냐. 이방식은 후위순회임.
 
-## 이진트리순회 (BFS) : 넓이 우선 탐색, level순으로 탐색
+## 경우의 수 DFS
+# 서로다른 n개 중에 r개를 선택하는 경우의 수 조합(순서 x, 중복 x) 여기서 checkList 조건뺴면 (순서 x, 중복 o)
+def DFS(v,index):
+    global cnt
+    if v == m :
+        print(res)
+        cnt+=1
+        return
+    else:
+        for i in range(index,n+1):
+            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
+                res[v] = i
+                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
+                DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 , 그냥 i 넣으면 중복 허용
+                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
+                
+# 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!, 재귀함수
+def DFS(v):
+    global cnt
+    if v == m :
+        print(res)
+        cnt+=1
+        return
+    else:
+        for i in range(1,n+1):
+            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
+                res[v] = i
+                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
+                DFS(v+1)
+                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
+
+    
+# 중복 순열 : n^r, 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 o) 재귀함수 활용
+def DFS(v):
+    global cnt
+    if v == m :
+        print(res)
+        cnt+=1
+        return
+    else:
+        for i in range(1,n+1):
+            # 중복순열에서는 뽑은거 다시 뽑아도 되기때문에 checkList없어도 됨.
+            res[v] = i
+            DFS(v+1)
+
+
+## 넓이우선탐색 (BFS) : level순으로 탐색
+# 그래프에서의 BFS 탐색 (인접리스트) : 모든 정점 방문하는 방법
+lst = [[], [2, 3, 4], [1, 4], [1, 4], [1, 2, 3]] # 0번 정점은 없다고 가정한것임.
+visit = [False]*(n+1)
+def bfs(v):
+    que = deque([])
+    que.append(v)
+    visit[v] = True # 중요 
+    
+    while que:
+        x = que.popleft()
+        
+        for i in lst[x]:
+            if visit[i]:
+                continue 
+            que.append(i)
+            visit[i] = True ## 이 부분이 중요

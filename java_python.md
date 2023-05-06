@@ -54,7 +54,7 @@
 |                | str.endswith("h")                           | str.endsWith("h")                                         |   |   |
 |                | str.split(",")                              | str.split(",")                                            |   |   |
 |                | str.replace("h","s",1)                      | str.replaceFirst("h","s")                                 |   |   |
-|                | str.strip()                                 | str.strip()                                               |   |   |
+|                | str.strip() #delete vacant space            | str.strip()                                               |   |   |
 |                | str.strip("hi")                             |                                                           |   |   |
 |                | str.isupper()                               | str.isUpperCase()                                         |   |   |
 |                | str.upper()                                 | str.toUpperCase()                                         |   |   |
