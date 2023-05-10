@@ -1083,7 +1083,7 @@ def solution3055():
     else: print(dist[D[0]][D[1]])
     
 
-def solution():
+def solution11057():
     n = int(input())
     lst = [[1 for _ in range(10)] for _ in range(n+1)]
     
@@ -1092,15 +1092,106 @@ def solution():
             lst[i][j] = (lst[i][j-1] + lst[i-1][j])%10007
             
     print(sum(lst[n])%10007)
+
+
+def solution1949():
+    n = int(input())
+    people = list(map(int,input().split()))
+    people.insert(0,0)
+    lst = [[] for _ in range(n+1)]
+    dy = [[0 for _ in range(n+1)] for _ in range(2)]
+
+    for _ in range(n-1):
+        a, b = map(int,input().split())
+        lst[a].append(b)
+        lst[b].append(a)
+        
+    def dfs(x, prev):
+        dy[0][x] = 0
+        dy[1][x] = people[x]
+        
+        for y in lst[x]:
+            if y == prev:
+                continue
+            dfs(y,x)
+            dy[0][x] += max(dy[0][y],dy[1][y])
+            dy[1][x] += dy[0][y]
     
+    dfs(1,-1)
+    print(max(dy[0][1],dy[1][1]))
+    
+
+def solution():
+    N, M = map(int,input().split())
+    maplst = []
+    for _ in range(N):
+        lst = list(map(int,input().split()))
+        maplst.append(lst)
+    
+    virus = []
+    safe = []
+    wall = [0]*3
+    
+    answer = 0
+    
+    for i in range(N):
+        for j in range(M):
+            if maplst[i][j] == 2:
+                virus.append([i,j])
+            elif maplst[i][j] == 0:
+                safe.append([i,j])
+    
+    def bfs(before):
+        move = [[1,0],[-1,0],[0,1],[0,-1]]
+        after = [lst[:] for lst in before]
+        que = []
+        for v in virus:
+            que.append(v)
+        
+        while que:
+            v = que.pop(0)
+            x = v[0]
+            y = v[1]
+            
+            for m in move:
+                nx = x + m[0]
+                ny = y + m[1]
+                
+                if 0<=nx<N and 0<=ny<M and after[nx][ny] == 0:
+                    after[nx][ny] = 2
+                    que.append([nx,ny])
+                    
+        return after
+
+    def dfs(v,index):
+        nonlocal answer
+        nonlocal wall
+        if v == 3:
+            newMap = [lst[:] for lst in maplst]
+            
+            for w in wall:
+                newMap[w[0]][w[1]] = 1
+                
+            resMap = bfs(newMap)
+            total = 0
+            
+            for s in resMap:
+                total += s.count(0)
+                
+            if total>answer:
+                answer = total
+            return
+        
+        else:
+            for i in range(index,len(safe)):
+                wall[v] = safe[i]
+                dfs(v+1,i+1)
+    
+    dfs(0,0)
+    print(answer)
     
 if __name__ == "__main__":
+    import sys
     sys.setrecursionlimit(10**6)
 
     solution()
-    
-
-    
- 
-    
-    

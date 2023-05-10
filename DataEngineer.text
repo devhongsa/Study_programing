@@ -1,0 +1,92 @@
+프로덕션 데이터베이스 : MYSQL, PostgreSQL, Oracle
+데이터 웨어하우스 : Redshift, Snowflake, BigQuery, Hive..
+
+프로덕션 데이터베이스는 실제 서비스에 필요한 데이터들이 있기 때문에 서비스 과정에서 계속 쓰이는 데이터베이스다. 
+데이터 웨어하우스는 데이터 분석 전용의 데이터베이스라고 보면 된다. 만약 데이터 웨어하우스가 구축되어있지 않은 회사에서는 데이터관련 직무를 수행할때
+프로덕션 데이터베이스를 사용해야 하기 때문에, 분석을 위해 빅쿼리를 날리게 되면 서비스 운영에 차질이 생기게 될 수 있다.
+
+# Star Schema 
+테이블간의 관계를 정의해서 최대한의 스토리지 낭비를 줄이고, 조인을 이용해서 데이터를 뽑아쓰는 형태. 업데이트에 용이함. 프로덕션 데이터베이스에서 주로 사용
+# Denormalized Schema 
+별도의 조인이 필요없게 모든 데이터를 테이블에 넣는 방식. 조인이 필요없어서 빠른 계산이 가능. 데이터 웨어하우스에서 사용하는 방식
+
+# ETL(Extract Transform Load)
+외부에 존재하는 데이터를 읽어서 데이터 웨어하우스로 저장해주는 데이터 파이프라인
+
+# AWS Database services 
+RDS (mysql, postgresql, aurora, oracle..)
+DynamoDB
+Redshift
+ElasticCache
+Neptune
+ElasticSearch
+MongoDB
+
+# AWS AI & ML services 
+Sagemaker : Deep learning ans Machine learning end-to-end framework
+Lex : chatbot service
+Polly : Text to speech service
+Rekognition : Image Recognition service
+
+# AWS 기타 서비스
+Amazon Alexa : voice bot platform (음성 인식후 여러 기능 수행)
+Amazon Connect : 콜센터 구현 
+Lambda : serverless computing service, ec2 런치 필요없음/ google은 Cloud Function / Azure은 Azure Function 
+
+
+## Redshift
+2PB까지 지원 
+응답속도가 빠르지 않아서 데이터웨어하우스로만 이용 
+고정용량/고정비용
+PK 유일성을 보장하지 않음 (유일성을 보장하려면 레코드가 들어갈때마다 유일성체크를 해야되는데 그걸하면 빅쿼리에 불리하기때문에 안함. 그래서 개발자가 보장을 해줘야함)
+폴더 구조 
+CREATE SCHEMA raw_data;   로우데이터 저장 스키마
+CREATE SCHEMA analytics;   분석데이터 저장 스키마
+CREATE SCHEMA adhoc;   뭔가 데이터를 가지고 테스트 할일 있을때 이 테이블에서 함
+
+
+## 데이터의 품질 체크하기 : 현업에서 깨끗한 품질의 데이터란 존재하지 않음. 항상 데이터의 품질을 체크하는 습관을 길러야함 
+1. 중복된 레코드 체크하기 
+SELECT COUNT(1)
+FROM talbeName 
+
+SELECT COUNT(1)
+FROM (
+    SELECT DISTINCT userId, sessionId, ts, channel
+    FROM tableName
+)
+-- 두 쿼리 값 비교 --
+
+# CTE: FROM안에 SELECT문이 들어가있는 구조를 위로 뺴냄. 이렇게 하면 SELECT문이 ds라는 테이블 이름으로 대체가 되기 떄문에 ds를 쿼리안에서 재사용할 수 있음
+With ds AS(
+    SELECT DISTINCT userId, sessionId, ts, channel
+    FROM tableName
+)
+SELECT COUNT(1)
+FROM ds
+
+
+2. 최근 데이터의 존재 여부 체크하기 
+SELECT MIN(ts), MAX(ts)
+FROM tableName;
+
+3. PK uniqueness가 지켜지는지 체크하기 
+SELECT sessionId, COUNT(1)
+FROM tableName
+GROUP BY 1
+ORDER BY 2 DESC 
+LIMIT 1;
+
+4. 값이 비어있는 컬럼들이 있는지 체크하기 
+SELECT 
+    COUNT(CASE WHEN sessionId is NULL THEN 1 END) sessionid_null_count,
+    COUNT(CASE WHEN userId is NULL THEN 1 END) userid_null_count,
+FROM tableName
+
+5. 위의 체크사항들은 unit test 형태로 만들어서 매번 쉽게 체크가능 
+
+## CTAS : SELECT를 가지고 테이블 생성. 조인하는 SELECT문을 그대로 테이블로 만들어서 다음에 SELECT할떄 좀더 빠르게 가져옴.
+DROP TABLE IF EXISTS adhoc.seungmin_session_summary;
+CREATE TABLE adhoc.seungmin_session_summary AS 
+SELECT B.*, A.ts FROM raw_data.session_timestamp A
+JOIN raw_data.user_session_channel B ON A.sessionid = B.sessionid;

@@ -3,6 +3,7 @@
 # 3차원 배열 선언 : 3d_array = [[[0 for _ in range(column)] for _ in range(row)] for _ in range(level)]
 # dfs 쓸때 : sys.setrecursionlimit(10**6)
 # dfs 쓸때 : nonlocal 변수 선언 필요할때 있음
+# 깊은복사 import copy , copy.deepcopy(lst), or 2차원 리스트 깊은복사 : [lst[:] for lst in lsts]
 from collections import deque
 from collections import Counter
 #사칙연산
@@ -389,7 +390,87 @@ for i in range(3):
                 break
         else:
             cnt+=1
-            
+   
+
+
+
+
+
+########################################################################################################        
+########################################################################################################        
+########################################################################################################        
+################################################ 알고리즘 ################################################
+########################################################################################################        
+########################################################################################################        
+########################################################################################################        
+########################################################################################################        
+
+## 트라이 (문자열 검색에 응용)
+def solution(words, queries):
+    trie_dict = dict()
+
+    ## 문자열 길이에 따라서 트라이를 여러개 만들어냄.
+    for idx, word in enumerate(words):
+        n = len(word)
+        if n not in trie_dict:
+            trie_dict[n] = Trie()
+        trie_dict[n].add_word(word, idx)
+    
+    result = []
+    for query in queries:
+        n = len(query)
+        if n not in trie_dict:
+            result.append([])
+        else:
+            result.append(trie_dict[n].get_result(query))
+
+    result = [[words[idx] for idx in r] for r in result]
+    return result
+
+class Node:
+    def __init__(self, val):
+        self.val = val      # 필수
+        self.children = dict()      # 필수
+        self.words = []     # 추가 기능
+
+
+class Trie:
+    def __init__(self):
+        self.head = Node(None)  # 필수
+    
+    def add_word(self, word, idx):
+        curr = self.head    # 필수
+        curr.words.append(idx) # 추가 기능
+        for c in word:
+            if c not in curr.children:
+                curr.children[c] = Node(c) # 필수
+            curr = curr.children[c] # 필수
+            curr.words.append(idx) # 추가 기능
+
+    def get_result(self, query):
+        curr = self.head
+
+        for c in query:
+            if c == '?':
+                return curr.words
+            if c not in curr.children:
+                return []
+            curr = curr.children[c]
+        return curr.words
+
+# words = ["hello", "hear", "hell", "good", "goose", "children", "card", "teachable"]
+# queries = ["he??", "g???", "childre?", "goo????"]
+
+
+## 우선순위 큐 (작업순서 문제에 적용)
+from queue import PriorityQueue
+pq = PriorityQueue()
+pq.put((priority, data1, data2))
+pq.get()
+
+import heapq 
+heapq.heappush(lst,(priority,data1,data2))
+heapq.heappop(lst)
 
 ## 이분검색, 이분탐색 (up down할때 빨리 찾는법)
 lst = [23,87,65,12,57,32,99,81,31]
@@ -457,7 +538,7 @@ def dfs(v):
         if not visit[i]:
             dfs(i)
             
-# 1부터7까지의 숫자가 적힌 이진트리를 탐색하며 숫자출력하는 재귀함수 구현
+# 1부터7까지의 숫자가 적힌 이진트리를 탐색하며 숫자출력하는 재귀함수 구현 (트리구조가 표현된 리스트에서)
 def DFS(v):
     if v>7:
         return 
@@ -468,7 +549,20 @@ def DFS(v):
         # print 구문이 어디 들어가냐에따라 전위순회(현재노드->왼쪽노드->오른쪽노드), 중위순회(왼쪽->현재->오른쪽), 후위순회(왼쪽->오른쪽->현재)로 나뉨. 어떤 노드부터 탐색할것이냐. 이방식은 후위순회임.
 
 ## 경우의 수 DFS
-# 서로다른 n개 중에 r개를 선택하는 경우의 수 조합(순서 x, 중복 x) 여기서 checkList 조건뺴면 (순서 x, 중복 o)
+# 모든경우의 수 (모든 부분집합 구하기)
+ch = [0]*(n+1)
+def dfs(v,sum):
+    if v == n+1:
+        print(sum)
+        for c in ch:
+            "doSometing"
+    else:
+        ch[v] = 1
+        DFS(v+1,sum+addsometing) # 원소를 선택했을때 sum값을 바꾸고 넘김
+        ch[v] = 0 
+        DFS(v, sum) # 원소를 선택하지 않았을땐 sum값을 그대로 넘김
+    
+# 서로다른 n개 중에 r개를 선택하는 경우의 수 조합 (순서 x, 중복 x) 
 def DFS(v,index):
     global cnt
     if v == m :
@@ -477,12 +571,9 @@ def DFS(v,index):
         return
     else:
         for i in range(index,n+1):
-            if checkList[i]==0:  ## 아직 뽑지않은 선택지만 뽑기위한 조건
-                res[v] = i
-                checkList[i]=1  ##순열에서는 뽑은 선택지는 다시 뽑으면 안되기때문에 checkList에서 표시를 해준다.
-                DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 , 그냥 i 넣으면 중복 허용
-                checkList[i]=0 ##다시 되돌아 왔을때, 기존에 선택했던 선택지가 아닌 다른 선택지를 선택하러 for문이 넘어가기때문에 리셋해준다.
-                
+            res[v] = i
+            DFS(v+1,i+1)   ## 다음선택지 for문을  전에 선택한 인덱스 + 1 부터로 시작하기 위한 조건 , 그냥 i 넣으면 중복 허용 (순서x,중복o)
+            
 # 순열 : 서로다른 n개 중에 r개를 선택하는 경우의 수 (순서 o, 중복 x) : n!/(n-r)!, 재귀함수
 def DFS(v):
     global cnt

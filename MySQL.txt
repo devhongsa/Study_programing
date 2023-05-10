@@ -290,14 +290,14 @@ SELECT DISTINCT *                                   // DISTINCT는 값이 중복
 FROM Customers
 WHERE CustomerID < 50           
 WHERE CustomerName < "B" AND Country = 'Germany'     //  문자열도 비교가능 B 이전 문자 A로 시작하는 name만 불러오기
-WHERE country (NOT) LIKE '%r%'                       // %는 어떤 문자열이 와도 상관없다는뜻, r이 들어가는 country 이름 찾기  NOT을 넣으면 r이 들어가지 않는 데이터 찾기
+WHERE country (NOT) LIKE '%r%'                       // %는 어떤 문자열이 와도 상관없다는뜻, r이 들어가는 country 이름 찾기  NOT을 넣으면 r이 들어가지 않는 데이터 찾기(LIKE,ILIKE) : ILIKE는 대소문자 구별안함.
 WHERE country LIKE 'B_____'                         // _ 이것은 문자 길이를 뜻함. B로 시작하는 고정된 문자열 길이를 찾겠다는뜻
 WHERE discount LIKE '50\%'                          // %자체의 문자열을 찾고싶으면 역슬래시 넣으면됨.
 //찾고자하는 데이터값이 명확하다면 =을 쓰는것이 LIKE보다 훨씬 빠르다
 WHERE country IN ('Germany', 'France')              // country가 germany나 france 인 사람, OR을 써도 되는데 그러면 구문이 너무 길어짐
 WHERE coustomerID BETWEEN 3 AND 5                   // id가 3과 5사이인 사람, 3과 5 포함
 WHERE customerID IS NULL                            // null 값 찾기  NAN은 숫자가 아닌거 
-ORDER BY customerid DESC                            // 내림차순 정렬 , ASC 는 오름차순 정렬 default는 ASC 안써주면 ASC로 자동정렬 
+ORDER BY customerid DESC, customerID, country       // 내림차순 정렬 하되 값이 같으면 customerID로 오름차순 , ASC 는 오름차순 정렬 default는 ASC 안써주면 ASC로 자동정렬 NULL값은 오름차순일때 맨뒤 내림차순일땐 맨앞에 위치. 바꾸고 싶으면 NULL FIRST, NULL LAST를 사용
 LIMIT 10
 
 비교연산자 : <, >, <=, >=, = , <>(!=)
@@ -310,6 +310,10 @@ SELECT LEFT('20140323', 4)   //2014
 SELECT RIGHT('20140323', 4)  //0323 
 SUBSTR("20140323",1,4)          // 1번째부터 4번째까지 , 2014 
 SUBSTR("20140323",5)            // 5번째부터 끝까지 0323 
+REPLACE("string","s","d")      // string이라는 문자열에서 s를 찾아서 d로 바꿔라
+UPPER(str)
+LOWER(str)
+LEN(str)
 
 SELECT name FROM students WHERE marks > 75 ORDER BY Right(name,3), id    // id는 세컨더리 정렬기준
 SELECT name, Right(name,3) from students
@@ -319,6 +323,7 @@ CEIL() 올림
 FLOOR() 내림 
 ROUNT(long, 4)  // 4자리수 반올림
 산술연산 + - * /
+1/2::float // type 변환
 
 
 ////// 집계함수 
@@ -331,12 +336,15 @@ MIN()
 MAX()
 ABS() //절대값
 
+
 ///// GROUP BY 
 SELECT supplierID, AVG(price) AS avg_price              // AS는 별명으로 부르겠다는 뜻 
 FROM products
 GROUP BY suppierID                  // suppierID 별로 price 평균낸값 추출
 HAVING AVG(price) >= 100            // WHERE문은 GROUP BY 이전에 실행되기 때문에 WHERE AVG(price)>= 100 을 하면 안된다. 그래서 HAVING을 씀
 ORDER BY AVG(price)
+
+SELECT channel, COUNT(1) FROM tableName GROUP BY 1;  // 여기 1은 channel을 말함. SELECT에서 선택된 첫번째 컬럼을 말하는 것임.
 
 SELECT salary*months AS earnings, COUNT(*) FROM Employee GROUP BY earnings ORDER BY earnings DESC LIMIT 1;
 // from -> where -> group by -> order by -> limit -> select 
@@ -426,3 +434,8 @@ FROM Users_past
 UNION ALL을 하면 중복값상관없이 모두 합침
 
 mysql은 지원하지않지만, INTERSECT(두 테이블의 교집합만 보여줌), EXCEPT(A-B를 보여줌, 차집합)
+
+
+
+/// Null값 판별 : field1 is not NULL, field2 is NULL
+/// NULL 값을 사칙연산하면 그대로 NULL 값임.
