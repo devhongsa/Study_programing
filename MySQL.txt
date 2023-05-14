@@ -386,6 +386,12 @@ categoryid1_avgprice     categoryid2_avgprice     categoryid3_avgprice      ...
 
 
 /////// JOIN 
+///// JOIN시 체크해야될 사항 : 두 테이블 중에 한테이블에 존재하는 id값이 다른테이블에 없을때 
+SELECT DISTINCT sessionid FROM tableName1
+minus
+SELECT DISTINCT sessionid FROM tableName2
+
+//
 SELECT *
 FROM orders
      INNER JOIN customers ON orders.customerID = customers.customerID
@@ -409,6 +415,22 @@ SELECT country.continent, FLOOR(AVG(city.population))
 FROM city
     INNER JOIN country ON country.code = city.countrycode
 GROUP BY country.continent
+
+
+// JOIN 응용 
+// NULLIF(컬럼이름, 0) : 컬럼값이 0이면 NULL로 대체
+SELECT LEFT(ts, 7) "month",  -- "year month"
+       channel,
+       COUNT(DISTINCT usc.userid) uniqueUsers,
+       COUNT(DISTINCT CASE WHEN amount > 0 THEN usc.userid END) paidUsers,
+       ROUND(paidUsers*100.0/NULLIF(uniqueUsers, 0),2) conversionRate,
+       SUM(amount) grossRevenue,
+       SUM(CASE WHEN refunded is False THEN amount END) netRevenue
+   FROM raw_data.user_session_channel usc
+   LEFT JOIN raw_data.session_timestamp t ON t.sessionid = usc.sessionid
+   LEFT JOIN raw_data.session_transaction st ON st.sessionid = usc.sessionid
+   GROUP BY 1, 2
+   ORDER BY 1, 2;
 
 
 ///////// SELF JOIN : A테이블과 A테이블을 조인, 즉 A테이블의 컬럼들이 모두 독립적인 컬럼값들이 아닌 중복되는 컬럼값들이 존재 
@@ -439,3 +461,5 @@ mysql은 지원하지않지만, INTERSECT(두 테이블의 교집합만 보여�
 
 /// Null값 판별 : field1 is not NULL, field2 is NULL
 /// NULL 값을 사칙연산하면 그대로 NULL 값임.
+/// COALESCE(value, 0) NULL값이면 0으로 대체
+

@@ -1121,7 +1121,7 @@ def solution1949():
     print(max(dy[0][1],dy[1][1]))
     
 
-def solution():
+def solution14502():
     N, M = map(int,input().split())
     maplst = []
     for _ in range(N):
@@ -1190,8 +1190,358 @@ def solution():
     dfs(0,0)
     print(answer)
     
+def solution1991():
+    N = int(input())
+    obj = {}
+    for i in range(N):
+        n,l,r = input().split()
+        
+        obj[n] = [l,r]
+        
+    def dfs(v, node, type):
+        if v == N:
+            return 
+        else:
+            if type==1:
+                print(node, end="")
+                if obj[node][0] != ".":
+                    dfs(v+1, obj[node][0],type)
+                if obj[node][1] != ".":
+                    dfs(v+1, obj[node][1],type)
+            elif type ==2:
+                if obj[node][0] != ".":
+                    dfs(v+1, obj[node][0],type)
+                print(node, end="")
+                if obj[node][1] != ".":
+                    dfs(v+1, obj[node][1],type)
+            else:
+                if obj[node][0] != ".":
+                    dfs(v+1, obj[node][0],type)
+                if obj[node][1] != ".":
+                    dfs(v+1, obj[node][1],type)
+                print(node, end="")
+        
+    dfs(0,'A',1)
+    print("")
+    dfs(0,'A',2)
+    print("")
+    dfs(0,'A',3)
+    
+
+def solution1012():
+    N1 = int(input())
+    
+    def bfs(a,b):
+        nonlocal map1
+        nonlocal visit
+        
+        move = [[1,0],[-1,0],[0,1],[0,-1]]
+        que = [a,b]
+        visit[a][b] = 1
+        
+        while que:
+            a = que.pop(0)
+            b = que.pop(0)
+            
+            for m in move:
+                na = a + m[0]
+                nb = b + m[1]
+                
+                if 0<=na<n1 and 0<=nb<m1 and visit[na][nb] == 0 and map1[na][nb] == 1:
+                    que.append(na)
+                    que.append(nb)
+                    visit[na][nb] = 1
+                    
+    for _ in range(N1):
+        n1, m1, g1 = map(int,input().split())
+        map1 = [[0 for _ in range(m1)] for _ in range(n1)]
+        visit = [[0 for _ in range(m1)] for _ in range(n1)]
+        answer = 0
+        for _ in range(g1):
+            x, y = map(int,input().split())
+            map1[x][y] = 1
+            
+        for i in range(n1):
+            for j in range(m1):
+                if map1[i][j] == 1 and visit[i][j] == 0:
+                    bfs(i,j)
+                    answer += 1
+                    
+        print(answer)
+                    
+
+def solution7795():
+    tc = int(input())
+    for _ in range(tc):
+        an, bn = map(int,input().split())
+        A = list(map(int,input().split()))
+        B = list(map(int,input().split()))
+        
+        B.sort()
+        
+        ans = 0
+        
+        for num in A:
+            left = 0
+            right = len(B)-1
+            
+            result = left - 1
+            while left<=right:
+                middle = (left+right)//2
+                
+                if B[middle]>=num:
+                    right = middle-1
+                else:
+                    left = middle+1
+                    result = middle
+
+            ans += result+1
+
+        print(ans)
+        
+
+def solution2470():
+    N = int(input())
+    lst = list(map(int,sys.stdin.readline().split()))
+    
+    lst.sort()
+    
+    absv = float("inf")
+    result = []
+    
+    for i in range(N):
+        a = lst[i]
+        left = 0
+        right = N-1
+        
+        while left<=right:
+            mid = (left+right)//2
+            if mid==i: break
+
+            res = a + lst[mid]
+            absv_ = abs(res)
+            
+            if absv_<absv:
+                absv = absv_ 
+                result = [a,lst[mid]]
+            
+            if res<0 :
+                left = mid+1
+            elif res>0:
+                right = mid-1
+            else:
+                print(a,lst[mid])
+                return
+    
+    result.sort()
+    print(result[0], end=' ')
+    print(result[1])
+        
+
+def solution2805():
+    N, M = map(int,input().split())
+    lst = list(map(int, sys.stdin.readline().split()))
+    
+    maxLen = max(lst)
+    
+    left = 0
+    right = maxLen
+    
+    result = -1
+    
+    while left<=right:
+        mid = (left+right)//2
+        
+        total = 0
+        for wood in lst:
+            if wood>mid:
+                total += wood-mid
+        
+        if total>=M:
+            left = mid + 1
+            result = mid
+        else:
+            right = mid - 1
+            
+    print(result)
+                
+
+def solution2110():
+    N, C = map(int,input().split())
+    lst = []
+    
+    for i in range(N):
+        lst.append(int(sys.stdin.readline()))
+    lst.sort()
+    
+    left = 1
+    right = lst[-1]-lst[0]
+    
+    result = 0
+    
+    while left <= right:
+        mid = (left+right)//2
+        c = 1
+        
+        a = lst[0]
+        
+        for i in range(1,len(lst)):
+            if lst[i] - a < mid:
+                continue
+            else:
+                c += 1
+                a = lst[i]
+                
+                if c >= C :
+                    left = mid + 1
+                    result = mid
+                    break
+        
+        if c < C:
+            right = mid - 1
+    
+    print(result)
+
+
+def solution15651():
+    
+    N, M = map(int,input().split())
+    
+    result = [0]*M
+    def dfs(v):
+        nonlocal result
+        if v == M:
+            for n in result:
+                print(n, end=" ")
+            print("")
+            return
+        else:
+            for i in range(1,N+1):
+                result[v] = i
+                dfs(v+1)
+    
+    dfs(0)
+    
+def solution15649():
+    
+    N, M = map(int,input().split())
+    
+    result = [0]*M
+    ch = [0]*(N+1)
+    
+    def dfs(v):
+        nonlocal result
+        if v == M:
+            for n in result:
+                print(n, end=" ")
+            print("")
+            return
+        else:
+            for i in range(1,N+1):
+                if ch[i] == 0:
+                    result[v] = i
+                    ch[i] = 1
+                    dfs(v+1)
+                    ch[i] = 0
+    
+    dfs(0)
+    
+
+def solution15652():
+    N, M = map(int,input().split())
+    
+    res = [0] * M
+    def dfs(v,index):
+        if v == M:
+            for n in res:
+                print(n, end=" ")
+            print("")
+            return
+        else:
+            for i in range(index,N+1):
+                res[v] = i 
+                dfs(v+1,i)
+    dfs(0,1)
+
+
+def solution15650():
+    N, M = map(int,input().split())
+    
+    res = [0] * M
+    def dfs(v,index):
+        if v == M:
+            for n in res:
+                print(n, end=" ")
+            print("")
+            return
+        else:
+            for i in range(index,N+1):
+                res[v] = i 
+                dfs(v+1,i+1)
+    dfs(0,1)
+
+
+def solution14888():
+    N = int(input())
+    numList = list(map(int,sys.stdin.readline().split()))
+    add, sub, mul, div = map(int,input().split())
+    minNum = 1000000001
+    maxNum = -1000000001
+    
+    def dfs(v, result):
+        nonlocal minNum, maxNum, add, sub, mul, div
+        if v == N-1:
+            minNum = min(result,minNum)
+            maxNum = max(result,maxNum)
+            return 
+        else:
+            if add>0:
+                add -= 1
+                dfs(v+1, result + numList[v+1])
+                add += 1
+            if sub>0:
+                sub -= 1
+                dfs(v+1, result - numList[v+1])
+                sub += 1
+            if mul>0:
+                mul -= 1
+                dfs(v+1, result * numList[v+1])
+                mul += 1
+            if div>0 :
+                div -= 1
+                dfs(v+1, int(result/numList[v+1]))
+                div += 1
+    dfs(0,numList[0])      
+    print(maxNum)
+    print(minNum)
+    
+
+def solution9663():
+    N = int(input())
+    cnt = 0
+    rowList = [0]*N
+    
+    def check(x):
+        for i in range(x):
+            if rowList[x] == rowList[i] or abs(rowList[x] - rowList[i]) == abs(x - i):
+                return False
+        return True 
+        
+    def dfs(row):
+        nonlocal cnt
+        if row == N:
+            cnt += 1
+        else:
+            for i in range(N):
+                rowList[row] = i
+                if check(row):
+                    dfs(row+1)
+                    
+    dfs(0)
+    print(cnt)
+    
 if __name__ == "__main__":
     import sys
     sys.setrecursionlimit(10**6)
 
-    solution()
+    solution9663()
