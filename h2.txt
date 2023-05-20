@@ -6,8 +6,8 @@ chmod 755 h2.sh
 ./h2.sh 
 
 spring web 실행
-localhost:8080/h2-console 
-spring web 실행시. h2 url 주소가 로그로 뜨는데 그 주소를 JDBC URL 주소에 넣고 connect 
+localhost:8080/h2-console -> embedded Generic H2 -> URL에 주소 붙여넣기
+spring web 실행시. h2 url 주소가 로그로 뜨는데 그 주소를 JDBC URL 주소에 넣고 connect // 이렇게 하면 web실행할때마다 주소가 바뀌니까 yml파일에서 url를 미리 지정해주자
 
 intellij에서 h2 연결하는방법은 
 Database -> datasource -> h2 -> URL: 복사한 url 주소 
@@ -15,3 +15,25 @@ Database -> datasource -> h2 -> URL: 복사한 url 주소
 url에 ip빼고 localhost넣으면 정상접속됨.
 connect 누르고 
 이후 접속시에는 jdbc url :  jdbc:h2:tcp://localhost/~/test 으로 수정후 접속 
+
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: H2
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+

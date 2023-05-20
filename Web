@@ -28,8 +28,10 @@ URL vs URI
 URL은 서버의 특정파일이 어디에 위치하는지 식별하는 주소이고, URI는 특정자원을 나타내는 주소값을 말한다.(uri는 API개발을 통해 나오는 주소)
 
 Http message구조 
-HTTP/1.1 200 OK              :  http버전 상태코드 응답문구 
-Content-Type: text/html      : 헤더 명 : 헤더 값
+POST /account HTTP/1.1       : http request 헤더 정보
+HTTP/1.1 200 OK              : http response 헤더 정보, 상태코드 응답문구
+Content-Type: text/html      : 어떤 형식으로 받았다
+Accept: application/json     : 어떤 형식으로 reponse 받겠다. 
 빈줄
 <html>                       : 바디 
 </html>

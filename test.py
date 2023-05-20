@@ -1540,8 +1540,136 @@ def solution9663():
     dfs(0)
     print(cnt)
     
+
+def solution1182():
+    N, S = map(int,sys.stdin.readline().split())
+    lst = list(map(int,sys.stdin.readline().split()))
+    
+    cnt = 0
+    ch = [0]*N
+    
+    def dfs(v,sum):
+        nonlocal cnt
+        if v==N:
+            if 1 not in ch:
+                return
+            if sum==S:
+                cnt += 1
+        else:
+            ch[v] = 1
+            dfs(v+1,sum+lst[v])
+            ch[v] = 0
+            dfs(v+1,sum)
+    dfs(0,0)
+    print(cnt)
+
+
+def solution10825():
+    N = int(input())
+    lst = []
+    for i in range(N):
+        lst_ = list(sys.stdin.readline().split())
+        for i in range(1,4):
+            lst_[i] = int(lst_[i])
+        lst.append(lst_)
+        
+    lst.sort(key=lambda x : (x[1],-x[2],x[3],x[0]), reverse=True)
+    
+    for name in lst:
+        print(name[0])
+
+
+def solution1015():
+    N = int(input())
+    lst = list(map(int,sys.stdin.readline().split()))
+    lst2 = []
+    for i in range(N):
+        lst2.append([lst[i],i])
+    lst2.sort(key=lambda x:(x[0],x[1]))
+    
+    for i in range(N):
+        lst2[i].append(i)
+
+    lst2.sort(key=lambda x : x[1])
+    
+    for n in lst2:
+        print(n[2], end=" ")
+
+
+def solution11652():
+    N = int(input())
+    obj = {}
+    for _ in range(N):
+        n = int(sys.stdin.readline())
+        if n in obj:
+            obj[n] += 1
+        else:
+            obj[n] = 1
+    result = 0
+    ans = float("inf")
+    for k,v in obj.items():
+        if v>result:
+            result = v
+            ans = k 
+        elif v==result:
+            if k<ans:
+                ans = k
+        
+    print(ans)
+    
+
+def solution15970():
+    N = int(input())
+    lst = []
+    for _ in range(N):
+        lst.append(list(map(int,sys.stdin.readline().split())))
+    lst.sort(key=lambda x : (x[1],x[0]))
+    
+    total = 0
+    total += (lst[1][0]-lst[0][0]) + (lst[-1][0]-lst[-2][0])
+    
+    for i in range(1,N-1):
+        if lst[i+1][1] == lst[i][1] and lst[i-1][1] == lst[i][1]:
+            total += min(lst[i][0]-lst[i-1][0],lst[i+1][0]-lst[i][0])
+        elif lst[i-1][1] != lst[i][1]:
+            total += lst[i+1][0]-lst[i][0]
+        else:
+            total += lst[i][0]-lst[i-1][0]
+    
+    print(total)
+    
+def solution(ingredients, items):
+    obj = {}
+    for ing in ingredients:
+        obj[ing] = []
+    for i,v in enumerate(items):
+        if v in obj:
+            obj[v].append(i)
+
+    print(obj)
+    
+    keys = list(obj.keys())
+    minimum = len(items) + 1
+    res = [0]*len(keys)
+    def dfs(v):
+        nonlocal minimum
+        if v == len(obj):
+            ma = max(res)
+            mi = min(res)
+            if ma-mi+1 < minimum:
+                minimum = ma-mi+1
+                print(res)
+            return
+        else:
+            for i in range(len(obj[keys[v]])):
+                res[v] = obj[keys[v]][i]
+                dfs(v+1)
+    dfs(0) 
+    print(minimum)   
+    return minimum
+
 if __name__ == "__main__":
     import sys
     sys.setrecursionlimit(10**6)
 
-    solution9663()
+    solution(["생닭", "인삼", "소주", "대추"],["물", "인삼", "커피", "생닭", "소주", "사탕", "생닭", "대추", "쌀"])

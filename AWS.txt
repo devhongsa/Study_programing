@@ -31,6 +31,12 @@ brew update      // homebrew 업데이트
 - AWS CodeCommit 
 - AWS IAM 보안
 - 부하 테스트
+- Elastic Beanstalk
+
+###################클라우드 유형#########################
+IAAS : 하드웨어만 구성된 리소스에서 OS, 미들웨어를 직접구성하고 어플리케이션 구현
+PAAS : 미들웨어까지 구성된 리소스에서 어플리케이션과 데이터 부분은 직접 구현
+SAAS : 하드웨어 미들웨어 어플리케이션까지 모두 탑재된 리소스를 사용
 
 ###################네트워크 기본#########################
 
@@ -74,7 +80,7 @@ C class ip
   VPC는 하나의 region에만 속할 수 있음.
 
 Region > VPC > AZ > Subnet   
-AZ는 하나의 region안에 자연재해와 같은 비상상황을 대비하기 위해서 데이터센터를 분리해놓은 거라고 보면 됨. 보통 한 region당 2개이상의 AZ가 존재함.
+AZ(Availability Zone)는 하나의 region안에 자연재해와 같은 비상상황을 대비하기 위해서 데이터센터를 분리해놓은 거라고 보면 됨. 보통 한 region당 2개이상의 AZ가 존재함.
 
 Internet Gateway (IGW) : 외부 VPC와 통신하기 위한 통로. private subnet은 IGW 와 연결되어있지 않음.
 
@@ -192,6 +198,7 @@ Nat gateway 만들고 private ec2와 연결하기
 Nat gateway 생성 : public subnet에 생성. 탄력적 IP 할당. 연결유형 퍼블릭 
 private subnet의 routing table에 가서 0.0.0.0/0의 요청을 위에 만든 nat gateway로 보내주는걸로 설정추가. natgateway는 이를 igw로 연결
 이렇게 하면 private ec2에서 sudo yum install mysql 같은 명령어 수행가능 
+// EC2 -> 탄력적 IP -> 탄력적 IP 할당 -> IP연결(내가 생성한 인스턴스에 연결)
 
 
 ###########################################
@@ -1079,3 +1086,13 @@ STS(Security Token Service)
 ##################################################
 npm install loadtest
 npm install -g artillery
+
+
+
+##################################################
+Elastic Beanstalk
+##################################################
+애플리케이션을 신속하게 배포하고 관리할수 있게 해주는 서비스 
+create application -> 앱이름 설정 -> 플랫폼에서는 어떤 언어로된 앱 만들건지 설정 -> 추가옵션에서 키페어 설정, vpc설정하고 앱생성
+기본 앱구성환경이 만들어진 ec2가 생성됨. nginx가 기본으로 구성되어있음. 
+EB가 다 만들어지면 jar파일을 올려서 java프로젝트를 실행할 수 있음.

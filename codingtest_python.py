@@ -52,6 +52,7 @@ list1.reverse() # 리스트 뒤집기
 list2 = [[1,2],[4,3],[3,6]]
 list2.sort() ## 이중리스트를 정렬하면 리스트의 첫번째 요소 숫자를 기준으로 정렬함
 list2.sort(key=lambda x: (x[1],x[0])) ## 이렇게 하면 정렬기준을 리스트 2번째 요소를 기준으로 정렬함.
+lst.sort(key=lambda x : (x[1],-x[2],x[3],x[0]), reverse=True) ## 여기서 x[0]은 문자열이라서 -를 못붙인다. 이때 reverse를 활용해야함.
 
 ''.join(i for i in letters)  # 리스트 요소 사이사이에 '' 요게 들어감.
 ''.join(letters) # 위에랑 똑같은 말임. 위는 리스트 요소마다 변화를 줄 수 있는 것이 차이점.

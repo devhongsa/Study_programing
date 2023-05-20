@@ -457,9 +457,20 @@ UNION ALL을 하면 중복값상관없이 모두 합침
 
 mysql은 지원하지않지만, INTERSECT(두 테이블의 교집합만 보여줌), EXCEPT(A-B를 보여줌, 차집합)
 
-
-
 /// Null값 판별 : field1 is not NULL, field2 is NULL
 /// NULL 값을 사칙연산하면 그대로 NULL 값임.
 /// COALESCE(value, 0) NULL값이면 0으로 대체
 
+/// 고급 문법 
+LISTAGG
+LAG 
+WINDOW 함수 
+    ROW_NUMBER OVER
+    SUM OVER 
+    FIRST_VALUE, LAST_VALUE
+JSON parsing 함수
+
+
+SQL문을 실행할때 
+BEGIN과 END(또는 COMMIT) 명령어 사이에 SQL문을 넣어서 실행하면 트랜잭션 기능이 실행되서, 모든 sql 쿼리가 성공해야만 db에 적용되고 하나라도 실패하면 롤백한다.
+파이선의 psycopg2 에서는 autocommit=False로 설정 후에  , try catch문안에서 .commit() 과 rollback() 함수로 트랜잭션을 조절한다

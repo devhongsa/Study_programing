@@ -16,7 +16,7 @@
 | move to implementaions   | command option B    |                        |   |   |
 | shorten lambda method    | option shift enter  |                        |   |   |
 | annotation comment       | command /           | command kc, command ku |   |   |
-|                          |                     |                        |   |   |
+| auto code prettier       | command option L    |                        |   |   |
 |                          |                     |                        |   |   |
 |                          |                     |                        |   |   |
 |                          |                     |                        |   |   |

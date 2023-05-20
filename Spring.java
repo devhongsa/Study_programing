@@ -20,19 +20,25 @@ DIP : 의존성 역전 원칙(교체) - 어떤 외부라이브러리를 사용�
 // Spring
 
 // @SpringBootApplication : spring boot application으로 설정
-// @Controller : View를 제공하는 controller로 설정
-// @RestController : REST API를 제공하는 controller로 설정
-// @RequestMapping : URL 주소를 맵핑
+// @Controller : View를 제공하는 controller로 설정, 응답값이 기본적으로 html임. 백엔드와 프로튼엔드가 구별이 거의 없던 시절 쓰였고 지금은 거의 안쓰임
+// @RestController : REST API를 제공하는 controller로 설정, 응답을 주로 json으로 함. 백엔드에서는 이제 이거를 씀. 클래스에 붙임.
+// @RequestMapping : URL 주소를 맵핑, RestController클래스안에 있는 메서드에 맵핑
 // @GetMapping, PostMapping, PutMapping, DeleteMapping, : api method 설정
-// @RequestParam : URL query parameter 맵핑.
-// @RequestBody : Http Body를 parsing 맵핑
-// @Valid : POJO Java class의 검증
+// @PathVariable : /1 이런식으로 url 뒤에 붙는 정보를 받는 방법
+// @RequestParam : URL query parameter 맵핑. url에 ?ordierId=1 이런식으로 오는 요청에서 파라미터 정보를 받는 방법, required나 defaultValue 설정가능
+// @RequestBody : Http Body를 parsing 맵핑. client가 body에 json형식의 큰데이터를 실어서 보내면, 백엔드에서 이 body를 받을때 사용
+// @RequestHeader : 마찬가지로 client가 보낸 header정보를 받을때 사용
+// @Valid : 객체 유효성 검증. @RequestBody와 함께 쓰여서 client로부터 온 데이터가 내가만든 DTO객체와 적합한지 판단함.
 // @Configration : 1개 이상의 Bean을 등록할때 설정
 // @Component : 1개의 Class 단위로 등록할때 사용
 // @Bean : 1개의 외부 library로부터 생성한 객체를 등록 시 사용 , 메소드에 사용
 // @Autowired : DI를 위한 곳에 사용
-// @Qualifier : @Autowired 사용시 bean이 2개 이상 일때 명시적 사용
+// @Qualifier : @Autowired 사용시 bean이 2개 이상 일때 명시적 사용, 구현체가 2개일때 하나의 bean을 우선적으로 사용
+// @Primary : 역시 인터페이스의 구현체가 다수일때 한 구현체를 Primary로 지정해서 이 구현체를 우선적으로 사용
 // @Resource : @Autowired + @Qualifier 의 개념으로 이해
+// @ExceptionHandler : Controller 클래스 안에서 구현됨. Controller안에있는 특정API가 에러를 일으키면 catch해서 처리
+// @ResponseStatus : 예외가 일어났을때 Status code를 변경함
+// @RestControllerAdvice : 어플리케이션의 전역적 예외 처리 클래스를 만들어서 사용. 현재 실무에서 가장많이 쓰임 클래스에 붙이고, 클래스안에서 @ExceptionHandler 구현
 // @Transactional : 클래스나 메소드에 달아서 트랜잭션 생성
 // @Transactional(prpagation = Required) : Required가 실무에서 가장 많이 쓰이고,
 // Required-New가 가끔 쓰일수 있다.
@@ -66,7 +72,7 @@ DIP : 의존성 역전 원칙(교체) - 어떤 외부라이브러리를 사용�
 // DB관련
 // implementation 'org.springframework:spring-jdbc:5.3.22'
 // implementation 'com.zaxxer:HikariCP:5.0.1'
-// testImplementation 'com.h2database:h2:2.1.214'
+// testImplementation 'com.h2database::2.1.214'
 
 // import static org.assertj.core.api.Assertions.*;
 
@@ -156,6 +162,9 @@ DIP : 의존성 역전 원칙(교체) - 어떤 외부라이브러리를 사용�
 // 주입하는 형태를 말함.
 // Ioc 는 @Component 어노테이션으로 spring에게 객체를 관리해달라는 뜻임. Component 등록된 객체는 Spring
 // container에서 관리하는 Bean이 됨.
+// @Controller, RestController, Service, Component, Repository 어노테이션은 모두 자동으로 bean으로 등록됨.
+// 원래 옛날에는 xml파일에 직접 모든 클래스를 bean으로 등록해줬어야했음.
+// 
 
 // AOP : 로그관련 기능 @Aspect, @Pointcut, @Before, @After
 
@@ -174,12 +183,14 @@ DIP : 의존성 역전 원칙(교체) - 어떤 외부라이브러리를 사용�
 // @ToString // User라는 객체를 println 했을때, User의 멤버변수에 대한 값들을 출력해줌.
 // @NoArgsConstructor // 인자가 없는 생성자 생성, 필수적으로 넣어줘야함
 // @AllArgsConstructor // 모든 멤버변수를 인자로 갖는 생성자 생성
-// @RequiredArgsConstructor // NonNull 멤버변수를 인자로 갖는 생성자 생성
+// @RequiredArgsConstructor // NonNull(final) 멤버변수를 인자로 갖는 생성자 생성, 멤버변수에 @Autowired를 하는대신, 멤버변수를 final로 생성해주고 
+// @RequiredArgsConstructor를 클래스에 선언해서 final로 선언된 멤버변수가 포함된 생성자를 자동으로 생성해준다.
 // @EqualsAndHashCode // 객체끼리의 비교연산을 위한 어노테이션
 // @Data // Getter + Setter + ToString + RequiredArgsConstructor +
 // EqualsAndHashCode
-// @Builder // User.builder().name("martin").email("11@gs").build(); 이런식으로
-// 이어쓰기위한 어노테이션
+// @Builder // User.builder().name("martin").email("11@gs").build(); 이런식으로 이어쓰기위한 어노테이션s
+// @Slf4j : 해당 클래스의 logger를 자동생성.
+// @UtilityClass : static method만 재공하는 유틸리티 성격의 클래스들의 생성자를 private으로 만들어서 객체 생성을 못하게 막아놓음.
 
 // 프로젝트 구조
 // package
