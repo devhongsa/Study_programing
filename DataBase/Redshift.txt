@@ -1,0 +1,125 @@
+aws serverless redshift 만들기
+endpoint 주소, username, password 필요 // username과 password는 관리자 암호변경에서 설정 가능
+파이썬 pip install SQLAlchemy==1.4.47
+
+connection url = postgresql://username:password@endpoint주소
+vpc 인바운드 규칙 수정 : 사용자지정 TCP, port 5439, Anywhere Ipv4
+
+
+## 파이썬에서 redshift 연결하기 ##
+pip install redshift_connector 
+
+import redshift_connector
+
+dbname = ""
+user = ""
+password = ""
+host = "redshift endpoint"
+port = 5439
+
+conn = redshift_connector.connect(
+    host = host,
+    database = dbname, 
+    port = 5439
+    user = user, 
+    password = password
+)
+
+cursor = conn.cursor()
+
+cursor.execute('sql query')
+############################
+
+Redshift 구조 
+
+스키마
+    일반 database와 같음
+사용자
+    스키마에 접근하는 사용자 
+그룹 
+    사용자들을 모아놓는 그룹, 보통 사용자가 아닌 그룹에 스키마에 대한 접근권한을 줘서 관리함.
+역할
+    사용자에게 부여하는 역할,권한
+
+
+# 스키마 생성
+CREATE SCHEMA raw_data;
+CREATE SCHEMA analytics;
+CREATE SCHEMA adhoc;
+CREATE SCHEMA pii;
+
+# 스키마 목록 보기 
+select * from pg_namespace;
+
+# 유저(사용자) 생성하기 
+CREATE USER keeyong PASSWORD '*****'; 
+
+# 유저 목록 보기 
+select * from pg_user;
+
+# 그룹 생성하기 
+CREATE GROUP analytics_users;
+CREATE GROUP pii_users;
+CREATE GROUP analytics_authors;
+
+# 그룹에 사용자 추가하기 
+ALTER GROUP analytics_authors ADD USER keeyong;
+
+# 역할 생성하기 
+CREATE ROLE staff;
+CREATE ROLE manager;
+CREATE ROLE external;
+
+# 역할 부여하기 
+GRANT ROLE staff TO keeyong;
+GRANT ROLE staff TO ROLE manager;  -- staff의 역할을 manager에게 똑같이 부여. 이후 manager에게 추가 권한을 줌
+
+# 역할 목록 보기 
+select * from SVV_ROLES;
+
+
+## s3에 있는 파일을 copy해서 redshift에 넣기 
+우선 s3 IAM 설정해줘야함 
+    1. IAM에 가서 역할 생성 -> AWS 서비스 -> Redshift 선택 -> customizable 선택
+    2. s3 검색 후 fullaccess 혹은 readonly 권한 선택 
+    3. 역할 이름 설정. 
+    4. redshift로 돌아와서 클러스터의 보안 및 암호화에서 내가 만든 IAM 역할을 연결해줌.
+    5. 그러면 ARN 주소가 나옴
+
+COPY raw_data.user_session_channel
+FROM 's3://keeyong-test-bucket/test_data/user_session_channel.csv' 
+credentials 'aws_iam_role=ARN주소'
+delimiter ',' dateformat 'auto' timeformat 'auto' IGNOREHEADER 1 removequotes; 
+
+// delimiter의 ',' : csv 파일이라는 걸 알려주는? 
+// dateformat, timeformat : 알아서 날짜 잘 찾아서 넣어라 
+// IGNOREHEADER 1 : 맨 처음 행 무시 
+// removequotes : 따옴표 무시 
+
+# COPY 명령 오류가 났을때 오류내용 확인 
+select * from stl_load-errors order by starttime DESC;
+
+# CTAS 테이블 만들어보기 
+CREATE TABLE analytics.mau_summary AS 
+SELECT 
+  TO_CHAR(A.ts, 'YYYY-MM') AS month,
+  COUNT(DISTINCT B.userid) AS mau
+FROM raw_data.session_timestamp A
+JOIN raw_data.user_session_channel B ON A.sessionid = B.sessionid
+GROUP BY 1      
+ORDER BY 1 DESC;
+
+
+# 권한 부여하기 
+GRANT ALL ON SCHEMA analytics TO GROUP analytics_authors;
+GRANT ALL ON ALL TABLES IN SCHEMA analytics TO GROUP analytics_authors;
+
+GRANT ALL ON SCHEMA adhoc to GROUP analytics_authors;
+GRANT ALL ON ALL TABLES IN SCHEMA adhoc TO GROUP analytics_authors;
+
+GRANT USAGE ON SCHEMA raw_data TO GROUP analytics_authors;
+GRANT SELECT ON ALL TABLES IN SCHEMA raw_data TO GROUP analytics_authors;
+
+
+
+## Redshift Spectrum : S3 등에 있는 파일들을 테이블처럼 사용가능하게 해주는 서비스
