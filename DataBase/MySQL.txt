@@ -30,7 +30,7 @@ mysql 설치된 경로(C/bitnamy/wamp/mariadb/bin)로 가서 ,  mysql -uroot -p 
 mac 버전 
 brew install mysql
 brew services start mysql 
-brew services stop mysql 
+brew services stop mysql  
 brew services list 
 mysql -u root -p:콘솔 접속
 exit 
@@ -188,6 +188,9 @@ VALUES('data5','data5-2','data5-5','data5-6','data5-7','data5-8','data5-9','data
 
 insert into public."User" ("walletAddress", "contractAddres") values ('address','address2')   값이 숫자면 숫자만 입력 
 
+#INSERT IGNORE : uique 키로 설정된 컬럼에서 중복된 데이터를 넣으려고 할때 그 부분은 무시하고 계속 수행함.
+#INSERT INTO my_table (id, name) VALUES (1, 'John') ON DUPLICATE KEY UPDATE name = 'Jane';
+# ON DUPLICATE KEY UPDATE는 만약 중복된 키가 있으면 내가 설정한값('Jane')으로 Update 쿼리를 실행한다.
 
 #DELETE
 delete from balance.userbalance where btc>0;
@@ -293,12 +296,14 @@ WHERE CustomerName < "B" AND Country = 'Germany'     //  문자열도 비교가�
 WHERE country (NOT) LIKE '%r%'                       // %는 어떤 문자열이 와도 상관없다는뜻, r이 들어가는 country 이름 찾기  NOT을 넣으면 r이 들어가지 않는 데이터 찾기(LIKE,ILIKE) : ILIKE는 대소문자 구별안함.
 WHERE country LIKE 'B_____'                         // _ 이것은 문자 길이를 뜻함. B로 시작하는 고정된 문자열 길이를 찾겠다는뜻
 WHERE discount LIKE '50\%'                          // %자체의 문자열을 찾고싶으면 역슬래시 넣으면됨.
+//LIKE IN : 여러 조건 포함 가능 
 //찾고자하는 데이터값이 명확하다면 =을 쓰는것이 LIKE보다 훨씬 빠르다
 WHERE country IN ('Germany', 'France')              // country가 germany나 france 인 사람, OR을 써도 되는데 그러면 구문이 너무 길어짐
 WHERE coustomerID BETWEEN 3 AND 5                   // id가 3과 5사이인 사람, 3과 5 포함
 WHERE customerID IS NULL                            // null 값 찾기  NAN은 숫자가 아닌거 
 ORDER BY customerid DESC, customerID, country       // 내림차순 정렬 하되 값이 같으면 customerID로 오름차순 , ASC 는 오름차순 정렬 default는 ASC 안써주면 ASC로 자동정렬 NULL값은 오름차순일때 맨뒤 내림차순일땐 맨앞에 위치. 바꾸고 싶으면 NULL FIRST, NULL LAST를 사용
 LIMIT 10
+
 
 비교연산자 : <, >, <=, >=, = , <>(!=)
 논리연산자 : AND, OR 

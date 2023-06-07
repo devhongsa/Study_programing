@@ -439,8 +439,22 @@ print(stack)
 ########################################################################################################        
 ########################################################################################################        
 ########################################################################################################  
+# 이분탐색
+# 트라이
+# 우선순위큐 
+# 그리디
+# 완전탐색
+# 분할정복
+# DFS, BFS
+# 백트래킹
+# 최단경로
+# 투포인터
+# 동적계획법
+# 냅색 알고리즘
+# 기타
 
-## 이분탐색 (정렬된 리스트에서 특정값을 찾고싶을때, 결과 빨리 찾기// 꼭 완전히 정렬되어있지않아도됨. 결과값을 기준으로 특정 규칙으로 정렬되어있으면 이분탐색 가능)
+
+## 이분탐색? (정렬된 리스트에서 특정값을 찾고싶을때, 결과 빨리 찾기// 꼭 완전히 정렬되어있지않아도됨. 결과값을 기준으로 특정 규칙으로 정렬되어있으면 이분탐색 가능)
 left = 0              #리스트 첫 인덱스
 right = len(lst)-1    #리스트 마지막 인덱스
 
@@ -457,7 +471,7 @@ while left<=right:
         result = middle   #조건에 만족할때 그때의 인덱스 result에 저장, 경우에 따라 결과값이 최선의 선택이면 break로 while문 탈출
 
 
-## 트라이 (문자열 검색에 응용, 문자열검색을 엄청많이 반복해야될때 유용)
+## 트라이? (문자열 검색에 응용, 문자열검색을 엄청많이 반복해야될때 유용)
 def solution(words, queries):
     trie_dict = dict()
 
@@ -514,7 +528,7 @@ class Trie:
 # queries = ["he??", "g???", "childre?", "goo????"]
 
 
-## 우선순위 큐 (작업순서 문제에 적용)
+## 우선순위큐? (작업순서 문제에 적용)
 from queue import PriorityQueue
 pq = PriorityQueue()
 pq.put((priority, data1, data2))
@@ -525,7 +539,7 @@ heapq.heappush(lst,(priority,data1,data2))
 heapq.heappop(lst)
 
 
-## 그리디 : 현재 단계에서 가장 좋은 선택을 하는 과정. 정렬이 동반됨, 리스트를 정렬후 순회하면서 조건대로 풀어내기
+## 그리디? : 현재 단계에서 가장 좋은 선택을 하는 과정. 정렬이 동반됨, 리스트를 정렬후 순회하면서 조건대로 풀어내기
 
 ## 깊이우선탐색 (DFS?) : 이진트리의 경우 부모노드부터 시작해서 왼쪽 노드로 계속 탐색. 경우의 수 같은 문제에 쓸 수 있음.
 # 그래프에서의 DFS 탐색 (인접리스트 탐색) : 모든 정점을 방문하는 방법, 만약 visit리스트에 False가 남아있다면 출발지점에서 시작해서 그 정점에 방문할수 없다는뜻.
@@ -548,7 +562,7 @@ def DFS(v):
         print(v, end= " ") #현재노드
         # print 구문이 어디 들어가냐에따라 전위순회(현재노드->왼쪽노드->오른쪽노드), 중위순회(왼쪽->현재->오른쪽), 후위순회(왼쪽->오른쪽->현재)로 나뉨. 어떤 노드부터 탐색할것이냐. 이방식은 후위순회임.
 
-## 완전탐색 경우의 수 DFS
+## 완전탐색? 경우의 수 DFS
 # 모든경우의 수 (모든 부분집합 구하기)
 ch = [0]*(n+1)
 def dfs(v,sum):
@@ -621,3 +635,159 @@ def bfs(v):
                 continue 
             que.append(i) #que에 작업추가
             visit[i] = True ## 이 부분이 중요
+            
+## 분할정복?
+# 기본원리
+def divide(lst, left, right):
+    # 최대로 분할했을때(left == right): 리턴할 값 
+    # 분할도중 더이상 분할하지않아도 될때가 있으면 그때의 조건과 리턴 값.
+    # 분할해야할때 left, right 인덱스값 수정해서 재귀함수 호출 
+    # 재귀함수가 리턴한 값들을 통해 자신이 얻고자 하는 값을 리턴 
+    
+# 최대값 찾기
+def getMax(lst, left, right):
+    mid = (left+right)//2 
+    if (left == right): return lst[left]
+    
+    left = getMax(lst, left, mid)
+    right = getMax(lst, mid+1, right)
+    
+    return left if left>right else right
+
+# 부분수열의 최대 합 
+def divideSubArray(lst, left, right):
+    if (left == right) : return lst[left]
+    
+    mid = (left+right)//2
+    # 단일 요소 값
+    maxLeft = divideSubArray(lst,left,mid) 
+    maxRight = divideSubArray(lst,mid+1,right)
+    
+    # 요소 2개 이상인 부분수열의 합
+    maxarr = getMaxSubArray(lst, left, mid, right)
+    
+    return max(maxLeft, max(maxRight,maxarr))
+
+def getMaxSubArray(lst, left, mid, right):
+    sumLeft = 0
+    maxLeft = float("-inf")
+    
+    for i in range(mid,left-1,-1):
+        sumLeft += lst[i]
+        maxLeft = max(maxLeft, sumLeft)
+        
+    sumRight = 0
+    maxRight = float("-inf")
+    
+    for i in range(mid+1,right+1):
+        sumRight += lst[i]
+        maxRight = max(maxRight, sumRight)
+        
+    return maxLeft + maxRight
+
+
+## 백트래킹? : 트리탐색 (DFS)에서 재귀호출 for문(다음노드 후보군)에서 if문으로 조건을 정해서 조건에 만족하는 노드만 재귀호출 하는 것.
+## 투포인터? 
+def twoPointer(lst, target):
+    p1 = 0
+    p2 = 0
+    total = 0
+    result = [-1,-1]
+    
+    while True:
+        if total>target:
+            total -= lst[p1]
+            p1 += 1
+        elif total<target:
+            total += lst[p2]
+            p2 += 1
+        
+        if total == target:
+            result[0] = p1 
+            result[1] = p2 - 1
+            break 
+        elif total<target and p2 == len(lst): break
+    
+    return result
+
+## 최단경로?
+# 다익스트라 
+    # 출발점에서 목표점까지 최단경로를 구함
+    # 한노드에서 다른 모든 노드까지의 최단경로를 모두 구함
+    # 간선에 음의 가중치가 없어야함
+visit = [0] * N
+res = [float("inf")] * N
+obj = {
+    1 : [[2,2],[3,3]],  # 노드1에서 노드2, 3이 연결되어있고 그에따른 가중치 
+    2 : [[3,4],[4,5]],
+    3 : [[4,6]],
+    5 : [[1,1]]
+}
+res[1] = 0 # 노드1에서 1로 가는 비용은 0
+
+while True:
+    ## 아직 방분하지 않은 곳들 중에서 가장 res값이 낮은곳 선택
+    startNode = -1
+    minValue = float("inf")
+    for i,v in enumerate(res):
+        if visit[i] == 0:
+            if v<minValue:
+                startNode = i
+                minValue = v
+    if startNode == -1 :
+        break
+    visit[startNode] = 1
+    # startNode에서 연결된 노드들까지 가는데 드는 최소비용 
+    for l in obj[startNode]:
+        if visit[l[0]] == 0:
+            res[l[0]] = min(res[l[0]],res[startNode]+l[1])
+
+## 동적계획법? : dfs로 모든 경우의 수를 파악하기에는 경우의 수가 너무 많고, 최대값 최소값과 관련된 얘기가 나오면 동적계획법을 생각해야한다.
+    # 동적계획법에서 리스트 형태가 나온다면, 그 리스트사이즈인 d리스트를 생성해서 요소요소마다 값을 채우는법을 먼저 생각한다.
+    # 동적계획법은 d[N] 값을 구하는 것이기 때문에 d[0]부터 d[N]까지 어떤식으로 채워서 넣어야할지 부터 생각해야한다.
+
+## 냅색 알고리즘?
+# 냅색알고리즘  선택지 중복선택 O
+def solutionNS():
+    N = 11 # 무게 제한
+    d = [0]*(N+1)
+    lst = [[5,12],[3,8],[6,14],[4,8]] # 가치, 무게
+    
+    for v in lst:
+        for i in range(v[1], N+1):
+            d[i] = max(d[i],d[i-v[1]] + v[0])
+    
+    print(d[N])
+
+# 냅색알고리즘 최대점수 구하기, 선택지 중복선택 X
+def solution9987():
+    N = 20 # 무게 제한
+    lst = [[10,5],[25,12],[15,8],[6,3],[7,4]] # [가치,무게]
+    
+    d = [0]*(N+1)
+    
+    for q in lst:
+        for i in range(N, q[1]-1, -1):
+            d[i] = max(d[i], d[i-q[1]]+q[0])
+                
+    print(d[N])
+# 중복선택 X 버전, 이중리스트로 구현하는법
+    # d[선택지갯수+1][가방무게+1] 만들기
+    # d[0][0~end] 까지 모두 0으로 초기화
+    # d[1][0~end] d[1]은 우선 d[i-1]꺼 복사 
+    # 이후 비교참조는 d[i-1] 부분과 비교 -> 중복선택하지 않기 위한 로직
+    
+## 기타?
+## 누적합을 이용한 부분수열 합구하기 : 효율성을 크게 높임.
+lst = [0]*N # N은 주어진 리스트의 길이 
+lst[0] = givenList[0]
+for i in range(1,N): 
+    lst[i] = givenList[i] + lst[i-1]
+
+#인덱스 i부터 j까지의 부분수열의 합 
+lst[j]-lst[i-1]
+
+
+
+
+            

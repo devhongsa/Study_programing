@@ -739,31 +739,28 @@ def solution22113():
  
 # 냅색알고리즘  선택지 중복선택 O
 def solutionNS():
-    d = [0]*12
-    lst = [[5,12],[3,8],[6,14],[4,8]]
+    N = 11 # 무게 제한
+    d = [0]*(N+1)
+    lst = [[5,12],[3,8],[6,14],[4,8]] # 가치, 무게
     
     for v in lst:
-        for j in range(v[0],len(d)):
-            if d[j] < d[j-v[0]] + v[1]:
-                d[j] = d[j-v[0]] + v[1]
+        for i in range(v[1], N+1):
+            d[i] = max(d[i],d[i-v[1]] + v[0])
     
-    print(d[11])
+    print(d[N])
 
 # 냅색알고리즘 최대점수 구하기, 선택지 중복선택 X
 def solution9987():
-    limit = 20
-    lst = [[10,5],[25,12],[15,8],[6,3],[7,4]]
+    N = 20 # 무게 제한
+    lst = [[10,5],[25,12],[15,8],[6,3],[7,4]] # [가치,무게]
     
-    d = [0]*21
+    d = [0]*(N+1)
     
     for q in lst:
-        for i in range(q[1],len(d)):
-            if i == i-q[1] :
-                d[i] = max(d[i],max(d[:i])+q[0])
-            else:
-                d[i] = max(d[i-q[1]] + q[0],d[i])
+        for i in range(N, q[1]-1, -1):
+            d[i] = max(d[i], d[i-q[1]]+q[0])
                 
-    print(d[20])
+    print(d[N])
     
 class ArrayStack:
 
@@ -1668,8 +1665,80 @@ def solution(ingredients, items):
     print(minimum)   
     return minimum
 
+
+def solution11726():
+    n = int(input())
+    
+    if n == 1:
+        print(1)
+        return
+    
+    d = [0] * (n+1)
+    d[1] = 1 
+    d[2] = 2
+    
+    for i in range(3,n+1):
+        d[i] = (d[i-2] + d[i-1])%10007
+    
+    print(d[n])
+    
+def solution2579():
+    n = int(input())
+    c = [0]
+    for i in range(n):
+        c.append(int(sys.stdin.readline()))
+    if n == 1:
+        print(c[1])
+        return
+    
+    d = [[0]*(n+1),[0]*(n+1)]
+    
+    d[0][1] = c[1]
+    d[0][2] = c[1] + c[2]
+    d[1][2] = c[2]
+    
+    for i in range(3,n+1):
+        d[0][i] = d[1][i-1] + c[i]
+        d[1][i] = max(d[0][i-2],d[1][i-2]) + c[i]
+        
+    print(max(d[0][n],d[1][n]))
+    
+
+def divideSubArray(lst, left, right):
+    if (left == right) : return lst[left]
+    
+    mid = (left+right)//2
+    maxLeft = divideSubArray(lst,left,mid)
+    maxRight = divideSubArray(lst,mid+1,right)
+    
+    maxarr = getMaxSubArray(lst, left, mid, right)
+    
+    print(left, right)
+    print(maxLeft, maxRight, maxarr)
+    return max(maxLeft, max(maxRight,maxarr))
+
+def getMaxSubArray(lst, left, mid, right):
+    sumLeft = 0
+    maxLeft = float("-inf")
+    
+    for i in range(mid,left-1,-1):
+        sumLeft += lst[i]
+        maxLeft = max(maxLeft, sumLeft)
+        
+    sumRight = 0
+    maxRight = float("-inf")
+    
+    for i in range(mid+1,right+1):
+        sumRight += lst[i]
+        maxRight = max(maxRight, sumRight)
+        
+    return maxLeft + maxRight
+
 if __name__ == "__main__":
     import sys
     sys.setrecursionlimit(10**6)
+    
+    print(divideSubArray([-5,0,4,-3,-1,3,1,-5,8], 0, 8))
+    #print(divideSubArray([5,4,0,7,8], 0, 4))
 
-    solution(["생닭", "인삼", "소주", "대추"],["물", "인삼", "커피", "생닭", "소주", "사탕", "생닭", "대추", "쌀"])
+    

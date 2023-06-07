@@ -25,6 +25,8 @@ sudo lsof -PiTCP -sTCP:LISTEN  현재 사용되고 있는 port 목록 보여줌
 sudo lsof -i :80    80번포트를 사용하고 있는 작업들 보여줌 
 sudo kill -9 PID    작업죽이기 
 
+ps aux | grep -i redis : redis 관련 실행되고 있는 프로세스를 찾아줌.  -i는 대소문자 구분없이 찾아줌. 
+
 
 https://inpa.tistory.com/entry/LINUX-%F0%9F%93%9A-%ED%8C%8C%EC%9D%BC-%EA%B6%8C%ED%95%9C-%EC%86%8C%EC%9C%A0%EA%B6%8C%ED%97%88%EA%B0%80%EA%B6%8C-%F0%9F%92%AF-%EC%A0%95%EB%A6%AC
 ###파일권한###

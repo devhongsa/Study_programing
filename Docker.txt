@@ -186,7 +186,32 @@ minikube delete 삭제
 kubectl help 
 minikube help  쳐보면 명령어들이 나와있음.
 
+########################################################################
+Docker로 mysql container 만들고 intellij에서 연결하기
+########################################################################
+shell에서 실행
+docker run -d \
+--name fintech-mysql \
+-e MYSQL_ROOT_PASSWORD="fintech" \
+-e MYSQL_USER="fintech" \
+-e MYSQL_PASSWORD="fintech" \
+-e MYSQL_DATABASE="fintech" \
+-p 3306:3306 \
+mysql:latest
 
+-- 의미 : cotainer이름 fintech-mysql, ROOT 계정 비밀번호를 fintech로 설정, fintech user 생성, 비밀번호 fintech로 설정, fintech database 생성
+          컨테이너에 접근시 호스트에서 컨테이너로 3306포트로 접근. 컨테이너에서는 3306포트로 mysql서버실행 ,가장최신버전 mysql:latest 실행 (없으면 다운받음)
+
+docker exec -it fintech-mysql bash  : 컨테이너 bash 접속
+mysql -u root -p
+# 사용자 생성 : 만약 intellj에서 접속시 접근오류 뜨면 권한설정이 user 권한이 설정 안되어있는거임. 사용자권한 부여해야함.
+create user '사용자이름'@'%' identified by '비밀번호';
+# 사용자 권한 부여
+grant all privileges on *.* to '사용자이름'@'%';
+# 권한 적용
+flush privileges;
+
+intellij에서 mysql 연결 
 
 
 ####################################
