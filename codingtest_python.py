@@ -6,6 +6,11 @@
 # 깊은복사 import copy , copy.deepcopy(lst), or 2차원 리스트 깊은복사 : [lst[:] for lst in lsts]
 from collections import deque
 from collections import Counter
+lst = deque()
+lst.append(1)
+lst.appendleft(2)
+lst.popleft()
+lst.pop()
 #사칙연산
 + - * / 
 % **
@@ -451,6 +456,8 @@ print(stack)
 # 투포인터
 # 동적계획법
 # 냅색 알고리즘
+# 최소신장트리 (크루스칼, 프림)
+# 최단경로 (다익스트라, 벨만포드, 플로이드워셜)
 # 기타
 
 
@@ -535,7 +542,8 @@ pq.put((priority, data1, data2))
 pq.get()
 
 import heapq 
-heapq.heappush(lst,(priority,data1,data2))
+heapq.heapify(lst)
+heapq.heappush(lst,(priority,data1,data2)) ## priority 기준으로 최소힙정렬함.
 heapq.heappop(lst)
 
 
@@ -777,6 +785,192 @@ def solution9987():
     # d[1][0~end] d[1]은 우선 d[i-1]꺼 복사 
     # 이후 비교참조는 d[i-1] 부분과 비교 -> 중복선택하지 않기 위한 로직
     
+    
+## 최소신장트리? : 최소 비용으로(선택된 모든 간선비용의 합) 모든 노드들을 연결하는 방법
+# 크루스칼 
+    # 간선 중 최소 값을 가진 간선부터 연결 ( 가중치 기준 정렬 필요)
+    # 사이클 발생시 다른 간선 선택 
+        # Union-find 방식 
+graph = [(1,3,1), (1,2,9), (1,6,8), (2,4,13), (2,5,2) ,(2,6,7) ,(3,4,12) ,(4,7,17),(5,6,5),(5,7,20)] #(정점1, 정점2, 가중치) / 중복간선정보있어도됨.
+graph.sort(key=lambda x: x[2]) 
+
+mst = []
+n = 7 # 정점 개수 
+parent = [0] 
+
+for i in range(1,n+1):
+    parent.append(i) # 각 정점의 부모를 자기자신으로 일단 표기
+    
+def find(u):
+    if u!=parent[u]:
+        parent[u] = find(parent[u])
+        
+    return parent[u]
+
+def union(u, v):
+    root1 = find(u)
+    root2 = find(v)
+    
+    if u<v:
+        parent[root2] = root1
+    else:
+        parent[root1] = root2
+    
+mst_cost = 0 # 가중치 합 
+
+for l in graph:
+    a, b, w = l
+    if find(a) != find(b): ## 부모노드가 같다는건 사이클이 발생했다는 뜻.
+        union(a,b)
+        mst.append((a,b))
+        mst_cost += w
+        
+print(mst_cost, mst)
+
+# 프림 
+    # 임의의 노드에서 시작
+    # 간선정보 리스트를 -> 딕셔너리 형태로 바꿔야함. {노드 : [(가중치, 노드, 노드2), (가중치2, 노드, 노드3)]}
+    # 연결된 노드들의 간선 중 낮은 가중치를 갖는 간선 선택 (최소 heap으로 구현)
+    # 추가된 노드가 가지고 있는 간선들(방문하지 않은 쪽 간선만) heap에 추가
+    # 즉 갈수있는 경로(간선)에서 최소 가중치를 가진 간선을 계속 선택하는 과정
+    # 간선의 개수가 많을 때 크루스칼보다 유리 
+
+import heapq
+import collections
+
+n = 7 # 정점개수
+lst = [(1,3,1), (1,2,9), (1,6,8), (2,4,13), (2,5,2) ,(2,6,7) ,(3,4,12) ,(4,7,17),(5,6,5),(5,7,20)] #(정점1, 정점2, 가중치)
+graph = collections.defaultdict(list)
+visit = [0] * (n+1)
+
+for l in lst: # 간선 정보 입력 받기 (중복간선정보가 들어있지 않은 간선정보리스트)
+    u, v, weight = l
+    graph[u].append([weight, u, v]) # heapify 할때 첫번째 인자를 기준으로 정렬하기 때문에 weight를 맨앞으로 넣어줌.
+    graph[v].append([weight, v, u]) # 만약 중복간선정보가 있는 리스트면 이 줄을 빼주면 됨 
+
+
+def prim(graph, start_node):
+    visit[start_node] = 1
+    candidate = graph[start_node]
+    heapq.heapify(candidate)
+    
+    mst = []
+    total_weight = 0
+    
+    while candidate:
+        w, u, v = heapq.heappop(candidate)
+        if visit[v] == 0:
+            visit[v] = 1
+            mst.append((u,v))
+            total_weight += w 
+            
+            for edge in graph[v]:
+                if visit[edge[2]] == 0:
+                    heapq.heappush(candidate,edge)
+                    
+    return total_weight
+
+print(prim(graph,1))
+
+
+## 최단경로 : 출발점에서 목표점까지 최소비용으로 가는 방법
+# 다익스트라 
+    # 출발점에서 도착점까지의 최소비용(간선 가중치의 합이 최소가 되는)으로 가는방법 구함
+    # 출발점에서 모든 노드들 까지의 최소비용을 모두 구할 수 있음.
+    # 간선 가중치가 음수가 없어야함.
+    # 1. 노드들 간의 간선 정보 graph로 표현 (단방향)
+    
+import heapq
+import collections
+
+n = 7 # 정점개수
+lst = [(1,3,1), (1,2,9), (1,6,8), (2,4,13), (2,5,2) ,(2,6,7) ,(3,4,12) ,(4,7,17),(5,6,5),(5,7,20)] #(정점1, 정점2, 가중치)
+graph = collections.defaultdict(list)
+visited = [False] * (n+1)
+distance = [float("inf")] * (n+1)
+
+for l in lst:
+  u, v, w = l                           # u: 출발노드, v: 도착노드, w: 연결된 간선의 가중치 
+  graph[u].append((v, w))              # 거리 정보와 도착노드를 같이 입력합니다.
+
+def get_smallest_node():
+  min_val = float("inf")
+  index = 0
+  for i in range(1, n+1): # 0노드는 없으니까 1번노드부터 시작
+    if distance[i] < min_val and not visited[i]: 
+      min_val = distance[i]
+      index = i
+  return index
+
+def dijkstra(start):
+  distance[start] = 0 # 시작 노드는 0으로 초기화
+  visited[start] = True
+
+  for i in graph[start]:
+    distance[i[0]] = i[1] # 시작 노드와 연결된 노도들의 거리 입력
+  
+  for _ in range(n-1): 
+    now = get_smallest_node() # 거리가 구해진 노드 중 가장 짧은 거리인 것을 선택
+    visited[now] = True       # 방문 처리
+
+    for j in graph[now]:
+      if distance[now] + j[1] < distance[j[0]]: # 기존에 입력된 값보다 더 작은 거리가 나온다면,
+        distance[j[0]]= distance[now] + j[1]    # 값을 갱신한다.
+
+dijkstra(1)
+print(distance)
+
+
+# 벨만포드
+    # 음수 간선이 포함되어 있어도 가능
+    # 음수 사이클이 있으면 동작안함
+    # 매번 모든 간선을 확인하기 때문에 다익스트라에 비해서 느림
+
+start = 1 #출발점
+n = 7 # 정점개수
+lst = [(1,2,8), (1,3,6), (1,5,5), (2,3,-5), (2,4,1) ,(2,6,4) ,(3,4,4) ,(4,7,3),(5,6,5),(6,2,0),(6,7,-7)] #(정점1, 정점2, 가중치)
+distance = [float("inf")] * (n+1)
+
+distance[start] = 0
+
+isMinusCycle = False 
+for i in range(n+1): # n+1 만큼 반복실행
+    for v in lst:
+        if distance[v[0]] == float("inf"): continue
+        
+        if distance[v[1]] > distance[v[0]] + v[2] :
+            distance[v[1]] = distance[v[0]] + v[2]
+            
+            if i==n:
+                isMinusCycle = True # n+1번째때 최소비용이 갱신된다면 음수사이클이 존재하는 것임.
+
+print(distance)
+
+
+# 플로이드워셜 
+    # 각각의 정점에서 모든 정점으로의 최단거리(최소비용)를 구함
+    # 이차원 리스트의 distance
+    # 음수있어도 가능, 음수싸이클이 있으면 불가 
+n = 7 # 노드 수
+lst = [(1,2,8), (1,3,6), (1,5,5), (2,3,-5), (2,4,1) ,(2,6,4) ,(3,4,4) ,(4,7,3),(5,6,5),(6,2,0),(6,7,-7)] #(정점1, 정점2, 가중치)
+dist = [[float("inf") for _ in range(n+1)] for _ in range(n+1)]
+
+for i in range(1,n+1):
+    dist[i][i] = 0   # 자기자신에게 가는 비용은 0
+    
+for v in lst:
+    dist[v[0]][v[1]] = v[2]  # 인접한 노드로 가는 비용 
+
+for k in range(1, n+1):
+    for i in range(1, n+1):
+        for j in range(1, n+1):
+            dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])  # 중간에 k노드를 거쳐서 가는게 더빠르면 업데이트
+
+print(dist)
+    
+    
+    
+                    
 ## 기타?
 ## 누적합을 이용한 부분수열 합구하기 : 효율성을 크게 높임.
 lst = [0]*N # N은 주어진 리스트의 길이 

@@ -1,28 +1,16 @@
-from sqlalchemy import create_engine, MetaData, Table
+n = 7 # 노드 수
+lst = [(1,2,8), (1,3,6), (1,5,5), (2,3,-5), (2,4,1) ,(2,6,4) ,(3,4,4) ,(4,7,3),(5,6,5),(6,2,0),(6,7,-7)] #(정점1, 정점2, 가중치)
+dist = [[float("inf") for _ in range(n+1)] for _ in range(n+1)]
 
-# Redshift 연결 정보 설정
-db_username = "admin"
-db_password = "Qwer1234!"
-db_host = "default.364472264080.us-west-2.redshift-serverless.amazonaws.com"
-db_port = 5439
-db_name = "dev"
+for i in range(1,n+1):
+    dist[i][i] = 0   # 자기자신에게 가는 비용은 0
+    
+for v in lst:
+    dist[v[0]][v[1]] = v[2]  # 인접한 노드로 가는 비용 
+    
+for k in range(1, n+1):
+    for i in range(1, n+1):
+        for j in range(1, n+1):
+            dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])  # 중간에 k노드를 거쳐서 가는게 더빠르면 업데이트
 
-# SQLAlchemy 엔진 생성
-engine = create_engine(f"postgresql+psycopg2://{db_username}:{db_password}@{db_host}:{db_port}/{db_name}")
-
-# 연결 테스트
-try:
-    connection = engine.connect()
-    print("Redshift에 성공적으로 연결되었습니다.")
-    
-    query = "select * from raw_data.apartment_sale_info limit 10"
-    
-    result = connection.execute(query)
-    
-    # 결과 처리
-    for row in result:
-        print(row)
-        
-    connection.close()
-except Exception as e:
-    print("연결 실패:", str(e))
+print(dist)

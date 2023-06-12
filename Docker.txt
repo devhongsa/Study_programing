@@ -1,3 +1,19 @@
+ubuntu 환경 docker, docker-compose, kubectl, kustomize, minikube 설치 
+Mac OS환경에서 docker, docker-compose, kubectl, kustomize 설치하기 
+Docker로 mysql, redis container 만들고 intellij에서 연결하기
+Docker, Docker-compose 기본 개념
+Docker 기본 명령어 
+docker - 옵션 설명 
+Dockerfile 
+Dockerhub 이미지 저장소 이용하기  https://hub.docker.com
+AWS ECR(Elastic Container Registry) 저장소 이용하기 
+docker 이미지 경량화 하기 
+docker 데몬 디버깅 
+docker-compose 사용하기 
+
+
+
+
 ##############################################
 ubuntu 환경 docker, docker-compose, kubectl, kustomize, minikube 설치 
 ##############################################
@@ -187,17 +203,19 @@ kubectl help
 minikube help  쳐보면 명령어들이 나와있음.
 
 ########################################################################
-Docker로 mysql container 만들고 intellij에서 연결하기
+Docker로 mysql, redis container 만들고 intellij에서 연결하기
 ########################################################################
 shell에서 실행
-docker run -d \
+docker run -it \
 --name fintech-mysql \
 -e MYSQL_ROOT_PASSWORD="fintech" \
 -e MYSQL_USER="fintech" \
 -e MYSQL_PASSWORD="fintech" \
 -e MYSQL_DATABASE="fintech" \
 -p 3306:3306 \
-mysql:latest
+-d mysql:latest
+
+docker run -it --name my-redis -p 6379:6379 -d redis
 
 -- 의미 : cotainer이름 fintech-mysql, ROOT 계정 비밀번호를 fintech로 설정, fintech user 생성, 비밀번호 fintech로 설정, fintech database 생성
           컨테이너에 접근시 호스트에서 컨테이너로 3306포트로 접근. 컨테이너에서는 3306포트로 mysql서버실행 ,가장최신버전 mysql:latest 실행 (없으면 다운받음)
@@ -297,6 +315,10 @@ docker run \
 --log-opt max-file=5 \
 nginx
 
+
+########################################
+docker - 옵션 설명 
+########################################
 
 docker run \ 
 -i    호스트의 표준 입력을 컨테이너와 연결, 다른컨테이너와 상호작용
@@ -480,6 +502,7 @@ docker 이미지 경량화 하기
   COPY . .
   EXPOSE 8080 
   CMD ["node", "server.js"]
+  
 
 ##############################################
 docker 데몬 디버깅 

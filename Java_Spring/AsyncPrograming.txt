@@ -1,0 +1,88 @@
+비동기 프로그래밍 
+ThreadPoolExecutor
+corePoolSize = 최소 몇개의 쓰레드를 구성할것인지
+maximumPoolSize = 최대 몇개 쓰레드 
+keepAliveTime = 쓰레드가 특정시간동안 일을 하지않으면 자동으로 반환 
+unit = 시간단위
+WorkQueue = 작업을 쌓아두는 자료구조, 이 큐 사이즈가 꽉 찰경우 추가 쓰레드를 생성한다.
+
+설정 
+@Configuration
+public class AppConfig {
+
+    @Bean(name = "defaultTaskExecutor", destroyMethod = "shutdown")
+    public ThreadPoolTaskExecutor defaultTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(200);
+        executor.setMaxPoolSize(200);
+        return executor;
+    }
+
+    @Bean(name = "messagingTaskExecutor", destroyMethod = "shutdown")
+    public ThreadPoolTaskExecutor messagingTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(200);
+        executor.setMaxPoolSize(200);
+        return executor;
+    }
+}
+
+
+@Configuration
+@EnableAsync   // 이 어노테이션을 선언해줘야 Async 프로그래밍 가능 
+public class AsyncConfig {
+}
+
+
+서비스 
+@Service
+@RequiredArgsConstructor
+public class EmailService {
+
+    @Async("defaultTaskExecutor")
+    public void sendMail() {
+        System.out.println("[sendMail] :: "
+                           + Thread.currentThread().getName());
+    }
+
+    @Async("messagingTaskExecutor")
+    public void sendMailWithCustomThreadPool() {
+        System.out.println("[sendMailWithCustomThreadPool] :: "
+                           + Thread.currentThread().getName());
+    }
+}
+// Async로 선언된 메소드를 사용할때 스프링에서는 이 메소드를 proxy object로 한번 감싼 형태로 가져와서 Async 동작을 하게 한다. 
+
+
+서비스 예제 
+@Service
+@RequiredArgsConstructor
+public class AsyncService {
+
+    private final EmailService emailService; // 이렇게 Bean으로 설정된 객체를 써야 비동기적으로 실행이 됨.
+
+    public void asyncCall_1() {
+        System.out.println("[asyncCall_1] :: " + Thread.currentThread().getName());
+        emailService.sendMail();
+        emailService.sendMailWithCustomThreadPool();
+    }
+
+    // Bean으로 주입된 객체를 써야지 스피링프레임워크가 알아서 async 처리를해주는데, 여기서는 객체를 따로 생성해서 사용하기 때문에 비동기로 실행이 안된다.
+    public void asyncCall_2() {
+        System.out.println("[asyncCall_2] :: " + Thread.currentThread().getName());
+        EmailService emailService = new EmailService();
+        emailService.sendMail();
+        emailService.sendMailWithCustomThreadPool();
+    }
+
+    // 내부에 Async 함수를 선언해서 사용하는 것도 안된다. 무조건 Bean으로 미리 등록되어 있어야 Async사용가능
+    public void asyncCall_3() {
+        System.out.println("[asyncCall_3] :: " + Thread.currentThread().getName());
+        sendMail();
+    }
+
+    @Async
+    public void sendMail() {
+        System.out.println("[sendMail] :: " + Thread.currentThread().getName());
+    }
+}

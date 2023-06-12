@@ -1,0 +1,132 @@
+- 기본 프로젝트 생성 
+- src 폴더 삭제 
+- 프로젝트 폴더에서 새로만들기 -> Module 생성 -> spring intializer -> 버전 선택후 생성 -> 필요없는 파일, 폴더 지우기 (Help.md, resorces/static,templates, - - Application 클래스 : 서버실행할 목적이 아닌 모듈에서는 필요없음)
+
+- 루트폴더의 settings.gradle에서  include '모듈이름' 추가해주기 
+
+- module 의 build.gradle에서
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.1'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'  // version이 맞아야함, 안맞으면 버전 오류뜸 
+}
+
+group = 'com.devhong'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'  //module이 java11을 쓰고있으면 여기도 11이여야함.
+
+- module의 settings.gradle 파일 지워줘야함.
+- module의 build.gradle 파일 밑에 코드 추가 
+tasks.register("prepareKotlinBuildScriptModel") {}
+- module-api module의 build.gradle 파일의 dependencies에 implementation project(':module-common') 추가 
+- 이때 moudule-api 모듈에서 module-common의 순수 객체는 가져와서 쓸 수 있지만 의존성 주입은 불가능함. 
+- Application 객체는 자신이 있는 패키지만 Component Scan을 함. com.devhong.moduleapi 안에 Application 객체가 있기때문에 moduleapi 안에서만 scan이 일어남 그래서 devhong으로 옮겨주면 devhong 패키지안에 있는 모든 모듈에 대해서 component scan을 함.
+- 이 방법보다는 Application 객체의 @SprignBootApplication 어노테이션에서 
+@SpringBootApplication(
+        scanBasePackages = { "dev.be.moduleapi", "dev.be.modulecommon" }
+)
+이렇게 옵션을 주면 됨. 실무에서 이렇게 쓰임.
+
+/**
+ *[중요] `ModuleApiApplication` Package Path 변경 : 하위 Module에 존재하는 Bean Scan을 위한 조치
+ *
+ * ModuleApiApplication의 위치를 변경하는 방법이 아닌
+ * 명시적으로 Component Scan 범위 지정하여 Bean을 등록한다.
+ *
+ * scanBasePackages에서 Bean으로 등록할 Package Path를 지정해준다.
+ * 그런데 JPA와 관련된 Entity와 Repository는 여기서 Scan이 되지 않는다.
+ * 그래서 "@EntityScan, @EnableJpaRepositories" 어노테이션을 사용해서 등록을 시도해야 한다.
+ *
+ * 만약 JPA를 사용한다면
+ * "@EntityScan, @EnableJpaRepositories" 어노테이션을 사용해
+ * 필요한 Entity와 Repository를 Bean으로 등록한다.
+ * 이렇게 명시적으로 등록해주지 않으면 Entity와 Repository는 Bean으로 등록되지 않아
+ * 컴파일 시점에 Bean 주입이 실패했다는 에러가 발생한다.
+ *
+ * 그렇다면 scanBasePackages에서 "dev.be.modulecommon"을 등록하는 이유는 뭘까?
+ * 그 이유는 api module에서 common module에 있는 일반적인 Bean을 참조할 수 있으므로
+ * 그러한 Bean들을 Spring Container에 등록하기 위해 사용한다.
+ * ex) CommonDemoService.class
+ */
+
+- module-common 에서는 여러 모듈에서 공통적으로 쓰이는 DB설정이나 기타 공용유틸기능을 넣어서 씀.
+- DB 연결하기 위해서 module-common build.gradle dependencies 에 
+api 'org.springframework.boot:spring-boot-starter-data-jpa'
+implementation 'mysql:mysql-connector-java'
+추가 
+/*
+    api가 아닌 implementation로 선언하면
+    dev.be.moduleapi.service.DemoService.memberRepository가 JpaRepository의 메소드를 사용하지 못한다.
+    */
+
+    /*
+    api 키워드를 사용하기 위해선 2가지 중 1가지 방법으로 선언을 해야 한다.
+
+    1. api를 사용하려는 build.gradle의 plugins에 id 'java-library' 추가
+    2. 상위 모듈(=root)에서 'java-library' 추가
+    ex) subprojects {
+            apply plugin: 'java-library'
+        }
+*/
+
+- application.yml 파일 설정은 module-common이 아닌 module-api 모듈에서 설정.
+
+- module-common build.gradle 에서 추가 코드 
+tasks.bootJar { enabled = false }
+tasks.jar { enabled = true }
+/*
+[tasks.bootJar 기본 값 : true]
+
+`bootJar` 옵션을 true로 설정하면 'xxx.jar' 파일이 생성된다.
+ex) module-common-0.0.1-SNAPSHOT.jar
+이렇게 생성된 'jar' 파일은
+그 파일 안에 Application을 실행시키는 데 필요한
+[dependencies / classes / resources]을 포함하고 있어
+`java -jar` 옵션으로 jar 파일을 실행시킬 수 있다.
+
+그런데 Common Module은
+다른 Module에서 참조하는 목적의 Module이므로
+실행 가능한 jar 파일을 생성할 필요가 없다.
+그러므로 `ModuleCommonApplication.class`는 존재할 필요가 없다.
+그러므로 Common Module에서는
+bootJar 옵션값을 false로 설정한다.
+
+만약 bootJar 옵션을 true로 주면
+Main.class를 찾게 되는데
+Common Module에서는 Api Module처럼
+ModuleApiApplication.class가 없으므로 다음과 같은 에러가 발생한다.
+ex) Caused by: org.gradle.api.InvalidUserDataException: Main class name has not been configured and it could not be resolved
+ */
+
+ /*
+[tasks.jar 기본 값 : true]
+
+`jar` 옵션을 true로 설정하면 'xxx-plain.jar' 파일이 생성된다.
+ex) module-common-0.0.1-SNAPSHOT-plain.jar
+이렇게 생성된 '-plain.jar' 파일은 'jar' 파일과는 다르게
+'dependencies'를 제외한 [classes / resources]만을 포함하고 있어
+`java -jar` 옵션으로 jar 파일을 실행시킬 수 없다.
+
+Common Module에서는 Api Module에서 사용할
+[classes / resources]만 존재하면 되므로
+jar 옵션값을 true로 설정한다.
+ */
+
+
+- build 하기 
+- root project에서 Gradle 빌드 명령어를 실행한다.
+./gradlew clean :module-api:buildNeeded --stacktrace --info --refresh-dependencies -x test
+  ./gradlew clean은 build폴더 모두 지움
+  stacktrace는 에러메세지 나타내라 info는 info단계부터 warn error 단계까지 나타내라, -x test는 test코드 실행하지 않고 빌드
+- Api module을 실행시킬 jar 파일이 생성된 경로로 이동한다.
+  ex) cd module-api/build/libs/
+- 해당 Path로 이동 후 java -jar 명령어를 실행한다.
+  ex) java -jar module-api-0.0.1-SNAPSHOT.jar 
+
+
+- profile 지정하기 (보통 local, dev, test, prod 으로 profile을 나눔)
+- 개발단계, 배포단계에서의 환경설정이 다르기때문에 yml파일도 여러개가 있어야함. 
+- application-local.yml, application-dev.yml 파일을 각각 만들어서 profile 마다 다른 설정으로 서버를 키게 됨. (module-api 안에 있는 yml파일)
+- application-local.yml파일에   profile-name: "local" 추가 
+- intellij에서 위에 어플리케이션 실행버튼 옆에 아래화살표 클릭, Edit Configuration 들어가서 Active profiles에 local 쓰고 적용하면 local.yml 파일로 설정되서 서버실행함.
+- profile이 설정된 jar파일을 실행하려면 java -jar -Dspring.profiles.active=local module-api-0.0.1-SNAPSHOT.jar

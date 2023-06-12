@@ -1,7 +1,26 @@
-레포지토리 
-study_fastcampus => 맥북,회사컴에서 Nodejs폴더, grapql test, db userfollow 테이블 수정하는 로직
-flutter-graphql => 맥북에서 flutter_graphql, 맥북에서만 사용 플러터로 graphql 테스트
-ep-graphql(heroku git) => graphql 서버
+- ssh 인증키 설정
+- git 기본 이론
+- gitignore 작성법
+- git 명령어 모음
+- pull request 
+- 브랜치 전략
+- 커밋 메세지 convention
+- 마크다운
+
+
+마크다운(markdown) 사이트 : https://www.markdownguide.org/
+brew install git 
+config 설정 하기 
+
+
+/// ssh 인증키 설정
+// ssh 인증키 깃헙 등록하기 // https://jootc.com/p/201905122827 : 비밀번호 등록시 
+cd ~/.ssh 
+ssh-keygen -> 키이름, 비밀번호 입력 (비밀번호는 패스해도 됨) -> 키와 키.pub 파일 2개가 생김 
+cat 키.pub 
+깃험에 들어가서 계정 setting -> ssh 키 생성 -> 위의 키.pub 내용 모두 복사해서 붙여넣고 등록 .
+이후 git clone할때 레포지토리의 ssh 주소 복사 
+내 작업폴더에서 git clone ssh주소 
 
 
 403에러 해결 : https://beagle-dev.tistory.com/244
@@ -11,31 +30,95 @@ ep-graphql(heroku git) => graphql 서버
 =) 깃헙 패스워드 입력을 하라는 창이 나오고 입력을 하시면 본인의 깃주소에 소스코드가 올라갑니다.
 =) 인증이 끝난 후부터는 git push만 하면 기존의 세팅한 주소로 바로 푸쉬가 됩니다. 변경을 원하시면 git remote "set-url" "any_name" "git_reposit_주소"를 사용하시면 되요
 
-git 명령어 모음 
+
+/// git 기본 이론
+// git의 영역 
+Working Directory -> git add -> Staging Area -> git commit -> Local Repository -> git push -> Remote Repository -> git fetch(원격 저장소의 커밋들을 불러옴) -> local Repository -> git merge -> Working Directory 
+
+main : 깃의 기본 브랜치
+origin : 깃의 기본 원격 브랜치 별칭, 원격저장소를 의미한다 
+HEAD : 현재 작업 브랜치의 위치  
+
+
+/// gitignore 작성법  // gitignore.io
+/docs 
+test.txt 
+/docs/test.txt 
+/docs/*.txt : 이경우 docs파일의 하위폴더 안에있는 txt파일은 ignore처리가 안됨.
+/docs/**/*.txt : docs폴더안에있는 하위폴더들 포함해서 모든 txt확장자 파일을 ignore
+
+
+/// git 명령어 모음 
+
+git init 
+rm -rf .git 
+
+git config (--global) user.email bippr0901@gmail.com
+git config (--global) user.name devhongsa
+git config --list 
 
 git commit 
+git commit --amend          // 바로 이전의 커밋내용을 다시 커밋한다 
+git commit -m 메세지내용      
 git branch                 // branch 목록 보기 
 git branch version2        //version2 branch 생성
 git checkout version2      // version2로 이동
 git branch -d version2     // branch 삭제 
-git push origin version2   // version2에 push 하기 
-git merge version2         // main branch에서 실행하면 version2 와 버전병합. 
-git reset                  // 특정 commit 삭제 
+git push origin version2   // version2 브랜치를 원격저장소에 push 하기 
+git merge version2         // main branch에서 실행해야함. version2 와 버전병합.  팀원들끼리 기준이 되는 브랜치를 정해야함 여기서는 main이 기준브랜치
+git merge --abort           // merge를 중단하고 머지 이전의 상태로 되돌아감 
+git rebase                 // merge와 기능은 동일하지만 branch줄기를 하나의 줄기로 합쳐줌.
+git reset HEAD^            // head 바로이전 상태로 되돌아감. HEAD 커밋은 사라짐
+git revert HEAD             // 마지막 커밋에서 만약 어떤내용을 추가하고, 어떤 내용은 삭제했다면, revert 실행시 추가한 내용은 삭제하고 삭제된 내용은 되살린다. HEAD와 완전히 반대되는 커밋이 새로 생김.
 git cherry-pick            // 다른 브랜치에서 특정 commit 가져옴 
-git status 
+git status                 // 깃 버전 관리 상태 보기 
+git add 파일이름            // 파일을 스테이징 상태로 
+git add .                 // 모든 파일을 (수정된 혹은 추가된) 스테이징 상태로 
+git restore --staged 파일이름    // 스테이징 영역에 있는 것을 다시 뺌 
 git tag 
 git log 
+git fetch               // 원격 저장소의 소스를 내 로컬 저장소로 받아옴 (내 작업소스에는 반영 X)
+git pull                // pull = fetch + merge 
 
-git rebase는 merge와 기능은 동일하지만 branch줄기를 하나의 줄기로 합쳐줌.
+/// pull request
+pull request는 내가 브랜치를 따서 작업을 하고 푸쉬까지 한 상황에서 특정 브랜치와의 병합을 요청할때 쓴다. 
+나만의 프로젝트면 이게 필요없지만 팀프로젝트일 경우 혹은 신입이 새로운 기능을 개발해서 사수에게 확인을 받아야 할 경우 쓴다.
+또는 어떤 오픈소스프로젝트를 포크를 떠서 내가 작업을 한다음에 원본레포지토리에 풀리퀘스트를 할수도 있다. 
+풀리퀘스트할때 base는 병합을 할 메인 브랜치를 선택하고 compare는 내가 작업한 브랜치를 선택해주면 된다. 
+- 가능한 작은 기능 단위로 PR을 한다. 변경이 너무 많으면 리뷰를 하기 힘들기 때문 
+- 충분한 정보를 제공한다 (의도, 변경점, 테스트 여부 및 테스트 내용, 어떤부분을 집중 리뷰해주셨으면 좋겠는지)
+- 부드럽게 토론
 
-git config --global user.email "bippr0901@gmail.com"
-git config --global user.name "devhongsa"
+ex)
+Background
+인증에 메일 서비스를 연동하기로하여 mailgun을 사용하기로 하였다. 
+
+Change 
+기존 회원가입 로직에 이메일 인증을 통해 가입해야하는 1 step을 더 추가하였다.
+
+Test 
+이메일 발송을 통한 실테스트 확인,
+테스트 코드 함께 작성 
+
+Analytics   
+성능 테스트 결과, 비용 
+이메일 발송당 한건당 30원 
+
+Discuss 
+for문을 여러개로 작성하였지만, 좋은 방법이라고 생각되지 않습니다. 
+더 좋은 방법이 있으시면 적극 반영하도록 하겠습니다. 
+
+
+
+
+
 
 레포지토리가 이미 만들어져 있고 내 작업폴더를 레포지토리에 push하고 싶을때
 작업 폴더에서 terminal 
 git init 
 //git config --global init.defaultBranch main         default branch로 main 설정
 git remote add origin (repository 주소)                 작업폴더와 레포지토리 연결
+// git remote remove origin
 git remote set-url origin https://devhongsa@github.com/devhongsa/Study_programing.git
 git remote -v      작업폴더의 레포지토리 연결확인
 //git branch        branch 이름 확인 master면 
@@ -45,6 +128,7 @@ git pull origin main --allow-unrelated-histories     깃허브 저장소에 있�
 git push -u origin main 
 
 
+/// 임시 url 만들기 
 github settings 들어가서 pages 클릭 
 Source none에서 main으로 변경 save 
 url 만들어짐.  https://devhonglion.github.io/10000hours_web/
@@ -67,9 +151,6 @@ git pull origin main
 
 충돌 상관없이 현재 commit된 내용 밀어넣기 
 git push origin main --force
-
-
-
 
 
 버전관리 Semver 
@@ -109,31 +190,36 @@ caret ^
 
 
 
-버전관리 브랜치 전략
+/// 브랜치 전략
 
 ## gitflow 
 
 main : 여기서는 코드 수정작업x 모두 검증된 코드만 merge
 hotfix : 버그 수정
+release : develop브랜치에서 나온 브랜치 ,QA 각종 테스트를 거치는 작업
 develop : 기능 개발
 feature : develop브랜치에서 나온 브랜치 기능 개발 종류별로 나눠서 브랜치 형성, 오직develop브랜치에만 연결되어있음
-release : develop브랜치에서 나온 브랜치 ,QA 각종 테스트를 거치는 작업
 
 ## trunk based 
 
 하나의 긴 main 브랜치가 있고 기능을 개발할때마다 브랜치를 생성하고 기능이 개발되면 main에 merge하는 방식 
 
 
+/// 커밋 메세지 convention
+
+Type : [build, docs, feat(기능개발), fix(버그수정), refactor(리팩토링), revert(커밋되돌리기), style, test(테스트코드 작성)]
+
+ex)
+feat : [FEAT-135](브랜치 이름임) 이메일 인증 기능 구현 
+
+mailgun을 이용한 인증번호 발송을 통한 메일 발송 기능 구현
+
 github releases 기능
 깃헙 레포지토리 옆쪽에 릴리스하기 있음 여기서 버전마다 릴리스가능 
-
-
 
 github 오픈소스 기여하기 
 github 오픈소스 레포지토리로 가면 
 issues : 커뮤니케이션 하는 장소. 버그를 제보하거나, 기능추가를 제안하거나 하는 장소
-pull requests : 내가 특정 버그에대해서 수정작업을 했거나, 기능추가를 했으면 pull requests가능 
-위쪽에 fork라는 버튼이 있는데, 이는 오픈소스 레포지토리를 복사해서 내레포지토리로 만드는 것임. 여기서 브랜치를 따서 수정작업을 하고 pull requests 가능
 
 
 
@@ -142,5 +228,21 @@ CI/CD 작업을 도와주는 기능.
 내가 미리 짜놓은 testcode를 가동해주고, 특정서버에 배포해주는 등 코드배포를 자동화해주는 기능이다.
 
 
-github markdown 기능
-이슈, 코멘트 등에 글을 쓸때 체크박스, 번호매기기 같은 기능을 넣어줌.
+/// Readme.md 마크다운
+# : 글자크기 
+- : 점표시 
+
+```java
+fun onDestroy(){
+    mBinding = null
+    super.onDestroy()
+}
+```
+
+*** : 수평선 
+
+[Naver](https://naver.com)  : 링크 걸기 
+
+**강조하기** 
+
+> 박스블록 
