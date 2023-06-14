@@ -1,0 +1,158 @@
+////// redis 설치 //////
+linux 
+sudo apt-get update 
+sudo apt-get upgrade 
+sudo apt-get install redis-server
+redis-server --version
+
+macos 
+brew install redis
+
+docker로 설치
+docker pull redis
+docker run --name my-redis -p 6379:6379 redis
+docker stop my-redis
+docker start my-redis 
+docker exec -it my-redis /bin/sh  : redis서버 커멘트쉘 실행 
+
+redis-server : redis 서버 실행
+redis-cli : redis 클라이언트 커맨트창 실행 
+exit : 빠져나오기 
+
+brew services start redis : 터미널 창을 닫아도 서버 계속 실행 
+brew services stop redis 
+
+
+implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+yml파일에서 
+spring:
+    redis:
+        host: localhost 
+        prot: 6379
+
+main Application에 @EnableCaching 붙이기 
+
+
+
+
+
+
+////// Cache Config//////
+/// serialization(직렬화) : 데이터 or 오브젝트와 같은 값들을 바이트 형태로 변환. java에서만 호환되는 데이터, 오브젝트를 외부에서도 사용가능하게 바이트형토로 바꾸는것.
+@RequiredArgsConstructor
+@Configuration
+public class CacheConfig {
+
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private int port;
+
+    @Bean
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheConfiguration conf = RedisCacheConfiguration.defaultCacheConfig()
+                .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
+                //.entryTtl() cache데이터의 유효기간을 설정할 수 있음.
+        return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
+                .cacheDefaults(conf)
+                .build();
+    }
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory(){
+        //RedisClusterConfiguration : cluster로 구성할땐 이걸로 
+        RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
+        conf.setHostName(host);
+        conf.setPort(port);
+        //conf.setPassword();
+        return new LettuceConnectionFactory(conf);
+    }
+}
+
+
+
+
+
+
+////// LocalDatetime Serialize  //////
+// LocalDatetime 타입에 대해서 CacheConfig에서는 직렬화, 역직렬화에 대한 설정이 안되어있어서, 여기서 직접 설정을 해줌.
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Dividend {
+
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime date;
+    private String dividend;
+}
+
+
+
+
+
+
+
+////// Service Cache (Cacheable) //////
+@Slf4j
+@Service
+@AllArgsConstructor
+public class FinanceService {
+
+    private final CompanyRepository companyRepository;
+    private final DividendRepository dividendRepository;
+
+    @Cacheable(key = "#companyName", value = CacheKey.KEY_FINANCE)
+    // redis에 key값에 해당하는 값이 있으면 밑에 로직이 실행되지 않고, 곧바로 redis에서 데이터를 꺼내 쓴다.
+    // key : "finance::3M Company", value : ScrapedResult
+    // 여기서 ScrapedResult에 Company 객체와 Dividend 객체가 직렬화와 역직렬화를 거쳐서 redis와 java간의 데이터통신을 하는데, 객체는 기본적으로 default 생성자가 있어야 역직렬화가 가능하다. 그래서 DTO 객체에 @NoArgsConstructor 를 붙여줘야 역직렬화시 에러가 뜨지 않는다. 
+    public ScrapedResult getDividendByCompanyName(String companyName) {
+        log.info("search company dividend at DB->" + companyName);
+        CompanyEntity company = companyRepository.findByName(companyName)
+                .orElseThrow(NoCompanyException::new);
+
+        List<DividendEntity> dividendEntities = dividendRepository.findAllByCompanyId(company.getId());
+
+        List<Dividend> dividends = dividendEntities.stream()
+                .map(e -> Dividend.builder()
+                        .date(e.getDate())
+                        .dividend(e.getDividend())
+                        .build())
+                .collect(Collectors.toList());
+
+        return new ScrapedResult(Company.builder()
+                .ticker(company.getTicker())
+                .name(company.getName())
+                .build(), dividends);
+    }
+}
+
+
+
+
+
+
+
+////// CacheEvict //////
+@CacheEvict(value = CacheKey.KEY_FINANCE, key = "#result.name")
+// key에서 참조할 수 있는 값은 deleteCompany의 파라미터값인 ticker와, 리턴값인 Company이다. 이때 리턴값인 Company는 #result로 참조할 수 있고,
+// Company.name 은 #result.name 으로 참조할 수 있다. 메소드 안에서의 지역변수는 참조할 수 없다.
+// 이렇게 되면 deleteCompany가 실행될 때마다 redis에 저장되어있던 해당 회사의 값들이 삭제된다.
+    public Company deleteCompany(String ticker) {
+        CompanyEntity company = companyRepository.findByTicker(ticker)
+                .orElseThrow(NoCompanyException::new);
+
+        dividendRepository.deleteAllByCompanyId(company.getId());
+        companyRepository.delete(company);
+
+        deleteAutoCompleteKeyword(company.getName());
+
+        return Company.builder()
+                .ticker(company.getTicker())
+                .name(company.getName())
+                .build();
+    }

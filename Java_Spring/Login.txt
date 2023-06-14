@@ -1,0 +1,318 @@
+implementation 'org.springframework.boot:spring-boot-starter-security'
+implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+////// 권한 타입 Enum 클래스 //////
+public enum Authority {
+
+    ROLE_READ,
+    ROLE_WRITE;
+}
+
+////// User Entity //////
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity(name = "MEMBER")
+public class MemberEntity implements UserDetails {  //UserDetails 를 impl 하는거 중요 spring-security 기능 사용
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String username;
+
+    private String password;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> roles;
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
+}
+
+////// User Repository //////
+@Repository
+public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
+
+    Optional<MemberEntity> findByUsername(String username);
+
+    boolean existsByUsername(String username);
+}
+
+
+////// User Service //////
+@Slf4j
+@Service
+@AllArgsConstructor
+@Transactional
+public class MemberService implements UserDetailsService { //UserDetailsService impl 필요 loadUserByUsername override 필요
+
+    private final PasswordEncoder passwordEncoder;
+    private final MemberRepository memberRepository;
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+         return memberRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다. ->" + username));
+    }
+
+    public MemberEntity register(Auth.SignUp member){
+        if (memberRepository.existsByUsername(member.getUsername())) {
+            throw new AlreadyExistUserException();
+        }
+
+        member.setPassword(passwordEncoder.encode(member.getPassword())); //비밀번호가 그대로 DB에 저장되지 않게 암호처리
+        return memberRepository.save(member.toEntity());
+    }
+
+    public MemberEntity authenticate(Auth.SignIn member){
+        MemberEntity user = memberRepository.findByUsername(member.getUsername())
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 ID입니다."));
+
+        if (!passwordEncoder.matches(member.getPassword(), user.getPassword())) {
+            throw new RuntimeException("비밀번호가 일치하지 않습니다.");
+        }
+
+        return user;
+    }
+}
+
+////// Auth DTO //////
+public class Auth {
+
+    @Data
+    public static class SignIn {
+        private String username;
+        private String password;
+    }
+
+    @Data
+    public static class SignUp{
+        private String username;
+        private String password;
+        private List<String> roles;
+
+        public MemberEntity toEntity(){
+            return MemberEntity.builder()
+                    .username(username)
+                    .password(password)
+                    .roles(roles)
+                    .build();
+        }
+    }
+}
+
+////// AppConfig ////// PasswordEncoder에서 어떤 인코더를 사용할건지 설정 
+@Configuration
+public class AppConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
+}
+
+
+////// JWT //////
+// JWT = Header + Payload + Signatrue 
+    // Header : 토큰 타입(JWT), 어떤 암호화 알고리즘인지 
+    // Payload(Body) : 사용자 이름, 토큰 만료시간 등 (비밀번호와 같은 민감정보는 포함되면 안됨.)
+    // Signature : 토큰 유효한지, 위조되었는지 확인, (Secret Key 필요 )
+    // Secret key로는 평문을 base64로 인코딩한 값을 주로 씀.
+    // 터미널에 echo 'secretkey' | base64 
+    // 이후 yml 파일에 spring.jwt.secret : secret key   저장 
+
+
+////// Token Provider ////// security package에 생성
+@Component
+@RequiredArgsConstructor
+public class TokenProvider {
+
+    private static final long TOKEN_EXPIRE_TIME = 1000 * 60 * 60; // 1 hour
+    private static final String KEY_ROLES = "roles";
+
+    private final MemberService memberService;
+
+    @Value("${spring.jwt.secret}")
+    private String secretKey;
+
+    public String generateToken(String username, List<String> roles) {
+        //username 같은 경우 원래 Encrypt해서 claim 설정할 필요가 있음.
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put(KEY_ROLES, roles);
+
+        Date now = new Date();
+        Date expiredDate = new Date(now.getTime() + TOKEN_EXPIRE_TIME);
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(expiredDate)
+                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .compact();
+    }
+
+    public Authentication getAuthentication(String jwt) {
+        UserDetails userDetails = memberService.loadUserByUsername(this.getUsername(jwt));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+    }
+
+    public String getUsername(String token) {
+        return parseClaims(token).getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        if (!StringUtils.hasText(token)) return false; //빈문자열인지 체크
+
+        Claims claims = parseClaims(token);
+        return !claims.getExpiration().before(new Date()); // 만기가 지난 토큰인지 체크 
+    }
+
+    private Claims parseClaims(String token) { 
+        try {
+            return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
+    }
+}
+
+////// Auth Controller //////
+@Slf4j
+@RestController
+@RequestMapping("/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final MemberService memberService;
+
+    private final TokenProvider tokenProvider;
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@RequestBody Auth.SignUp request) {
+        MemberEntity result = memberService.register(request);
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/signin")
+    public ResponseEntity<?> signin(@RequestBody Auth.SignIn request) {
+        MemberEntity member = memberService.authenticate(request); //회원 확인, 비밀번호 확인
+        String token = tokenProvider.generateToken(member.getUsername(), member.getRoles());
+        log.info("user login -> " + request.getUsername());
+        return ResponseEntity.ok(token);
+    }
+}
+
+
+////// Filter ////// 요청이 올때마다 이 필터에서 요청 헤더로 온 토큰값을 검증하고 토큰이 유효하다면 SecurityContextHolder에 토큰을 등록함
+// client request <-> Filter <-> servlet <-> Interceptor <-> AOP <-> Controller
+@Slf4j
+@Component
+@RequiredArgsConstructor
+public class JwtAuthenticationFilter extends OncePerRequestFilter { //OncePerRequestFilter는 요청이 올때마다 이 필터가 실행됨.
+
+    private static final String TOKEN_HEADER = "Authorization";
+    private static final String TOKEN_PREFIX = "Bearer ";
+
+    private final TokenProvider tokenProvider;
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String token = resolveTokenFromRequest(request); // 요청 헤더에서 jwt 토큰 가져오기 
+
+        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) { //토큰이 시간만료되었는지 체크  
+            Authentication auth = tokenProvider.getAuthentication(token); // 사용자와 사용자권한정보가 포함된 인증토큰 리턴
+            SecurityContextHolder.getContext().setAuthentication(auth);
+
+            log.info(String.format("[%s] -> %s", tokenProvider.getUsername(token), request.getRequestURI()));
+        }
+
+        filterChain.doFilter(request, response); // 현재 필터가 처리한 요청을 다음 필터로 전달하거나, 필터 체인의 마지막에 도달한 경우 실제 서블릿 또는 컨트롤러로 요청을 전달하는 역할을 함.
+    }
+
+    private String resolveTokenFromRequest(HttpServletRequest request) { 요청에서 jwt 토큰을 추출하는 메소드
+        String token = request.getHeader(TOKEN_HEADER);
+
+        if (!ObjectUtils.isEmpty(token) && token.startsWith(TOKEN_PREFIX)) {
+            return token.substring(TOKEN_PREFIX.length());
+        }
+
+        return null;
+    }
+}
+
+
+////// Security Configuration //////
+@Slf4j
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) //@PreAuthorize, @PostAuthorize 을 Controller의 메소드에 사용가능하게함.
+@RequiredArgsConstructor
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+
+    private final JwtAuthenticationFilter authenticationFilter;
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                .authorizeRequests()
+                .antMatchers("/**/signup", "/**/signin").permitAll()
+                .and()
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Override
+    public void configure(final WebSecurity web) throws Exception {
+        web.ignoring()
+                .antMatchers("/h2-console/**"); //인증 필요하지 않는 url은 이렇게 설정해줌. 주로 여기는 개발과 관련된 url을 설정하고 
+                // 위의 메소드에서는 실제 서비스관련 api url을 적용함.
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+}
+
+
+
+/////// Controller에 권한 추가 ////////
+@GetMapping
+@PreAuthorize("hasRole('READ')") // 이제 요청할때 Header 값에 Key=Authorization, value=Bearer token값 실어서 보내야함.
+public ResponseEntity<?> searchCompany(final Pageable pageable) {
+    Page<CompanyEntity> companies = companyService.getAllCompany(pageable);
+    return ResponseEntity.ok(companies);
+}
+

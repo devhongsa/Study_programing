@@ -4,6 +4,9 @@
 @AllArgsConstructor
 @Builder
 @Entity
+// @AuditOverride(forClass=BaseEntity.class)
+// 위에꺼 쓰려면 implementation 'org.springframework.data:spring-data-envers' 해줘야함.
+// 그리고 config에서 JpaAuditing 없어도 됨.
 public class Account extends BaseEntity {
     @Id
     @GeneratedValue
