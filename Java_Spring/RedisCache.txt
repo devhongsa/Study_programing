@@ -79,6 +79,7 @@ public class CacheConfig {
 
 ////// LocalDatetime Serialize  //////
 // LocalDatetime 타입에 대해서 CacheConfig에서는 직렬화, 역직렬화에 대한 설정이 안되어있어서, 여기서 직접 설정을 해줌.
+// Dividend dto 에서 적용
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -156,3 +157,18 @@ public class FinanceService {
                 .name(company.getName())
                 .build();
     }
+
+
+
+
+
+
+
+
+//////  StringRedisTemplate 
+
+StringRedisTemplate redisTemplate;   의존성 주입 후 
+
+ValueOperations<String, String> ops = redisTemplate.opsForValue(); 
+ops.set("key", "value")    //key value에  클라이언트 요청으로 들어온 값들을 써서 사용하면 됨.
+String value = ops.get("key"); 

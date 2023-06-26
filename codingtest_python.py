@@ -107,6 +107,7 @@ string1.split('.')  #'.' 를 기준으로 문자열 나누기 리스트로 반�
 string1.isalpha()
 string1.isdigit() # 문자열이 숫자로만 이루어져 있는지 T/F 판별. 양수만 판별가능
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
+string1.replace('hi', 'hello', 1)
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
 string1.strip() ## 문자열 앞뒤 공백제거
 string1.strip('hi') ## hi를 인자로 전달하면 문자열의 앞뒤에 있는 h,i 문자를 제거함. h,i가 안나올때까지 계속 지움.
@@ -121,15 +122,16 @@ for char in string1:    #문자열 인덱스위치로 값리턴
     print(char)
     
 ## 딕셔너리 
+import collections
 obj = dict()
-
+graph = collections.defaultdict(list)
 del obj['key']  ## 딕셔너리 key,value 삭제하기 
 keylst = list(obj.keys())
 valuelst = list(obj.values())
 keyValuelst = list(obj.items())  ## [(key,value),(key2,value2),...]
 value = obj.get('key') ## obj['key'] 와 동일하지만 get은 오류를 일으키지않고 none값을 리턴함.
 
-obj = dict(sorted(obj.items(),reverse=True))  # 딕셔너리 정렬
+obj = dict(sorted(obj.items(),reverse=True))  # 딕셔너리 키 기준 정렬
 obj = dict(sorted(obj.items(), key= lambda x: x[1],reverse=True))  # value기준 정렬, 딕셔너리 정렬
 
 counter = Counter(obj)

@@ -82,3 +82,10 @@ public class TransactionController {
 		return QueryTransactionResponse.from(transactionService.queryTransaction(transactionId));
 	}
 }
+
+// Dto객체로 response/ResponseEntity<?> 객체로 맵핑해서 response/엔티티객체를 바로 response하는것은안좋음
+// @RequestMapping
+// @RequestParam : url 뒤에 ? 으로 오는 요청
+// @PathVariable : /{var}
+// @RequestBody : 헤더 바디에 오는 요청
+// @ModelAttribute : RequestParam을 여러번쓰는대신 Dto를 만들어서 한번에 Dto객체에 파라미터들을 맵핑해줌.

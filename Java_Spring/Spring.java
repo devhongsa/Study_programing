@@ -2,8 +2,17 @@
 SOLID 원칙 SRP:단일 책임 원칙(분류)-클래스 하나에 여러기능들을 다 넣지 마라,기능별로 클래스를 나눠라 OCP:개방 폐쇄 원칙(교체)-확장에는 열려있고 변경에는 닫혀있다.즉 수정하지말고 클래스를 추가해서 기능을 추가해라 LSP:리스코프 치환 법칙(교체)-상속받은 클래스는 부모클래스와 동일한 동작을 해야 재활용 가능성이 높아진다.(부모클래스를 인터페이스처럼 생각),실무에서는 상속을 최대한피함.ISP:인터페이스 분리 원칙(분류)-인터페이스를 기능별로 좀더 잘게 분리하자 DIP:의존성 역전 원칙(교체)-어떤 외부라이브러리를 사용하고 있다가,갑자기 그 라이브러리를 바꿔야할 일이 생기면 그 라이브러리를 직접적으로 사용한 클래스들을 모두 수정해줘야함.이를 방지하기 위해 인터페이스를 통해서 라이브러리 어답터코드만 바꾸면 되는 방식으로 해야함.
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// implementation 'org.springframework.boot:spring-boot-starter-aop'
-// implementation 'org.springframework.boot:spring-boot-starter-validation'
+implementation 'org.springframework.boot:spring-boot-starter-web'
+implementation 'org.springframework.boot:spring-boot-starter-security'
+implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+implementation 'org.springframework.boot:spring-boot-starter-aop'
+implementation 'org.springframework.boot:spring-boot-starter-validation'
+implementation 'io.jsonwebtoken:jjwt:0.9.1'
+implementation 'mysql:mysql-connector-java'
+implementation 'io.springfox:springfox-boot-starter:3.0.0'
+implementation 'io.springfox:springfox-swagger-ui:3.0.0'
+implementation 'ch.qos.logback:logback-classic:1.2.3'
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // start.spring.io
 // intellij settings에서 gradle 검색후 build and run을 inellij 로 변경하면 더 빨리 빌드하고 실행됨.
@@ -21,6 +30,8 @@ SOLID 원칙 SRP:단일 책임 원칙(분류)-클래스 하나에 여러기능�
 // 정보를 받는 방법, required나 defaultValue 설정가능
 // @RequestBody : Http Body를 parsing 맵핑. client가 body에 json형식의 큰데이터를 실어서 보내면,
 // 백엔드에서 이 body를 받을때 사용
+// @ModelAttribute : RequestParam에서 파라미터가 여러개면 RequestParam을 여러번 써야하는 데 ModelAttribute는 한번만 쓰고 객체(DTO)로 파라미터들을
+// 맵핑해준다.
 // @RequestHeader : 마찬가지로 client가 보낸 header정보를 받을때 사용
 // @Valid : 객체 유효성 검증. @RequestBody와 함께 쓰여서 client로부터 온 데이터가 내가만든 DTO객체와 적합한지
 // 판단함.
