@@ -1,0 +1,25 @@
+KafkaProducerConfig 생성
+ProduceerController 생성 
+    produce할 메세지를 client 요청으로 받음(내가 만든 Dto 객체로 받음) (JsonSerialize 설정 필요)
+KafkaProducerService 생성 
+    메세지를 컨트롤러로 부터 전달받아 메세지 produce , KafkaTemplate 사용
+
+KafkaConsumerConfig 생성 
+KafkaConsumer 생성 
+    메세지 수신 
+
+
+
+backend 실무에서 Kafka 사용 UseCase 
+- 고객의 페이지 뷰, 클릭 등의 구체적인 행동을 수집해서 고객행동 분석/모니터링 -> 의사결정에 활용 
+- 비즈니스 도메인간의 통신 
+- Streaming Processing (실시간으로 들어오는 로그, 데이터를 재가공 분석해서 현 상황 리포트 혹은 문제상황 실시간 캐치 ) kafka streams 라이브러리 사용 
+- Event Sourcing 
+
+
+
+kafka 운영 : 패캠 대용량 트래픽 Part4 Ch.05 
+브로커 및 파티션 추가 
+인증 추가 
+클러스트 마이그레이션 
+모니터링 tool : grafana

@@ -53,20 +53,20 @@ flushall : 모든 key-value 지우기
 set key1 banana  : key-value 쓰기 
 get key1 : key-value 읽기
 del key1 : 데이터 지우기 
-incr mycount : value값이 int로 취급하여 1 증가시키기 (데이터 원자성 보장, value가 int가 아니면 오류)
+incr mycount : value값이 int로 취급하여 1 증가시키기 (데이터 원자성 보장: 여러서버가 동시에 수행해도 원자성 보장, value가 int가 아니면 오류)
 decr mycount : 1감소시키기 
 mset key1 milk key2 coffe : 여러 키에 대한 값을 한번에 저장
 mget key1 key2 : 여러 키 값 한번에 get 
 
-** Lists
+** Lists (linked list로 구현되어 있음)
 lpush mylist apple : list 왼쪽에 요소 삽입
 rpush mylist banana 
 llen mylist : list의 길이
-lrange 0 -1 : 특정 범위를 반환 -1은 맨 오른쪽 
+lrange 0 -1 : 0인덱스에서 -1(맨끝)까지의 데이터를 리턴
 lpop mylist : list 맨 왼쪽요소 추출 (맨왼쪽요소를 리스트에서 삭제하고 나서 가져옴)
 rpop mylist 
 
-** Sets
+** Sets (중복된 데이터가 들어가지 않음. 검색이 빠름. 인덱스로 데이터 접근 불가)
 sadd myset apple : set에 데이터 추가 (set은 위치인덱스로 데이터를 찾을 수 없음)
 srem myset apple : 데이터 삭제 
 scard myset : set의 저장된 아이템 개수 반환 
@@ -74,17 +74,21 @@ smembers myset : 저장된 아이템들 반환
 sismember myset apple : 특정값이 set에 포함되어 있는지 확인 (있으면 1 없으면 0)
 
 ** Sorted Sets
-zadd mysset 1 apple : sorted set은 score값을 함께 넣어줘야함. score는 set에 순서를 부여해줌.
-zrange 0-1 withscores : score가 큰순서대로 정렬
+zadd myrank 1 apple 20 banana 30 grape : sorted set은 score값을 함께 넣어줘야함. score는 set에 순서를 부여해줌.
+zrange myrank 0 1 withscores : score가 큰순서대로 0부터 1까지  
+zrank myrank banana : 특정 값이 어떤 순위를 가지고 있는지 
+zrevrank myrank banana : 내림차순 정렬일때 순위
 zpopmin
 zpipmax
+zrem myrank apple
 
 ** hash 
-hset 
-hmset 
-hget 
-hdel 
-hincrby
+hset user1 name bear age 10  : key는 user1이 되고 value에 field-value 쌍이 저장됨. (name: bear, age: 10)
+hget user1 name : "bear"
+hmget user1 name age : 1) "bear" 2) "10"
+hincrby user1 count 2 : count필드의 값을 2 증가시킴 
+hkeys user1 : 모든 필드 보여줌 
+hdel user1 name
 
 ** Streams
 xadd 
@@ -179,3 +183,43 @@ app.get("/redis/:id", redisGet, async (req, res) => {
   redisSet(id, data);
   res.send(data);
 });
+
+
+
+
+
+####################################################################
+redis 복구  : 패캠 대용량 트래픽 Part3 - Ch.10 
+####################################################################
+docker run -v $(pwd)/redis.conf:/redis.conf --name my-redis redis redis-server /redis.conf
+1. RDB 
+redis.conf 에서 복구 정책 관련 옵션 수정 가능 
+save 60 10 : 60초마다 10개의 변경점이 있으면 dump.db 스냅샷 파일 생성
+bgsave : 수동으로 스냅샷파일 만들기 
+
+
+2. AOF
+redis서버에서 실행되었던 모든 명령어들을 저장해두었다가, 재시작시 그 명령어들을 다시 재실행 
+단점 : RDB 방식보다 파일 사이즈가 커짐 , 백업 복구 속도가 느림 
+redis.conf 
+appendonly yes : aof 방식 사용 
+appendfilename appendonly.aof : 복구 파일이름 설정 
+appendfsync (always, everysec, no) : fsync의 3가지 정책중 하나 선택, fsycn()호출은 OS에게 데이터를 디스크에 쓰도록함.
+always : 커맨드가 실행될때마다 저장 , 성능저하가 심해서 잘 사용안함.
+everysec : 1초마다 수행 , RDB성능과 비슷하여 이 옵션을 많이 사용함.
+no : OS에 맡김 
+
+
+3. Replica 복제 
+백업만으로는 장애 대비에 부족 (백업실패, 복구시간)
+아예 다른 노드로 미리 복제해 놓는 것 
+master가 죽었을 경우 replica 중 하나를 master로 전환해 즉시 서비스 정상화 가능 
+
+redis.conf 
+replicaof 127.0.0.1 6379 : master서버의 6379포트에서 동작하고 있는 redis서버를 계속 복제해옴. master 노드는 rdb나 aof를 설정하고 있어야함.
+만약 마스터노드가 백업설정을 안해놓은 상태에서 꺼지게 되면 비어있는 redis를 replica 노드가 복제해 오기 때문임.
+replica-read-only 
+
+docker-compose.yml 파일로도 master, secondery 노드 실행가능 
+
+4. Sentinel 사용 

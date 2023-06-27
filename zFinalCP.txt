@@ -1,0 +1,88 @@
+- 쿠키 vs 세션 
+- Docker 기본 명령어 
+
+
+####################################
+쿠키 vs 세션
+####################################
+Cookie 원리
+    client가 아이디와 비밀번호를 입력해서 server측에 로그인 요청.
+    server는 아이디, 비밀번호 확인 후 회원정보가 확인되면 http response 헤더에 Set cookie를 통해 해당 회원의 쿠키값을 실어서 보냄 
+    client에서 서버에서 보내온 그 쿠키값을 client 하드디스크에 저장함
+    이후 client가 서버측에 요청을 보낼때마다 저장되어 있는 쿠키값을 http request 헤더에 실어서 보냄.
+    sever측은 쿠키값이 오면 인증된 사용자라는 것이 확인되고, 계속 회원의 로그인 상태를 유지하게 되는 것임.
+    이후 회원이 로그아웃 요청을 보내면, 서버는 set cookie에 쿠키값을 삭제하라는 메세지를 response 헤더에 실어서 보냄
+    client는 저장되어 있던 쿠키값을 삭제함 
+
+cookie의 단점
+    쿠키값은 client측에서 폐기가 되더라도, 그 쿠키값만 알고있다면 헤더에 실어보내서 재사용이 가능함.
+    또한 쿠키값이 평문이라면 더욱더 보안에 취약하여 탈취당할 수 있음.
+    이에 암호화 과정이 필수적으로 필요하고, 암호화에 필요한 키 관리 등 신경써야 할 부분들이 많아짐.
+
+Session 원리
+    client가 아이디와 비밀번호를 입력해서 server측에 로그인 요청.
+    server는 아이디, 비밀번호 확인 후 회원정보가 확인되면 http response 헤더에 Set cookie를 통해 해당 회원의 세션값을 실어서 보냄 
+    이때 server측에서는 세션값을 키값으로 갖고, 회원 정보를 value값으로 하는 세션정보를 server측 메모리, 파일, DB 중에 저장해놓음. 
+    client는 서버로부터 온 세션값을 저장해놓고, 다음 요청부터 세션값을 헤더에 실어서 서버에 요청함.
+    server는 client로부터 온 세션값을 확인해 본 후, 회원정보가 확인되면 로그인 상태가 유지되는 것임.
+    client가 로그아웃을 요청하면 server에서는 session 키값을 삭제해버림. 
+
+session의 단점
+    session은 폐기후 재사용가능성도 없고, 세션값자체가 아무 의미없는 문자의 나열값이기 때문에 암호화도 필요가 없어서 
+    cookie의 단점을 완벽히 보안해주지만, 치명적인 단점으로 사용자가 많아지는 경우에는 서버측에 과도한 부하를 주게 된다. 
+    즉 서버측에서는 대규모 웹 서비스인 경우에 세션값 저장에 DB를 사용할 것이고, 이는 대규모의 회원이 서버에 요청을 할때마다 
+    DB서버에 엄청난 부하를 주게 되고 서버 성능 저하를 일으킨다.
+
+
+
+
+
+####################################
+Docker 기본 명령어 
+####################################
+docker search mysql (이미지 검색, official인게 안전한 이미지)
+docker run [image] 
+docker create [image] 
+docker start [container] 
+docker ps -a 
+docker images 
+docker inspect [container]  : 컨테이너 상세정보 확인 
+docker image inspect [imageName]
+docker pause [container]
+docker unpause [container]
+docker stop [container]
+docker kill [container] : 강제종료 
+docker stop $(docker ps -a -q) : 컨테이너 모두 중지 
+docker rm [container] : 삭제(실행중인 컨테이너는 불가)
+docker rm -f [container] : 강제삭제 (실행중인 컨테이너 종료 가능)
+docker rm -f $(docker ps -a -q)    모든 컨테이너 지우기
+docker rmi -f $(docker images -q)  모든 이미지 지우기
+docker container prune : 중지된 모든 컨테이너 삭제
+
+docker run --entrypoint sh ubuntu:focal  : --entrypoint는 docker ps 쳤을때 나오는 COMMAND 부분을 조작할 수 있는 명령어임.
+docker run -i -t -e MY_HOST=fastcampus.com ubuntu:focal bash : 컨테이너 내 환경변수 설정하기 
+docker run -i -t --env-file ./sample.env ubuntu:focal env : 컨테이너에 환경변수들 설정되어있는 env파일 내용 심고 환경변수 확인하기.
+
+docker exec [container] [command] : 실행중인 컨테이너에 명령어 실행하기 
+docker exec -i -t my-nginx bash : my-nginx컨테이너에 bash 셸로 접속하기 
+docker exec my-nginx env : my-nginx 컨테이너의 환경변수 확인하기 
+
+docker run -d -p 80:80 nginx   : 서버ip로 80번포트 요청이오면 컨테이너에 80번포트로 요청을 전달하겠다는 뜻. (hostPORT:containerPORT)
+docker run -d -p 127.0.0.1:80:80 nginx : 호스트IP 127.0.0.1에 80번포트로 오는 요청만 컨테이너로 전달하겠다는 뜻. 
+  curl 서버퍼블릭ip:80 으로 요청하면 connection 실패함.
+docker run -d --expose 80 nginx : --expose옵션은 그저 문서화 용도일뿐 실제 80포트로 바인딩하지는 않음.
+
+docker logs [container] : 전체 로그 확인
+docker logs --tail 10 [container]
+docker logs -f [container] : 실시간 로그 스트림 확인
+docker logs -f -t [container] : 로그마다 타임스탬프 표시
+
+
+-i    호스트의 표준 입력을 컨테이너와 연결, 다른컨테이너와 상호작용
+-t    TTY 할당, bash쉘을 쓸수있게하는 옵션
+-it   : -i 와 -t 옵션을 합쳐놓은거, 이 옵션을 넣어야 컨테이너안에서 터미널 실행 가능 
+--rm  컨테이너 실행 종료 후 자동 삭제 
+-d    백그라운드 모드로 실행 
+--name hello-world  컨테이너 이름 지정 
+-p 80:80    호스트:컨테이너 간 포트 바인딩  host server에 80번포트로 요청이 오면 컨테이너 서버에 80번포트로 요청을 전달하겠다는 뜻
+-v /opt/example:/example  호스트:컨테이너 간 볼륨 바인딩 (호스트볼륨)

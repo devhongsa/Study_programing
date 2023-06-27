@@ -5,6 +5,8 @@ SOLID 원칙 SRP:단일 책임 원칙(분류)-클래스 하나에 여러기능�
 implementation 'org.springframework.boot:spring-boot-starter-web'
 implementation 'org.springframework.boot:spring-boot-starter-security'
 implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+implementation 'org.springframework.session:spring-session-data-redis'
+implementation 'org.springframework.kafka:spring-kafka'
 implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 implementation 'org.springframework.boot:spring-boot-starter-aop'
 implementation 'org.springframework.boot:spring-boot-starter-validation'

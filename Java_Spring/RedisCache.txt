@@ -23,10 +23,36 @@ brew services start redis : 터미널 창을 닫아도 서버 계속 실행
 brew services stop redis 
 
 
+
+// 캐싱 관련 개념들 // 
+Cache hit : 캐시에 접근해 데이터를 발견함
+Cache miss : 캐시에 접근했으나 데이터를 발견하지 못함
+Evcition Policy : 캐시에 데이터 공간 확보를 위해 저장된 데이터를 삭제
+캐시 전략 :
+    Cache-aside : 항상 캐시를 먼저 체크, 데이터가 없으면 원본으로 가서 읽어온 후에 캐시에 저장 .
+        장점 : 캐시미스가 있어도 원본에 데이터로 가기때문에 치명적이지 않음. 
+        단점 : 최초의 접근은 느림, 업데이트 주기가 일정하지 않기 때문에 캐시가 최근 데이터가 아닐 수 있음. 
+    Write-through : 데이터를 쓸때 항상 캐시를 업데이트하여 최신 상태를 유지함 
+        장점 : 캐시가 항상 동기화 되어있어서 최신을 유지함 
+        단점 : 자주사용하지 않는 데이터도 캐시되고, 쓰기 시간이 지연된다.
+    Write-back : 데이터를 캐시에만 쓰고, 캐시의 데이터를 일정 주기로 DB에 저장 
+        장점 : 쓰기가 많은 경우 DB부하를 줄임. 
+        단점 : 캐시가 DB에 옮겨지기 전에 장애가 발생하면 데이터 유실 가능 .
+캐시 데이터 제거 방식 (Eviction Policy)
+    TTL(Time-To-Live) : 일정 시간이 지날때마다 삭제 
+
+
+
+
 implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+implementation 'org.springframework.session:spring-session-data-redis'  // Controller에서 HttpSession 사용할때 추가.
 
 yml파일에서 
 spring:
+    session:
+        store-type: redis
+    cache:
+        type: redis
     redis:
         host: localhost 
         prot: 6379
@@ -53,11 +79,20 @@ public class CacheConfig {
     @Bean
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration conf = RedisCacheConfiguration.defaultCacheConfig()
+                //.disableCachingNullvalues()   // null값이 redis에 저장되는것을 방지 
+                //.computePrefixWith(CacheKeyPrefix.simple())
                 .serializeKeysWith(RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericJackson2JsonRedisSerializer()));
-                //.entryTtl() cache데이터의 유효기간을 설정할 수 있음.
+                //.entryTtl(Duration.ofSeconds(10)) cache데이터의 유효기간을 설정할 수 있음.
+
+        HashMap<String, RedisCacheConfiguration> configMap = new HashMap<>();
+        configMap.put("CacheName",RedisCacheConfiguration.defaultCacheConfig()
+                    .entryTtl(Duration.ofSeconds(5)));   // 특정 캐시에 대한 TTL 설정 
+
+        
         return RedisCacheManager.RedisCacheManagerBuilder.fromConnectionFactory(redisConnectionFactory)
                 .cacheDefaults(conf)
+                //.withInitialCacheConfiguration(configMap)
                 .build();
     }
 
@@ -69,6 +104,14 @@ public class CacheConfig {
         conf.setPort(port);
         //conf.setPassword();
         return new LettuceConnectionFactory(conf);
+    }
+
+    // redis pub-sub 사용시 설정 
+    @Bean 
+    RedisMessageListenerContainer redisContainer() {
+        final RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+        container.setConnectionFactory(redisConnectionFactory());
+        return container;
     }
 }
 
@@ -162,6 +205,10 @@ public class FinanceService {
 
 
 
+///////  @CachePut : 메소드의 리턴값을 캐시에 설정 
+
+
+
 
 
 
@@ -169,6 +216,23 @@ public class FinanceService {
 
 StringRedisTemplate redisTemplate;   의존성 주입 후 
 
-ValueOperations<String, String> ops = redisTemplate.opsForValue(); 
+ValueOperations<String, String> ops = redisTemplate.opsForValue(); // 서비스 안에 메서드내에서 구현 
 ops.set("key", "value")    //key value에  클라이언트 요청으로 들어온 값들을 써서 사용하면 됨.
 String value = ops.get("key"); 
+
+
+ZSetOperations zSetOps = redisTemplate.opsForZSet();
+zSetOps.add("leaderboard", userId, score);
+zSetOps.rank(userId)
+zSetOps.reverseRange("leaderboard", 0 , 10) // 0부터 10까지 랭크 보여주기 
+
+
+
+
+
+
+
+//////////  Redis pub/sub : kafka와 비슷한 개념, 차이점은 메세지 큐에 저장하지 않고 바로 subscriber들에게 메세지를 밀어넣음.
+        // 메세지 유실에 대해서 민감하지 않은 데이터들에 적용
+        // 실시간으로 빠르게 전송되어야 하는 데이터 
+자세한 내용 패캠 대용량 트래픽 강의 Part3 - Ch.09  참고 
