@@ -2,11 +2,12 @@ KafkaProducerConfig 생성
 ProduceerController 생성 
     produce할 메세지를 client 요청으로 받음(내가 만든 Dto 객체로 받음) (JsonSerialize 설정 필요)
 KafkaProducerService 생성 
-    메세지를 컨트롤러로 부터 전달받아 메세지 produce , KafkaTemplate 사용
+    메세지를 컨트롤러로 부터 전달받아 메세지 produce , KafkaTemplate 사용해서 메세지 send 
+
 
 KafkaConsumerConfig 생성 
 KafkaConsumer 생성 
-    메세지 수신 
+    메세지를 수신해서 받은 데이터를 재가공하여 새로운 데이터를 DB에 넣는 작업 가능.
 
 
 
@@ -17,9 +18,179 @@ backend 실무에서 Kafka 사용 UseCase
 - Event Sourcing 
 
 
+Kafka vc RabbitMQ vs Redis pub/sub 
+Kafka 
+    Producer -> Broker -> Partition -> Consumer 
+    Consumer가 주체, Consumer가 자기 상황에 맞게 알아서 메세지를 가져감. Pull 
+RabbitMQ 
+    Producer -> Exchange -> Binding Rules -> Queue -> Consumer 
+    Producer가 주체, Binding Rules에 따라 Consumer에게 메세지 전달. Push
+Redis pub/sub 
+    kafka와 비슷한 구조이지만, consumer가 없으면 메세지를 따로 보관하지 않음. 
+    짧고 간결하고 없어져도 무방한 데이터를 전달하는데 특화 (채팅 서비스)
 
+
+
+/// kafka Streams 
+KafkaStreamConfig 생성 
+StreamLitener 생성 
+
+
+/// kafka 고급 
 kafka 운영 : 패캠 대용량 트래픽 Part4 Ch.05 
 브로커 및 파티션 추가 
 인증 추가 
 클러스트 마이그레이션 
 모니터링 tool : grafana
+
+
+
+
+kafka가 만들어진 이유는 서비스간의 결합이 너무 강하면 특정 서비스에 장애가 생겼을 시에 그 장애가 다른 서비스로 전파가 되어버린다.
+그래서 서버,서비스 간의 결합을 느슨하게 하기 위해서 중앙에 미들웨어 같은 완충장치를 놓게 되었고 그게 카프카이다.
+카프카는 중앙에서 메세지(데이터)를 관리하고 각 서버,서비스들은 kafka로 메세지를 produce 하고, 그 메세지를 필요로하는 서버,서비스는 kafka에 들어온 메세지를 
+consume한다. 즉 producer는 누가 이 메세지를 사용하든 말든 단순히 Kafka에 메세지를 쏘는 것이고, consumer는 누가 이 메세지를 produce 했는지는 관심없고, 
+단지 그 메세지를 사용할 뿐이다.
+
+https://github.com/spacetime101/fastcampus-kafka 강의 소스코드 
+
+jdk있어야 kafka실행가능 
+brew tap AdoptOpenJDK/openjdk  : brew tap 은 모듈 레포지토리를 brew 환경에 추가한다는 뜻
+brew install --cask adoptopenjdk8 : brew 환경에서 레포지토리 모듈 다운 --cask는 보통 GUI 프로그램을 brew에서 다운받기위해 쓰임.
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8) : version 변경 
+java -version
+
+kafka 설치 및 실행
+https://kafka.apache.org/downloads  2.8.2버전 binanry zip파일 다운로드 
+tar -zxf kafka_2.13-2.8.2.tgz
+cd kafka_2.13-2.8.2
+bin/zookeeper-server-start.sh config/zookeeper.properties : zookeeper 실행해야 kafka 실행가능 마지막에 &넣으면 백그라운드로 계속 실행 
+vi config/server.properties 
+advertised.listeners 부분 주석 해제하고 localhost:9092로 수정 
+bin/kafka-server-start.sh config/server.properties : kafka 서버 실행
+bin/kafka-topics.sh --create --topic topic-example1 --bootstrap-server localhost:9092 : topic-example1 토픽 생성 
+bin/kafka-topics.sh --describe --topic topic-example1 --bootstrap-server localhost:9092 : 토픽의 주요설정 확인 
+bin/kafka-console-producer.sh --topic topic-example1 --bootstrap-server localhost:9092
+    producer서버 실행 후 메세지 입력
+bin/kafka-console-consumer.sh --topic topic-example1 --from-beginning --bootstrap-server localhost:9092 --group team-a
+    consumer서버 실행후 producer서버에서 입력하는 값들을 볼 수 있음
+
+bin/kafka-consumer-groups.sh --bootstrap-server=localhost:9092 --group team-a --describe : 그룹 team-a의 현재 offset 확인 
+    offset이란 team-a가 구독하고 있는 토픽들에서 메세지를 어디까지 읽었는지 알려줌 .
+
+
+보통 하나의 토픽에는 여러 파티션을 설정해 놓음. 여기서 파티션이란 메세지가 저장되는 파일이라고 보면됨. 토픽은 파티션들이 있는 폴더라고 생각하면 됨. 
+파티션이 여러개면 비동기 분산처리로 대규모 트래픽에 유연할 수 있음. 
+producer가 메세지를 생성할때 파티션순서대로 넣기 때문에 consumer가 메세지를 처리할때, 메세지가 생성된 순서대로 처리된다는 보장이 없음. 
+그래서 순서가 중요한 메세지 같은 경우 key설정을 통해서 특정 파티션에 메세지를 넣는다거나 하는 방법이 있음. 
+
+
+클러스터를 구성할때는 
+broker 3개를 구성 : 1개의 leader 브로커와 2개의 follower 브로커 , 1개의 브로커가 장애가 생기면 바로 나머지 브로커가 leader 브로커로 설정되면서 서비스 장애 복구 
+
+
+
+#####  cluster 구성하기 ######## 
+ec2 생성, 보안그룹 9092(kafka), 2181(zookeeper) 포트 열어주기 
+sudo apt-get update 
+sudo apt-get install default-jre 
+mkdir kafka 
+curl "https://archive.apache.org/dist/kafka/2.7.2/kafka_2.12-2.7.2.tgz" -o /home/ubuntu/kafka/kafka.tgz 
+cd kafka 
+tar -xvzf kafka.tgz --strip 1 : 폴더새로 만들지말고 한꺼풀 벗겨서 파일저장 
+
+만약 ec2가 프리티어면 메모리 1G가 제한이라 kafka의 기본 메모리 설정을 바꿔줘야함 
+vi kafka-server-start.sh 에서 직접 수정해줘도 되고 
+
+export KAFKA_HEAP_OPS="-Xmx400m -Xms400m"
+export JAVA_HOME="usr/lib/jvm/java-11-openjdk-amd64"
+cd /home/ubuntu/
+vi .bashrc 
+G (맨뒤로)
+export KAFKA_HEAP_OPS="-Xmx400m -Xms400m"
+export JAVA_HOME="usr/lib/jvm/java-11-openjdk-amd64" 
+export PATH=$PATH:$JAVA_HOME/bin
+추가해주기 
+
+vi server.properties
+advertised.listeners=PLAINTEXT://[ec2 public ip]:9092
+logs.dir=/home/ubuntu/kafka/logs
+
+
+cd kafka_2.13-2.8.2
+cd config 
+vi server.properties
+/broker.id 로 broker.id 부분 찾아주기 
+broker.id=0 
+listeners=PLAINTEXT://:9092 
+#advertised.listeners : advertised 부분은 주석 처리 
+:wq 
+cp server.properties server1.properties : 설정파일 복사 
+cp server.properties server2.properties 
+
+server1, server2 설정파일 변경 
+broker.id=1
+listeners=PLAINTEXT://:9093
+log.dirs=/tmp/kafka-logs1
+
+broker.id=2
+listeners=PLAINTEXT://:9094
+log.dirs=/tmp/kafka-logs2
+
+
+bin/zookeeper-server-start.sh config/zookeeper.properties& : &넣어서 백그라운드로 계속 실행 
+bin/kafka-server-start.sh config/server.properties&
+bin/kafka-server-start.sh config/server1.properties&
+bin/kafka-server-start.sh config/server2.properties&
+
+bin/kafka-topics.sh --create --topic topic-example1 --bootstrap-server localhost:9093 --partitions 3 --replication-factor 2
+    파티션3개가 있는 토픽 생성 master서버는 localhost:9093 서버 replication-factor 옵션으로 원본의 복사본 하나 생성 
+
+bin/kafka-topics.sh --describe --topic topic-example1 --bootstrap-server localhost:9093 : topic-example1 토픽 상세 정보 확인 
+
+bin/kafka-console-producer.sh --topic topic-example1 --bootstrap-server localhost:9092,localhost:9093,localhost:9094
+    producer로 메세지 생성
+bin/kafka-console-consumer.sh --topic topic-example1 --from-beginning --bootstrap-server localhost:9092,localhost:9093,localhost:9094 --group team-a
+    consumer로 메세지 수신 
+
+
+추가 옵션 기능 
+bin/kafka-topics.sh --alter --topic topic-example1 --bootstrap-server localhost:9092 --partition 1 : 파티션 개수 바꾸기 
+
+bin/kafka-console-producer.sh --topic topic1 --bootstrap-server localhost:9092 --request-required-acks 1 (--message-send-max-retries 50)
+    acks 0 : 메세지를 보내고 카프카의 응답을 받지 않고 성공 처리함. 속도가 제일 빠름 // 메세지가 유실되어도 문제되지않는 케이스에 적합 
+    acks 1 : 리더 파티션의 성공응답값만을 확인 
+    acks all : 하나 이상의 팔로우 파티션 응답도 확인함. 메세지 유실가능성이 거의 없어 중요한 유스케이스에서 자주 사용 
+    (--message-send-max-retries 50) : 메세지 수신 장애 발생시 최대 몇번의 메세지 재생성을 할 건지 .
+
+bin/kafka-console-consumer.sh --topic topic1 --from-beginning --group group1 --property print.key=true --property key.seperator="-"
+    property 설정으로 메세지의 키값도 같이 수신하기. 키값과 밸류값 사이에 "-"로 구분 
+
+bin/kafka-consumer-groups.sh --list 
+bin/kafka-consumer-groups.sh --describe --group group1
+
+
+config/connect-file-sink.properties 파일에서 topics 부분을 내가 원하는 토픽으로 바꿔서 해당 토픽에 생성되는 메세지를 파일로 저장할 수 있음 
+
+
+
+///////////// Amazon MSK : kafka의 복잡한 클러스터 설정등을 쉽고 간편하게 생성할 수 있게 해주는 아마존 서비스 //////////////////
+
+ec2 생성 후 접속 
+sudo yum install -y java-1.8.0-openjdk-devel.x86_64
+wget https://archive.apache.org/dist/kafka/2.8.2/kafka_2.13-2.8.2.tgz
+tar -zxf kafka_2.13-2.8.2.tgz
+cd kafka_2.13-2.8.2
+
+msk 에서 kafka 클러스터 생성 
+kafka cluster가 생성되어 있는 서버에 토픽생성 
+bin/kafka-topics.sh --create --topic topic4 --bootstrap-server ${MSK브로커endpoint}
+
+첫번째 Message 발행
+$ bin/kafka-console-producer.sh --topic topic4 --bootstrap-server ${MSK브로커endpoint}
+>First Message
+>Second Message
+
+새로운 터미널에서 Consumer 실행하여 Message 읽기
+% bin/kafka-console-consumer.sh --topic topic4 --from-beginning --bootstrap-server
+${MSK브로커endpoint}

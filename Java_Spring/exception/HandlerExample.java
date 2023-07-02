@@ -1,3 +1,4 @@
+// Example 1 
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,5 +22,41 @@ public class GlobalExceptionHandler {
         log.error("Exception is occurred.", e);
 
         return new ErrorResponse(INTERNAL_SERVER_ERROR, INTERNAL_SERVER_ERROR.getDescription());
+    }
+}
+
+
+// Example 2 
+@Slf4j
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    /*
+        커스텀 exception 발생시 핸들러
+        ErrorResponse라는 응답 Dto객체 따로 만들어서 리턴하기 
+     */
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<ErrorResponse> handleAccountException(CustomException e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .statusCode(e.getStatus().value())
+                .errorCode(e.getErrorCode())
+                .errorMessage(e.getErrorMessage())
+                .build();
+        log.error("{} is occurred.",e.getErrorCode());
+        return new ResponseEntity<>(response, e.getStatus());
+    }
+
+    /*
+        api 접근 권한 설정으로 요청 제한이 되었을때 핸들러
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+        ErrorResponse response = ErrorResponse.builder()
+                .statusCode(HttpStatus.FORBIDDEN.value())
+                .errorCode(CustomErrorCode.ACCESS_DENIED)
+                .errorMessage(CustomErrorCode.ACCESS_DENIED.getErrorMessage())
+                .build();
+        log.error("Access Denied: {}", e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 }

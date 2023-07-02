@@ -19,7 +19,7 @@ public class BaseEntity {
 // @Id
 // @GeneratedValue : strategy = GenerationType.IDENTITY
 // @Transient : 데이터베이스에 저장하지 않을 컬럼.
-// @Enumerated : EnumType.STRING, ORDINAL
+// @Enumerated : EnumType.STRING, ORDINALㄴ
 // @Table
 // @JoinColumn : FK 지정 관련
 // @OneToOne, OneToMany, ManyToOne, ManyToMany

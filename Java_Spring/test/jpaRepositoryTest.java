@@ -1,5 +1,6 @@
-@SpringBootTest
-@Transactional
+
+@DataJpaTest
+@Transactional // 테스트 후에 롤백위해서 
 class JpaMemoRepositoryTest {
     @Autowired
     JpaMemoRepository jpaMemoRepository;

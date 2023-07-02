@@ -77,11 +77,15 @@ src > main > java > com.example.projectname >
     config
         Filter 구현
         Interceptor 구현
+        redis 설정 등 
     dto
+        요청받을때나 응답할때 쓸 객체 , entity를 그대로 응답하는 것은 위험, dto객체를 만들어서 필요한 데이터만 응답 
     exception
         ExceptionHandler 구현 @RestControllerAdvice
     aop
+        @Aspect 
     type
+        Enum type 
 
 
 

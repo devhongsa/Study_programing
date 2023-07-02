@@ -6,7 +6,7 @@ implementation 'io.jsonwebtoken:jjwt:0.9.1'
 - User Repository : username(회원아이디)로 유저엔티티 가져오는 findByUsername 구현
 - User Service : impl UserDetailsService, loadUserByUsername ( User 찾아서 UserDetail 객체 가져오는 메서드) 메소드 오버라이딩 
 - Auth DTO : SigIn SignUp class 구현 (서버와 클라이언트 사이에 주고받는 DTO 객체)
-- Token Provider : jwt 토큰 생성 및 토큰 유효성 검증 
+- Token Provider : security패키지에 객체 생성, jwt 토큰 생성 및 토큰 유효성 검증 
 - Filter : 헤더로 온 jwt 토큰을 검증하고, 회원의 권한을 불러와서 설정해준다. 
 - Seucrity Configuration : 권한이 필요없는 url들 설정 및 기본 http 보안 설정 
 - AppConfig : DB에 비밀번호 저장할때 암호화해서 저장할 PasswordEncoder 설정

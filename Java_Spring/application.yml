@@ -1,0 +1,13 @@
+# redis sentinel 구성시 yml 설정, 이와 함께 redis configuration 파일에서 sentinel 설정해줘야함
+spring:
+  cache:
+    type: redis
+  redis:
+    port: 6379
+    password: 123pwd
+    sentinel:
+      master: mymaster  # sentinel.conf 에 적시되어있는 sentinel monitor [master name] 에서 master name을 적으면 됨.
+      nodes:
+        - 10.0.0.16:port
+        - 10.0.0.17:port
+        - 10.0.0.18:port

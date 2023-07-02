@@ -11,6 +11,7 @@ redis의 가장 중요한 기능은 cache이다 이는 대규모 I/O처리에 �
 
 디스크에 저장하는 데이터는 영속성을 유지해야하는 데이터를 위주로 저장하고(회원정보와 같은)
 Redis는 로그인세션과 같이, 데이터가 날아가도 유저에게 치명적이지 않은 데이터를 위주로 저장하게 된다.
+로그인세션, 리스트 형태의 데이터에서 효율이 좋음.
 
 key-value store 방식 
     hash를 이용해 값을 바로 읽으므로 속도가 빠름 
@@ -18,13 +19,44 @@ key-value store 방식
     단점 key를 통해서만 값을 읽을 수가 있음
     범위 검색과 같은 복잡한 쿼리가 불가능 
 
+단점
+  휘발성 : AOF, RDB 복구 기술을 통해 극복 가능 
+  Single Thread : 데이터 정합성을 위해 싱글 스레드로 구현
+  Memory Fragmetation : 데이터가 없는 공간인데도 있다고 판단해서 데이터를 넣지 못하는 현상이 있을 수 있음. 주기적으로 이런 것들을 지워줘야함.
+  Big Size Data 에 부적합 
 
+Redis vs MemCached
+1. Data Type
+  redis는 여러 데이터 타입 지원 
+  memcached는 String 타입만 지원 
+2. Thread 
+  redis - Single Thread 
+  memcached - Multi Thread 
+3. Scale 
+  redis - scale out (서버를 여러대로 늘리기)
+  memcached - scale up (서버 성능 높이기)
+4. memory policy 
+  redis - no eviction, lru, ttl, random 
+  memcached - lru 
+5. persistence 
+  redis - aof, rdb 
+  memcached - none 
+
+####################################################################
 redis 설치 
+####################################################################
 linux 
+sudo su : super user권한으로 변경, 이후 sudo 안쓰고 명령어 실행 가능 
 sudo apt-get update 
 sudo apt-get upgrade 
 sudo apt-get install redis-server
 redis-server --version
+
+service redis status 
+cd /etc/redis  > vi redis.conf 
+redis-cli > info 
+service redis start 
+service redis stop 
 
 macos 
 brew install redis
@@ -43,8 +75,12 @@ exit : 빠져나오기
 brew services start redis : 터미널 창을 닫아도 서버 계속 실행 
 brew services stop redis 
 
+tail -f /var/log/redis/redis-server.log  : 로그 확인하기 
 
-################ redis 기본 명령어 모음 #################
+
+####################################################################
+redis 기본 명령어 모음
+####################################################################
 keys * : 모든 키 보기, 성능에 영향을 주는 명령어라서 개발단계에서만 씀.
 dbsize : key 몇개 있는지 
 flushall : 모든 key-value 지우기 
@@ -78,6 +114,8 @@ zadd myrank 1 apple 20 banana 30 grape : sorted set은 score값을 함께 넣어
 zrange myrank 0 1 withscores : score가 큰순서대로 0부터 1까지  
 zrank myrank banana : 특정 값이 어떤 순위를 가지고 있는지 
 zrevrank myrank banana : 내림차순 정렬일때 순위
+zrangebyscore myrank 20 30 withscores : 20~30사이의 점수를 가진 값들 함께 조회 
+zscore myrank apple : 특정 멤버의 score 조회
 zpopmin
 zpipmax
 zrem myrank apple
@@ -99,14 +137,16 @@ xdel
 
 
 #####################################################
+redis conf 설정 
+#####################################################
 
-
-################ redis conf 설정 #####################3
 # vi 편집기로 설정 파일 조회(redis.conf)
 sudo vi /etc/redis/redis.conf
+혹은 redis-cli 후에 config set maxmemory 500mb , config get maxmemory : 현재 maxmemory 설정상태 보기 
+근데 redis-cli로 config설정을 하면 서버가 내려갔다 다시 올라오면 초기화 되기 때문에 conf파일에서 직접 수정해주는 것이 좋음.
 
 # 최대 메모리 사양
-# ->    최대 사용 메모리 사양을 256mb로 설정한다. 단위는 mb나 g 등 필요에 맞춰 적어주면된다.
+# ->    최대 사용 메모리 사양을 설정한다. ec2의 메모리 성능에 따라서 설정을 달리 해준다. 단위는 mb나 g 등 필요에 맞춰 적어주면된다.
 maxmemory 256mb            
 
 # 메모리 초과 사용 시 후처리 방식 설정
@@ -133,61 +173,6 @@ echo "MyPassword" | sha256sum
 
 
 
-
-
-####################################################################
-redis server 만들기
-####################################################################
-
-프로젝트폴더 생성
-npx express-generator
-npm install 
-DEBUG=redis-server:* npm start
-npm install redis
-npm install axios
-
-redis-server : redis 서버 가동 
-
-////app.js
-const express = require("express");
-const redis = require("redis");
-const redisClient = redis.createClient();
-const axios = require("axios").default;
-
-const app = express();
-
-(async () => {
-  redisClient.on("error", (err) => console.log("Redis Client Error", err));
-  await redisClient.connect();
-})();
-
-
-const redisSet = async (key, value) => {
-  await redisClient.set(key, JSON.stringify(value));
-};
-
-//middleware
-const redisGet = async (req, res, next) => {
-  const { id } = req.params;
-  const data = await redisClient.get(id);
-  console.log(data);
-  data !== null ? res.send(JSON.parse(data)) : next();
-};
-
-app.get("/redis/:id", redisGet, async (req, res) => {
-  const { id } = req.params;
-  const { data } = await axios.request({
-    method: "get",
-    url: `https://reqres.in/api/product/${id}`,
-  });
-  redisSet(id, data);
-  res.send(data);
-});
-
-
-
-
-
 ####################################################################
 redis 복구  : 패캠 대용량 트래픽 Part3 - Ch.10 
 ####################################################################
@@ -211,15 +196,76 @@ no : OS에 맡김
 
 
 3. Replica 복제 
+	master redis ec2를 복제해서 replica ec2 하나 새로 생성 
+	보안그룹 설정에서 사용자 지정 TCP 6379 포트 열어줘야함. 그래야 master ec2의 redis 데이터를 복사해올수 있음. ip는 같은 보안그룹을 쓰는 ip에 대해서만 열어주기
 백업만으로는 장애 대비에 부족 (백업실패, 복구시간)
 아예 다른 노드로 미리 복제해 놓는 것 
-master가 죽었을 경우 replica 중 하나를 master로 전환해 즉시 서비스 정상화 가능 
+master가 죽었을 경우 replica 중 하나를 master로 전환해 즉시 서비스 정상화 가능 (sentinel)
 
 redis.conf 
-replicaof 127.0.0.1 6379 : master서버의 6379포트에서 동작하고 있는 redis서버를 계속 복제해옴. master 노드는 rdb나 aof를 설정하고 있어야함.
+replicaof [master ip] 6379 : master서버의 6379포트에서 동작하고 있는 redis서버를 계속 복제해옴. 
+conf 파일에 들어가서 바꿔줘도 되고 redis-cli 실행해서 replicaof [ip] [port] 해줘도 됨.(conf파일에서 하는것을 권장 )
+
+master 노드는 rdb나 aof를 설정하고 있어야함.
 만약 마스터노드가 백업설정을 안해놓은 상태에서 꺼지게 되면 비어있는 redis를 replica 노드가 복제해 오기 때문임.
 replica-read-only 
 
 docker-compose.yml 파일로도 master, secondery 노드 실행가능 
 
 4. Sentinel 사용 
+master가 죽었을때 replica를 자동으로 master로 바꿔주는 구조 , 만약 master가 죽어서 replica가 master가 되면 기존에 master였던 서버는 replica(slave)로 자동전환된다.
+sentinel은 기본적으로 3개이상의 홀수 개수로 구성한다. 과반 이상의 sentinel이 master 서버의 장애를 감지했을때 replica 서버를 master로 전환한다. 
+
+master, replica ec2에서 각각 sentinel 설치, 그리고 sentinel 전용 ec2에서도 sentinel 설치 
+apt-get update 
+apt-get install redis-sentinel 
+
+cd /etc/redis/ 
+vi sentinel.conf 
+bind 부분은 자신의 ec2 ip주소와 bind하게 한다. (bind 172.31.10.32 127.0.0.1 ssl)
+sentinel monitor mymaster [masterIp] 6379 2 : 모든 sentinel에서 마스터 ip를 설정해주고, 2는 2개의 sentinel이 master의 장애를 감지했을때 replica로 마스터를
+전환하라는 뜻임.
+service redist-sentinel restart 
+
+그리고 보안그룹 인바운드 규칙에서도 sentinel port인 26379 포트를 열어줘야함 
+사용자지정 TCP 26379포트 열고 같은 보안그룹 Ip만 허용으로 설정 
+
+Spring에서 sentinel 구성시 
+RedisConfig에서 Sentinel 관련 설정 필요 
+application.yml 에서 redis.sentinel 관련 설정 필요 
+
+
+
+####################################################################
+redis stress test 
+####################################################################
+
+redis-benchmark 
+
+-h : host 주소
+-p : port 번호
+-c : 클라이언트 수
+-n : 요청 횟수
+-d : 데이터 사이즈  3 (Byte)
+-k : 클라이언트 커넥션 유지 여부  1(유지)
+-r : 요청할 key 범위 
+-t : 커맨드 (hset, zrange... )
+
+
+####################################################################
+redis-cli 명령어 
+####################################################################
+info 
+save 
+bgsave 
+bgrewriteaof 
+configrewrite : config set 으로 변경했던 설정을 conf파일에 적용시킴.
+client kill : 특정 클라이언트의 연결을 해제함.
+monitor : 서버에서 실행되는 명령들을 보여준다. 
+slowlog 
+	slowlog-log-slower-than 에 설정된 시간이상의 작업이 발생되었을시 log로 남긴다 (microseconds 단위)
+	slowlog get # : 해당 숫자 만큼 로그를 가져와서 보여준다. 
+	slowlog-max-len # : 해당 숫자 만큼 로그를 저장할 수 있다.
+
+latency
+	latency-monitor-threshold 

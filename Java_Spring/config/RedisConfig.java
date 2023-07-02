@@ -32,7 +32,17 @@ public class CacheConfig {
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
+        //sentinel 구성시
+        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration()
+                .master("mymaster") 
+                .sentinel("sentinel IP",5000)
+                .sentinel("sentinel IP2",5001)
+                .sentinel("sentinel IP3",5002);
+        return LettuceConnectionFactory(redisSentinelConfiguration);
+
         // RedisClusterConfiguration : cluster로 구성할땐 이걸로
+
+        // standalone 
         RedisStandaloneConfiguration conf = new RedisStandaloneConfiguration();
         conf.setHostName(host);
         conf.setPort(port);
@@ -40,6 +50,18 @@ public class CacheConfig {
         return new LettuceConnectionFactory(conf);
     }
 
+
+    // redisTemplate 사용시 설정 
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
+
+    
     // redis pub-sub 사용시 설정
     @Bean
     RedisMessageListenerContainer redisContainer() {

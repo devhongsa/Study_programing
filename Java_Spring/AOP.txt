@@ -1,0 +1,108 @@
+AOP : 객체의 핵심기능과 부가기능을 나눠서 , 핵심기능을 구현한 객체는 핵심기능만 구현하게 하고, 부가기능은 다른객체로 하여금 하게 함.
+https://backtony.github.io/spring/2021-12-29-spring-aop-2/  참고 
+
+
+proxy 
+client -> interface(핵심기능 메소드) -> proxy(핵심기능 메소드를 오버라이딩하고, 메소드안에 부가기능 로직 구현, 그리고 핵심기능객체에 핵심기능구현 위임) 
+-> realObject(핵심기능 구현)
+즉 핵심기능 메소드가 login() 이라고 가정했을때 proxy 객체안에서는 
+@Override 
+login(){
+    부가기능 구현
+    realobject.login() 호출 
+}
+
+decorator : 기능을 확장하고자할때 사용, 상속하는 방법보다 유연한 방법이 될 수 있음 상속은 부모클래스가 바뀌면 자식클래스가 많은 영향을 받게 됨.
+
+
+########################################################################
+Spring Aop 
+########################################################################
+
+@After() // 메서드가 실행된 이후 동작. 메서드 실행 도중 에러발생해도 동작함
+@AfterReturning() // 메서드가 실행되고 성공적으로 값을 return했을때 동작 
+@AfterThrowing // 해당 메서드에서 에러발생시 동작.
+@Before()  // 메서드 실행 전 동작.
+@Around() // 메서드 실행 전후에 동작. 메서드의 리턴값 변경이 가능하는 등 여러가지 조작이 가능 
+
+JoinPoint joinPoint
+joinpoint.getArgs()  // 해당 메서드의 파라미터 가져오기, 파라미터가 객체일 경우 instanceof 로 객체체크해서 사용하기 
+joinpoint.getTarget() // 해당 메서드의 원본 객체 가져오기 
+
+
+
+이때 중요한 것은 메서드가 구현된 객체가 모두 스피링 Bean으로 등록되어 있어야한다. @Component 
+
+
+// Example 
+@Slf4j
+@Aspect
+@Component
+public class AspectV6Advice {
+
+    @Around("execution(* com.example.mvc.order..*(..))")
+    public Object doTransaction(ProceedingJoinPoint joinPoint) throws Throwable {
+        try {
+            // @Before 수행
+            log.info("[트랜잭션 시작] {}", joinPoint.getSignature());
+            // @Before 종료
+
+            // Target 메서드 호출
+            Object result = joinPoint.proceed();
+            // Target 메서드 종료
+
+            // @AfterReturning 수행
+            log.info("[트랜잭션 커밋] {}", joinPoint.getSignature());
+            // @AfterReturning 종료
+
+            // 값 반환
+            return result;
+        } catch (Exception e) {
+            // @AfterThrowing 수행
+            log.info("[트랜잭션 롤백] {}", joinPoint.getSignature());
+            throw e;
+            // @AfterThrowing 종료
+        } finally {
+            //@ After 수행
+            log.info("[리소스 릴리즈] {}", joinPoint.getSignature());
+            //@ After 종료
+        }
+    }
+
+    @Before("execution(* com.example.mvc.order..*(..))")
+    public void doBefore(JoinPoint joinPoint) {
+        log.info("[before] {}", joinPoint.getSignature());
+    }
+}
+
+
+
+// Example2 
+@Slf4j
+@Aspect
+@Component
+public class SignInAspect {
+
+    @AfterReturning("execution(* com.devhong.reservation.controller.AuthController.signIn(..))")
+    public void AfterSignIn(JoinPoint joinPoint){
+        Object[] args = joinPoint.getArgs();
+        Auth.SignIn user = (Auth.SignIn) args[0];
+
+        log.info(user.getUsername() + " SignIn Success");
+    }
+
+    // 커스텀 어노테이션 적용을 해준 메소드들에 동작. 어노테이션 인터페이스 만들어줘야함 
+    @Before(value = "@annotation(BeforeSignIn)")
+    public void beforeSignIn(JoinPoint joinPoint){
+        Object[] args = joinPoint.getArgs();
+        Auth.SignIn user = (Auth.SignIn) args[0];
+
+        log.info(user.getUsername() + " try SignIn");
+    }
+
+}
+
+
+// 어노테이션 인터페이스 
+public @interface BeforeSignIn {
+}

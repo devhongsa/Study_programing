@@ -16,16 +16,23 @@ lst.pop()
 % **
 // : 나누고 나머지 뺀 정수
 
+# 10진수 2진수, 8진수, 16진수 변환 
+bin(1234) # 0b... 
+oct(1234)
+hex(123)
+
+# 2진수를 10진수로 
+int('0b10000', 2)   
+
+
 # 리스트 list
 list1 = [1, 2, 3]
 [*list1]  ##리스트 언팩킹 
+answer = sum(my_list, []) ## 이중리스트 언패킹
 letters = ["A", "B", "C"]
 lst1 = ['A', 'B', 'C', 'D']
 lst2 = ['C', 'D', 'E', 'F']
 
-a= 'a'
-if a == 'a' or a =='b' or a == 'c':
-    print('true')
 
 ethWalletList = [address for address in ethWalletList if(address != None)] #ethWalletList안에 요소들중 None값이 아닌것만 리스트로 리턴
 lst = [int(num) for num in lst]  #lst안에 있는 스트링 숫자를 인트로바꿔서 리스트로 리턴
@@ -33,7 +40,6 @@ lst = [int(num) for num in lst if (num == '2')] #lst안에 요소에 2인것만 
 verb = 'buy' if amount>=0 else 'sell'
 
 list1 = list(set(list1))  # 중복 제거
-list1.index(1)
 {x: 0 for x in list1}
 list1.count(1)  # 요소값이 1인 갯수 세기
 # 요소값이 1인 요소 삭제하기, 단 1이 여러개면  첫번째 요소만 삭제함. list1 = list1.remove(1) 이렇게 안해줘도 바뀜.
@@ -56,8 +62,9 @@ list1.reverse() # 리스트 뒤집기
 
 list2 = [[1,2],[4,3],[3,6]]
 list2.sort() ## 이중리스트를 정렬하면 리스트의 첫번째 요소 숫자를 기준으로 정렬함
-list2.sort(key=lambda x: (x[1],x[0])) ## 이렇게 하면 정렬기준을 리스트 2번째 요소를 기준으로 정렬함.
-lst.sort(key=lambda x : (x[1],-x[2],x[3],x[0]), reverse=True) ## 여기서 x[0]은 문자열이라서 -를 못붙인다. 이때 reverse를 활용해야함.
+list2.sort(key=lambda x: x[1]) # x[1]를 기준으로 정렬 
+list2.sort(key=lambda x: (x[1],x[0])) ## 이렇게 하면 정렬기준을 x[1]를 첫번째 기준으로 정렬, x[1]이 똑같으면 x[0]을 기준으로 정렬 
+lst.sort(key=lambda x : (x[1],-x[2],x[3],x[0]), reverse=True) ## -는 내림차순으로 정렬, 만약 요소가 문자열이라면 reverse를 활용해야함.
 
 ''.join(i for i in letters)  # 리스트 요소 사이사이에 '' 요게 들어감.
 ''.join(letters) # 위에랑 똑같은 말임. 위는 리스트 요소마다 변화를 줄 수 있는 것이 차이점.
@@ -77,10 +84,6 @@ for i in combinations(items,2):
 
 round(3.12333,2)
 
-
-if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
-    print('aaa exist')
-
 union = (set(lst1) | set(lst2))  # 합집합, 두리스트 합집합
 inter = (set(lst1) & set(lst2))  # 교집합, 두리스트에서 교집합 요소추출
 complement = (set(lst1) - set(lst2))  # 차집합, lst1 기준 lst2와 다른 요소만 추출
@@ -93,6 +96,9 @@ for pair in zip(list1, letters):
 for i, val in enumerate(list1):
     print(i, val)
 # (0, 1), (1, 2) ...
+
+for i, pair in enumerate(zip(lst,lst2)):
+    print(i, pair[0],pair[1])
 
 
 # string 문자열
@@ -110,21 +116,24 @@ string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 ,
 string1.replace('hi', 'hello', 1)
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
 string1.strip() ## 문자열 앞뒤 공백제거
-string1.strip('hi') ## hi를 인자로 전달하면 문자열의 앞뒤에 있는 h,i 문자를 제거함. h,i가 안나올때까지 계속 지움.
+string1.strip('hi') ## hi를 인자로 전달하면 문자열의 앞뒤에 있는 h,i 문자를 제거함. h,i가 안나올때까지 계속 지움. string1 자체는 변경시키지 않음. 
 string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
 string1.isdecimal() # 문자가 숫자인지 아닌지 true false, isdigit도 있음.
 string1[::-1] # 문자열 뒤집기
-list(string1) #문자열을 한글자로 분리시켜서 리스트로 리턴
+
 for char in string1:    #문자열 인덱스위치로 값리턴
     print(char)
+
+if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
+    print('aaa exist')
     
 ## 딕셔너리 
-import collections
+from collections import defaultdict
 obj = dict()
-graph = collections.defaultdict(list)
+graph = defaultdict(list)
 del obj['key']  ## 딕셔너리 key,value 삭제하기 
 keylst = list(obj.keys())
 valuelst = list(obj.values())
