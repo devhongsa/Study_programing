@@ -430,6 +430,7 @@ ARG user1=hongsa   #변수 설정하고 값 할당.
   # 이때 ENV와 ARG 명령어 수행시 변수이름이 같다면, ENV변수가 ARG변수를 덮어씌우게 됨. 
 
 CMD ["node", "server.js"]     # cmd 명령어 수행
+ENTRYPOINT ["java", "-jar", "./app.jar"] # 컨테이너가 실행되었을때 실행되어야하는 명령어 
 ##############################################
 
 touch .dockerignore  하고 안에 node_modules 추가

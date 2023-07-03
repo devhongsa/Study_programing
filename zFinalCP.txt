@@ -123,7 +123,7 @@ docker run -i -t -e MY_HOST=fastcampus.com ubuntu:focal bash : 컨테이너 내 
 docker run -i -t --env-file ./sample.env ubuntu:focal env : 컨테이너에 환경변수들 설정되어있는 env파일 내용 심고 환경변수 확인하기.
 
 docker exec [container] [command] : 실행중인 컨테이너에 명령어 실행하기 
-docker exec -i -t my-nginx bash : my-nginx컨테이너에 bash 셸로 접속하기 
+docker exec -it my-nginx bash : my-nginx컨테이너에 bash 셸로 접속하기 
 docker exec my-nginx env : my-nginx 컨테이너의 환경변수 확인하기 
 
 docker run -d -p 80:80 nginx   : 서버ip로 80번포트 요청이오면 컨테이너에 80번포트로 요청을 전달하겠다는 뜻. (hostPORT:containerPORT)

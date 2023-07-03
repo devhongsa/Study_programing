@@ -1,0 +1,71 @@
+
+1. spring project build하기 
+
+    ./gradlew build  
+    ./gradlew clean : jar파일 다 삭제하기 
+
+    build/libs 에 jar파일 생성됨. plain.jar는 의존성이 포함안된 파일이기때문에 그냥 jar파일 사용 
+
+    build.gradle 에서
+    bootJar {
+        archiveFileName = 'app.jar'
+    }
+    이거 추가하면 jar파일 이름을 설정할수 있음. 
+
+    java -jar build/libs/app.jar  : jar파일로 프로젝트 실행하기 
+
+
+2. spring project에 Dockerfile 만들기 
+
+    root 디렉토리에 (build.gradle 있는 위치 ) Dockerfile 생성 
+
+    FROM openjdk:11
+    ARG JAR_FILE=build/libs/app.jar 
+    COPY ${JAR_FILE} ./app.jar 
+    ENV TZ=Asia/Seoul 
+    ENTRYPOINT ["java", "-jar", "./app.jar"]
+
+    openjdk11을 설치
+    JAR_FILE이라는 변수 생성해서 호스트서버에 있는 app.jar파일 위치를 넣어준다. 
+    호스트서버의 app.jar를 docker 컨테이너안에 복사 
+    타임존 설정 
+    docker 컨테이너가 실행될때 프로젝트 실행하기 
+
+    Dockerfile 있는 위치에서 해당 명령어로 도커 이미지 생성 
+    docker build -t devhongsa/my_project : devhongsa는 도커 허브 닉네임 
+
+3. docker-compose 사용하기 
+
+    docker-compose.yml 생성 
+
+    version: "3.8"  # Docker버전과 호환이 잘 되는 버전이여야 함.ㄴ
+    services:
+      my-service-redis: # 서비스 이름 짓기
+        container_name: myredis # 컨테이너 이름 짓기
+        build:
+          dockerFile: DockerFile 
+          context: ./redis   # DockerFile 있는 위치 
+        image: devhongsa/myredis # 이미지 이름 짓기 
+        ports:
+          - "6379:6379"
+        
+      my-service-database: 
+        container_name: mydatabase # 컨테이너 이름 짓기
+        build:
+          dockerFile: DockerFile 
+          context: ./database   # DockerFile 있는 위치 
+        image: devhongsa/mydatabase  # 이미지 이름 짓기 
+        environment:
+          - MARIADB_DATABASE=database-name 
+          - MARIADB_ROOT_PASSWORD=${SPRING_DATABASE_PASSWORD}  
+          # 환경변수사용. compose파일이 위치한 곳에 .env 파일이 있으면 자동으로 가져옴. 실무에서는 HashiCorp Vault를 주로 사용함.
+        volumes:
+          - ./database/config:/etc/mysql/conf.d
+        ports:
+          - "3306:3306"
+        
+
+
+
+
+

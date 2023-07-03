@@ -17,6 +17,7 @@ implementation 'mysql:mysql-connector-java'
 implementation 'io.springfox:springfox-boot-starter:3.0.0'
 implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 implementation 'ch.qos.logback:logback-classic:1.2.3'
+testImplementation 'org.assertj:assertj-core:3.21.0' // assertThat쓰는 라이브러리 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // start.spring.io
 // intellij settings에서 gradle 검색후 build and run을 inellij 로 변경하면 더 빨리 빌드하고 실행됨.

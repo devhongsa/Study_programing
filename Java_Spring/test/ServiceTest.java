@@ -1,3 +1,5 @@
+// @BeforEach에서 given으로 설정해줬던것들이 모든 테스트메소드에서 필요한것이 아니기 때문에, 이 설정을 넣어줘야 테스트돌릴때 경고메세지가 안뜸 
+@MockitoSettings(strictness = Strictness.LENIENT) 
 @ExtendWith(MockitoExtension.class) // @Mock 어노테이션 사용가능 
 class TransactionServiceTest {
     @Mock
@@ -14,8 +16,10 @@ class TransactionServiceTest {
     private TransactionService transactionService;
 
     @Test
+    @DisplayName("잔액사용 성공")
     void successUseBalance() {
         //given
+        // given 부분은 테스트 메소드마다 반복되게 때문에 @BeforeEach로 빼는 것이 좋음
         AccountUser user = AccountUser.builder()
                 .id(12L)
                 .name("Pobi").build();
@@ -49,6 +53,7 @@ class TransactionServiceTest {
         TransactionDto transactionDto = transactionService.useBalance(1L, "1111111111", 200L);
 
         //then
+        // verify는 행위에 대한 테스트임.
         // times(1) : save() 함수가 1번 실행됬다는걸 검증 , atLeastOnce()랑 동일, never()는 한번도 실행 안됐다.
         // 여기서 transactionRepository는 Mock객체이다.
         // 만약 @Mock으로 객체주입을 안해줬으면, TransactionRepository mock = mock(TransactionRepository.class) 를 선언해주고 사용해야함
@@ -58,6 +63,7 @@ class TransactionServiceTest {
         assertEquals(200L,captor.getValue().getAmount());
         assertEquals(9800L,captor.getValue().getBalanceSnapshot());
 
+        // 상태 테스트 
         assertEquals(9000L, transactionDto.getBalanceSnapshot());
         assertEquals(TransactionType.USE, transactionDto.getTransactionType());
         assertEquals(TransactionResultType.S, transactionDto.getTransactionResultType());
@@ -77,6 +83,9 @@ class TransactionServiceTest {
 
         //then
         assertEquals(ErrorCode.USER_NOT_FOUND, exception.getErrorCode());
+
+        // 위에 when, then을 합쳐놓은 거 
+        assertThatThrownBy(() -> transactionService.useBalance(1L, "1111111111", 100L)).isInstanceOf(AccountException.class).hasFieldOrPropertyWithValue("errorCode", ErrorCode.USER_NOT_FOUND);
     }
 
     @Test
@@ -183,6 +192,7 @@ class TransactionServiceTest {
     }
 
     @Test
+    @DisplayName("잔액사용 실패 테스트 ")
     void successSaveFailedTransaction() {
         //given
         AccountUser user = AccountUser.builder()

@@ -596,7 +596,7 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ##############################
 
-docker build -t server_dev/nginx .
+docker build -t server_dev/nginx .  
 docker run -d -p 80:80 server_dev/nginx
 
 

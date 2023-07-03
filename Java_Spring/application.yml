@@ -1,13 +1,85 @@
+spring:
+  profiles:
+    active: local # default 
+    group:
+      local:
+        - common # local이 실행될때 common 설정도 같이 가져와서 실행 
+      prod:
+        - common
+
+--- # 파일을 나누는 것과 같음 
+
+# 공통적인 spring 설정
+spring:
+  config:
+    activate:
+      on-profile: common
+
+---
+
+# local환경에서의 설정
+spring:
+  config:
+    activate:
+      on-profile: local
+
+---
+
+# 배포시 환경 
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+
+
+
 # redis sentinel 구성시 yml 설정, 이와 함께 redis configuration 파일에서 sentinel 설정해줘야함
 spring:
   cache:
     type: redis
   redis:
     port: 6379
-    password: 123pwd
+    password: 
     sentinel:
       master: mymaster  # sentinel.conf 에 적시되어있는 sentinel monitor [master name] 에서 master name을 적으면 됨.
       nodes:
         - 10.0.0.16:port
         - 10.0.0.17:port
         - 10.0.0.18:port
+
+# h2 db
+spring:
+  datasource:
+    url: jdbc:h2:mem:test
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/reservation_service?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: 
+
+# jpa 
+spring:
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update # create, create-drop ..
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+
+# logback
+logging:
+  config: classpath:logback-spring.xml  #resources폴더에 저장되어있는 logback-spring.xml 파일 
