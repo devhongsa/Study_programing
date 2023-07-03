@@ -1,4 +1,4 @@
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(MockitoExtension.class) // @Mock 어노테이션 사용가능 
 class TransactionServiceTest {
     @Mock
     TransactionRepository transactionRepository;
@@ -49,6 +49,11 @@ class TransactionServiceTest {
         TransactionDto transactionDto = transactionService.useBalance(1L, "1111111111", 200L);
 
         //then
+        // times(1) : save() 함수가 1번 실행됬다는걸 검증 , atLeastOnce()랑 동일, never()는 한번도 실행 안됐다.
+        // 여기서 transactionRepository는 Mock객체이다.
+        // 만약 @Mock으로 객체주입을 안해줬으면, TransactionRepository mock = mock(TransactionRepository.class) 를 선언해주고 사용해야함
+        // captor.capture()은 우선 save의 argument로 Transaction객체가 들어갔는지를 검증을 하고, 위에 useBalance()에 파라미터로 들어간 값이 
+        // 로직을 거치면서 Transaction객체의 멤버변수의 값에 영향을 끼치기때문에, 그에 대한 Transaction 값의 결과를 검증하는 과정임.
         verify(transactionRepository, times(1)).save(captor.capture());
         assertEquals(200L,captor.getValue().getAmount());
         assertEquals(9800L,captor.getValue().getBalanceSnapshot());

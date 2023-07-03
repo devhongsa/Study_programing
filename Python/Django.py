@@ -117,7 +117,7 @@ urlpatterns = [
 
 ### mywebapp폴더 에서 urls.py 만들고 api 개발 시작. 이러한 url요청이오면 views.py의 어떤 함수를 실행시켜라라는 로직구현.
 from django.urls import path 
-from . import views
+from .. import views
 
 app_name = 'polls' # app_name을 정해주면 templates html에서 href를 사용할때 'polls:detail' 이런식으로 써줘야함 여기서 detail은 밑에 path에서 name부분
 urlpatterns = [

@@ -1,3 +1,13 @@
+// Unit Test Code 작성 원칙 FIRST 
+Fast : 유닛 테스트는 빨라야함 
+Isolated : 다른 테스트에 종속적인 테스트 금지 , 특정 테스트의 결과에 따라 다른 테스트의 결과가 바뀌어서는 안됨.
+Repeatable : 매번 같은 결과를 만들어야함 
+Self-validating : 테스트는 스스로 결과를 검증할 수 있어야 함. 
+Timely : 테스트는 적시에 작성해야함 
+
+// 통합 테스트는 실제 환경을 가져와서 테스트해보는 것을 말함. 몇몇 Mocking을 섞어서 테스트함.
+
+
 // @WebMvcTest : Controller 테스트 
 // @DataJpaTest : jpa 레포지토리 테스트 
 // @RestclientTest : 클라이언트의 요청을 서버가 정상적으로 수행하는지 테스트 
