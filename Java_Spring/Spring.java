@@ -1,11 +1,16 @@
-객체지향(OOP):방대한 양의 코드를 잘 분류(클래스화)하고 교체를 할 수 있는 방법
-SOLID 원칙 SRP:단일 책임 원칙(분류)-클래스 하나에 여러기능들을 다 넣지 마라,기능별로 클래스를 나눠라 OCP:개방 폐쇄 원칙(교체)-확장에는 열려있고 변경에는 닫혀있다.즉 수정하지말고 클래스를 추가해서 기능을 추가해라 LSP:리스코프 치환 법칙(교체)-상속받은 클래스는 부모클래스와 동일한 동작을 해야 재활용 가능성이 높아진다.(부모클래스를 인터페이스처럼 생각),실무에서는 상속을 최대한피함.ISP:인터페이스 분리 원칙(분류)-인터페이스를 기능별로 좀더 잘게 분리하자 DIP:의존성 역전 원칙(교체)-어떤 외부라이브러리를 사용하고 있다가,갑자기 그 라이브러리를 바꿔야할 일이 생기면 그 라이브러리를 직접적으로 사용한 클래스들을 모두 수정해줘야함.이를 방지하기 위해 인터페이스를 통해서 라이브러리 어답터코드만 바꾸면 되는 방식으로 해야함.
+
+// intellij 설정 
+// settings에서 gradle 검색후 build and run을 inellij 로 변경하면 더 빨리 빌드하고 실행됨.
+// Edit Configuration > 환경변수 설정 가능 
+// settings > live template 에서 커스텀 코드 설정 가능 
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 implementation 'org.springframework.boot:spring-boot-starter-web'
 implementation 'org.springframework.boot:spring-boot-starter-security'
 implementation 'org.springframework.boot:spring-boot-starter-aop'
 implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
 implementation 'org.springframework.session:spring-session-data-redis'
 implementation 'org.springframework.kafka:spring-kafka'
 implementation 'org.apache.kafka:kafka-streams'
@@ -13,14 +18,14 @@ implementation 'com.jayway.jsonpath:json-path:2.7.0'
 implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 implementation 'org.springframework.boot:spring-boot-starter-validation'
 implementation 'io.jsonwebtoken:jjwt:0.9.1'
-implementation 'mysql:mysql-connector-java'
 implementation 'io.springfox:springfox-boot-starter:3.0.0'
 implementation 'io.springfox:springfox-swagger-ui:3.0.0'
 implementation 'ch.qos.logback:logback-classic:1.2.3'
+runtimeOnly 'com.mysql:mysql-connector-j'
 testImplementation 'org.assertj:assertj-core:3.21.0' // assertThat쓰는 라이브러리 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// start.spring.io
-// intellij settings에서 gradle 검색후 build and run을 inellij 로 변경하면 더 빨리 빌드하고 실행됨.
+
+
 // Spring
 
 // @SpringBootApplication : spring boot application으로 설정

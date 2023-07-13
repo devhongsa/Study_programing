@@ -1,3 +1,18 @@
+자주 쓰는 java 라이브러리 
+
+
+- ObjectMapper : JsonString to DtoObject , DtoObject to JsonString
+OjbectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+// 만일 MyDto 객체에 없는 프로퍼티 필드가 jsonString에 있을경우 오류를 일으키지 않고 해당 필드는 무시하게 하는 설정.
+
+MyDto mydto = mapper.readValue(jsonString, MyDto.class)
+String json = mapper.writeValueAsString(mydto)
+
+
+
+
+
+
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -494,19 +509,4 @@ public class Mission1 {
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-자주 쓰는 java 문법들
 
-- ObjectMapper : JsonString to DtoObject
-
-
-
-
-
-
-
-- ObjectMapper : JsonString to DtoObject , DtoObject to JsonString
-OjbectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-// 만일 MyDto 객체에 없는 프로퍼티 필드가 jsonString에 있을경우 오류를 일으키지 않고 해당 필드는 무시하게 하는 설정.
-
-MyDto mydto = mapper.readValue(jsonString, MyDto.class)
-String json = mapper.writeValueAsString(mydto)

@@ -50,7 +50,7 @@ implementation 'org.springframework.session:spring-session-data-redis'  // Contr
 yml파일에서 
 spring:
     session:
-        store-type: redis
+        store-type: redis # HttpSession 사용시 추가 
     cache:
         type: redis
     redis:

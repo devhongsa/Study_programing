@@ -118,6 +118,8 @@ docker rm -f $(docker ps -a -q)    모든 컨테이너 지우기
 docker rmi -f $(docker images -q)  모든 이미지 지우기
 docker container prune : 중지된 모든 컨테이너 삭제
 
+docker build -t my_app .  : DockerFile 있는 곳에서 실행  my_app은 도커 이미지 이름 
+
 docker run --entrypoint sh ubuntu:focal  : --entrypoint는 docker ps 쳤을때 나오는 COMMAND 부분을 조작할 수 있는 명령어임.
 docker run -i -t -e MY_HOST=fastcampus.com ubuntu:focal bash : 컨테이너 내 환경변수 설정하기 
 docker run -i -t --env-file ./sample.env ubuntu:focal env : 컨테이너에 환경변수들 설정되어있는 env파일 내용 심고 환경변수 확인하기.

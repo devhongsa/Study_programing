@@ -82,7 +82,10 @@ list(combinations(items,2))  # 리스트에서 요소2개를 뽑는 모든 경�
 for i in combinations(items,2):
     print(i)  # (1,2), (1,3), ...
 
-round(3.12333,2)
+import math 
+round(3.12333,2) # 반올림 
+math.ceil(3.123) # 올림
+math.floor(3.222) # 내림
 
 union = (set(lst1) | set(lst2))  # 합집합, 두리스트 합집합
 inter = (set(lst1) & set(lst2))  # 교집합, 두리스트에서 교집합 요소추출

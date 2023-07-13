@@ -19,6 +19,7 @@
 
     root 디렉토리에 (build.gradle 있는 위치 ) Dockerfile 생성 
 
+    # spring app DockerFile 루트 폴더에 생성 
     FROM openjdk:11
     ARG JAR_FILE=build/libs/app.jar 
     COPY ${JAR_FILE} ./app.jar 
@@ -33,6 +34,25 @@
 
     Dockerfile 있는 위치에서 해당 명령어로 도커 이미지 생성 
     docker build -t devhongsa/my_project : devhongsa는 도커 허브 닉네임 
+
+
+    # mysql DockerFile, database 디렉토리를 따로만들어서 생성 
+    # 베이스 이미지 설정
+    FROM mysql:latest
+
+    # 환경 변수 설정
+    ENV MYSQL_ROOT_PASSWORD=root
+    ENV MYSQL_DATABASE=mydatabase
+    ENV MYSQL_USER=myuser
+    ENV MYSQL_PASSWORD=mypassword
+
+    # 포트 설정 (선택 사항)
+    EXPOSE 3306
+
+    # 컨테이너 실행
+    RUN docker run -d -p 3306:3306 --name my-mysql-container my-mysql-image
+
+    
 
 3. docker-compose 사용하기 
 
@@ -55,17 +75,120 @@
           dockerFile: DockerFile 
           context: ./database   # DockerFile 있는 위치 
         image: devhongsa/mydatabase  # 이미지 이름 짓기 
-        environment:
+        environment: # 도커컨테이너의 환경변수 설정 
           - MARIADB_DATABASE=database-name 
           - MARIADB_ROOT_PASSWORD=${SPRING_DATABASE_PASSWORD}  
-          # 환경변수사용. compose파일이 위치한 곳에 .env 파일이 있으면 자동으로 가져옴. 실무에서는 HashiCorp Vault를 주로 사용함.
+          # .env의 환경변수사용. compose파일이 위치한 곳에 .env 파일이 있으면 자동으로 가져옴. 실무에서는 HashiCorp Vault를 주로 사용함.
         volumes:
-          - ./database/config:/etc/mysql/conf.d
+          - ./database/config:/etc/mysql/conf.d   # 호스트 서버의 config폴더를 컨테이너가 참조해서 초기 설정을 하게 됨. 
         ports:
           - "3306:3306"
-        
+    
+    my-service-app:
+      container_name: myapp 
+      build: .
+      depends_on:
+        - my-service-database 
+        - my-service-redis 
+      image: devhongsa/myapp 
+      environment:
+        - SPRING_DATABASE_USERNAME=${SPRING_DATABASE_USERNAME}
+        - SPRING_DATABASE_PASSWORD=${SPRING_DATABASE_PASSWORD}
+        - SPRING_PROFILES_ACTIVE=${SPRING_PROFILES_ACTIVE}  
+        # .env 파일에서 설정되어있어야 docker-compose가 알아서 인식해서 적용함. SPRING_PROFILES_ACTIVE=prod 로 지정. applications.yml파일에 prod 버전 설정을 불러오는것임.
+      ports:
+        - "80:8080"
+      restart: always
+      # depends_on는 실행순서만 지정할뿐, 앞서 실행된 서비스들이 실행가능한 상태인지는 파악을 안함. 이로 인해 만약 app이 실행에 실패하면 
+      # 계속 재실행하게 하는것임.
+
+
+4. applications.yml prod 버전 수정 
+
+    # 배포시 환경 
+    spring:
+    config:
+        activate:
+        on-profile: prod
 
 
 
+
+    # redis sentinel 구성시 yml 설정, 이와 함께 redis configuration 파일에서 sentinel 설정해줘야함
+    spring:
+    cache:
+        type: redis
+    redis:
+        port: 6379
+        password: 
+        sentinel:
+        master: mymaster  # sentinel.conf 에 적시되어있는 sentinel monitor [master name] 에서 master name을 적으면 됨.
+        nodes:
+            - 10.0.0.16:port
+            - 10.0.0.17:port
+            - 10.0.0.18:port
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        url: jdbc:mysql://{mysql ec2 server ip}:3306/{dbname}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+        # 만일 app서버에 mysql도 같이 있으면 ip부분에 docker-compose.yml에서 설정한 mysql service name을 적으면 된다.
+        username: ${SPRING_DATABASE_USERNAME} # intellij 환경변수 설정 
+        password: ${SPRING_DATABASE_PASSWORD}
+    jpa:
+        hibernate:
+        ddl-auto: validate # none
+        show-sql: true
+
+    myapp:
+    recommendation:
+        base:
+        url: http://localhost/dir/ 
+
+
+
+5. aws ec2에 배포하기 
+
+    ec2(amazon linux) 생성 후 터미널 접속 
+    sudo yum update -y
+
+    # git 설치
+    sudo yum install git -y 
+    git version 
+
+    # docker 설치 
+    sudo yum install docker 
+    docker -v 
+
+    # docker-compose 설치
+    sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+
+    # java 설치 
+    sudo yum install java-11-amazon-corretto.x86_64
+    java -version 
+    update-alternatives --config java : java 버전이 여러개 설치되어있을때 default 버전 바꾸기 
+
+    # docker 실행 
+    sudo systemctl start docker
+
+    # 권한 부여 
+    sudo usermod -a -G docker ec2-user
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo chmod 666 /var/run/docker.sock 
+    
+
+6. github repository clone 
+    ssh 주소로 받아올거면 ssh키 생성해서 github에 등록해주기 (github.txt에 설명써놓음)
+    git clone 레포주소 
+
+7. project 폴더에서 환경 설정 
+    만약 .env 파일을 사용했으면 로컬에서와 같은 .env를 프로젝트폴더에서 생성해주기 
+    ./gradlew clean build -x test : 테스트케이스 제외하고 빌드하기 
+
+    ** ec2 프리티어 사용시 메모리 부족으로 빌드 안됨 : https://repost.aws/ko/knowledge-center/ec2-memory-swap-file 
+        메모리 스왑으로 해결 
+    
+    docker-compose up --build
+
+
+docker-compose -f docker-compoae-local.yml up --build : -f는 compose파일이 여러개일때 명시적으로 파일이름 적어줌 
 
 

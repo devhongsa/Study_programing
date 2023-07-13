@@ -2,6 +2,31 @@ https://www.w3schools.com/sql/trysql.asp?filename=trysql_select_all  //sql문 �
 https://www.hackerrank.com/domains/sql
 https://leetcode.com/problemset/database/
 
+### DockerFile ###
+# 베이스 이미지 설정
+FROM mysql:latest
+
+# 환경 변수 설정
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=mydatabase
+ENV MYSQL_USER=myuser
+ENV MYSQL_PASSWORD=mypassword
+
+# 포트 설정 (선택 사항)
+EXPOSE 3306
+
+# 컨테이너 실행
+RUN docker run -d -p 3306:3306 --name my-mysql-container my-mysql-image
+docker run -it \
+--name coupon-mysql \
+-e MYSQL_ROOT_PASSWORD="Dnjfchs23" \
+-e MYSQL_USER="fintech" \
+-e MYSQL_PASSWORD="fintech" \
+-e MYSQL_DATABASE="freecoupon" \
+-p 3306:3306 \
+-d mysql:latest
+
+
 
 
 mac 경로
@@ -19,7 +44,6 @@ windows
 \connect [dbname] : db 접속 
 
 
-http://localhost:8080/swagger-ui/index.html
 window 버전
 mysql community edition download 
 mysql community server download 
@@ -39,7 +63,8 @@ user목록보기
 use mysql 
 select User, Host, Password from user;
 
-계정 생성
+
+# 계정 생성
 
 create user 계정@호스트 identified by 패스워드;
 
@@ -52,7 +77,7 @@ create user dbuser@'%' identified by 'password'; -- 어디에서나 접근 가�
 alter user 'root'@'localhost' IDENTIFIED BY 'password';   기존유저 비밀번호 변경 
 
  
-계정 삭제
+# 계정 삭제
 
 drop user 계정@호스트;
 
@@ -63,14 +88,14 @@ drop user dbuser@192.168.1.72;
 drop user dbuser@'%';
 
  
-권한 조회
+# 권한 조회
 
 show grants for 계정@호스트;
 
 show grants for dbuser;
 
 
-계정 권한 부여
+# 계정 권한 부여
 
 grant 권한 on 데이터베이스.테이블 to 계정@호스트;
 
@@ -87,7 +112,7 @@ flush privileges; --권한 부여한 내용들을 적용시켜줌.
 
 
 
-계정 권한 삭제
+# 계정 권한 삭제
 
 revoke 권한 on 데이터베이스.테이블 from 계정@호스트;
 

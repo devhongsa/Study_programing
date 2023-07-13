@@ -1,3 +1,5 @@
+https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter  // 바뀐버전 docs SecurityConfig
+
 implementation 'org.springframework.boot:spring-boot-starter-security'
 implementation 'io.jsonwebtoken:jjwt:0.9.1'
 
@@ -18,6 +20,14 @@ public enum Authority {
     ROLE_WRITE;
 }
 
+////// JWT //////
+// JWT = Header + Payload + Signatrue 
+    // Header : 토큰 타입(JWT), 어떤 암호화 알고리즘인지 
+    // Payload(Body) : 사용자 이름, 토큰 만료시간 등 (비밀번호와 같은 민감정보는 포함되면 안됨.)
+    // Signature : 토큰 유효한지, 위조되었는지 확인, (Secret Key 필요 )
+    // Secret key로는 평문을 base64로 인코딩한 값을 주로 씀.
+    // 터미널에 echo 'secretkey' | base64 
+    // 이후 yml 파일에 spring.jwt.secret : secret key   저장 
 
 
 
@@ -182,23 +192,6 @@ public class AppConfig {
 
 
 
-
-////// JWT //////
-// JWT = Header + Payload + Signatrue 
-    // Header : 토큰 타입(JWT), 어떤 암호화 알고리즘인지 
-    // Payload(Body) : 사용자 이름, 토큰 만료시간 등 (비밀번호와 같은 민감정보는 포함되면 안됨.)
-    // Signature : 토큰 유효한지, 위조되었는지 확인, (Secret Key 필요 )
-    // Secret key로는 평문을 base64로 인코딩한 값을 주로 씀.
-    // 터미널에 echo 'secretkey' | base64 
-    // 이후 yml 파일에 spring.jwt.secret : secret key   저장 
-
-
-
-
-
-
-
-
 ////// Token Provider ////// security package에 생성
 @Component
 @RequiredArgsConstructor
@@ -304,6 +297,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //OncePerReq
 
     private final TokenProvider tokenProvider;
 
+    /*
+        요청이 올때마다 실행되는 Filter, 토큰을 검증하고, 검증된 토큰을 등록하는 과정
+     */
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String token = resolveTokenFromRequest(request); // 요청 헤더에서 jwt 토큰 가져오기 
@@ -318,6 +314,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //OncePerReq
         filterChain.doFilter(request, response); // 현재 필터가 처리한 요청을 다음 필터로 전달하거나, 필터 체인의 마지막에 도달한 경우 실제 서블릿 또는 컨트롤러로 요청을 전달하는 역할을 함.
     }
 
+    /*
+        헤더에서 jwt토큰을 추출하는 메서드
+     */
     private String resolveTokenFromRequest(HttpServletRequest request) { 요청에서 jwt 토큰을 추출하는 메소드
         String token = request.getHeader(TOKEN_HEADER);
 
@@ -340,7 +339,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //OncePerReq
 @Slf4j
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) //@PreAuthorize, @PostAuthorize 을 Controller의 메소드에 사용가능하게함.
+@EnableGlobalMethodSecurity(prePostEnabled = true) //@PreAuthorize, @PostAuthorize를 쓸 수 있게 됨. 
 @RequiredArgsConstructor
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -359,6 +358,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
     }
 
+    /*
+        WebSecurity는 HttpSecurity 앞단에 적용되며, 스프링 시큐리티의 영향권 밖에 있음. 즉 인증과 인가가 적용되기 전에 동작함
+        즉 인증과 인가를 무시하는 경로를 설정할때 주로 쓰임 
+    */
     @Override
     public void configure(final WebSecurity web) throws Exception {
         web.ignoring()

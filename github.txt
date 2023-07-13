@@ -16,8 +16,8 @@ config 설정 하기
 /// ssh 인증키 설정
 // ssh 인증키 깃헙 등록하기 // https://jootc.com/p/201905122827 : 비밀번호 등록시 
 cd ~/.ssh 
-ssh-keygen -> 키이름, 비밀번호 입력 (비밀번호는 패스해도 됨) -> 키와 키.pub 파일 2개가 생김 
-cat 키.pub 
+ssh-keygen -t rsa -C "github@email" -> 키이름, 비밀번호 입력 (비밀번호는 패스해도 됨) -> 키와 키.pub 파일 2개가 생김 
+cat 키.pub > 복사 
 깃험에 들어가서 계정 setting -> ssh 키 생성 -> 위의 키.pub 내용 모두 복사해서 붙여넣고 등록 .
 이후 git clone할때 레포지토리의 ssh 주소 복사 
 내 작업폴더에서 git clone ssh주소 
@@ -235,7 +235,7 @@ CI/CD 작업을 도와주는 기능.
 
 /// Readme.md 마크다운
 # : 글자크기 
-- : 점표시 
+- , *, +: 점표시 
 
 ```java
 fun onDestroy(){
@@ -243,6 +243,9 @@ fun onDestroy(){
     super.onDestroy()
 }
 ```
+
+tab : 박스로 만들어짐 
+*글씨* : 기울임 
 
 *** : 수평선 
 
