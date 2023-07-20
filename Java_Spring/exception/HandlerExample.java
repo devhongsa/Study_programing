@@ -27,13 +27,19 @@ public class GlobalExceptionHandler {
 
 
 // Example 2 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /*
         커스텀 exception 발생시 핸들러
-        ErrorResponse라는 응답 Dto객체 따로 만들어서 리턴하기 
      */
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ErrorResponse> handleAccountException(CustomException e) {

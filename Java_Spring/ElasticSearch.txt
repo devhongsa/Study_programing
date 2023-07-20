@@ -1,13 +1,18 @@
 ElasticSearch 설치 
-docker pull docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+docker pull docker.elastic.co/elasticsearch/elasticsearch:7.17.3   // 버전 8.6.0은 아직 spring data 지원안함 
 docker network create elastic 
 
-docker run --name es01 --net elastic -p 9200:9200 -it docker.elastic.co/elasticsearch/elasticsearch:8.6.0
+docker run --name es01 --net elastic -p 9200:9200 -it docker.elastic.co/elasticsearch/elasticsearch:7.17.3
+docker run -d --name elasticsearch -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" docker.elastic.co/elasticsearch/elasticsearch:7.17.3
 
 docker exec -it es01 /usr/share/elasticsearch/bin/elasticsearch-reset-password -u elastic     // 비밀번호 초기화 
 docker cp es01:/usr/share/elasticsearch/config/certs/http_ca.crt .    // 도커컨테이너 안에 있는 http 보안 인증 파일 로컬 현재위치에 복제 
 curl --cacert http_ca.crt -u elastic https://localhost:9200     // user elastic의 접속에 대한 인증 
 curl --cacert http_ca.crt -u elastic -X GET "https://localhost:9200/_cluster/health?pretty"
+
+
+fingerprint 생성
+openssl x509 -fingerprint -sha256 -noout -in ./http_ca.crt
 
 kibana 설치 
 docker pull docker.elastic.co/kibana/kibana:8.6.0

@@ -79,6 +79,7 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
+        dialect: org.hibernate.dialect.MySQL5Dialect  # mysql 문법 오류가 뜨면 MySQL5Diaclect로 변경 
 
 # logback
 logging:

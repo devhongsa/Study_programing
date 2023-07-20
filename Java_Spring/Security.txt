@@ -335,7 +335,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter { //OncePerReq
 
 
 
-////// Security Configuration //////
+////// Security Configuration 구버전 //////
 @Slf4j
 @Configuration
 @EnableWebSecurity
@@ -376,6 +376,73 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 }
 
+
+
+
+
+////// Security Configuration 신버전 //////
+
+@Slf4j
+@Configuration
+@Order(1)   // FilterChain의 순서 , url를 분기로 SecurityConfig를 여러개 만들때 순서를 정해기 위함.
+@EnableWebSecurity(debug = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true) //@PreAuthorize, @PostAuthorize를 쓸 수 있게 됨.
+@RequiredArgsConstructor
+public class SecurityConfig {
+
+    private final PasswordEncoder passwordEncoder;
+
+    // security user 생성하기
+    @Bean
+    public InMemoryUserDetailsManager creatUser(){
+        List<UserDetails> users = Arrays.asList(
+                User.builder()
+                        .username("user2")
+                        .password(passwordEncoder.encode("2222"))
+                        .roles("ADMIN")
+                        .build(),
+                User.builder()
+                        .username("user3")
+                        .password(passwordEncoder.encode("3333"))
+                        .roles("USER")
+                        .build()
+        );
+
+        return new InMemoryUserDetailsManager(users);
+    }
+
+    /*
+        client에서 요청을 날리면 Spring Security의 여러 filterChain 들을 거치게 됨.
+        그 체인들에 대한 설정을 하는 Bean 임.
+        disable()로 특정 필터를 거치지않게 할 수 있음.
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .authorizeHttpRequests((authz) -> authz
+                        .antMatchers("/").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
+
+        http.formLogin(login->
+                login.defaultSuccessUrl("/",false) // 로그인성공시 루트페이지로 가지만, 다른 url에 접속시도하다가 로그인하는 경우 그 url로 가기위해서 alwaysUse를 false로 처리해준다.
+
+                );
+        return http.build();
+    }
+
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring()
+                //.antMatchers("/ignore1", "/ignore2")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());  // resource 폴더에 있는 statict설정들을 인증에서 빼줌.
+
+    }
+
+
+}
 
 
 

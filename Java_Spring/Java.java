@@ -351,11 +351,16 @@ public class AnimalTest {
     }
 }
 
+
+
+https://wildeveloperetrain.tistory.com/112   추상클래스와 인터페이스 차이점 
 // 추상클래스 : 추상클래스는 현재 클래스에서는 어떻게 구현할지는 모르고, 하위클래스에서 구현이 가능할때 쓴다.
 // 하위클래스가 추상클래스를 상속받으면 하위클래스에서는 abstract로 선언된 메서드들을 반드시 구현을 해야한다.
 // 만약 메서드를 일부만 구현한다면 그 클래스도 abstract로 선언해줘야한다.
 // 추상클래스는 객체를 생성할 수 없다 (new Computer() 불가)
 public abstract class Computer {
+    protected String name;   // private public 사용가능 
+
     public abstract void display();
 
     public abstract void typing();

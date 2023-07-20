@@ -59,6 +59,12 @@ brew services list
 mysql -u root -p:콘솔 접속
 exit 
 
+
+DML : SELECT INSERT UPDATE DELETE 
+DDL : CREATE ALTER DROP RENAME TRUNCATE
+DCL : GRANT REVOKE 
+TCL : COMMIT ROLLBACK SAVEPOINT 
+
 user목록보기
 use mysql 
 select User, Host, Password from user;

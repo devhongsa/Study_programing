@@ -9,6 +9,9 @@
 또한 데이터베이스를 잘 설계하여 조회 쓰기 과정을 효율적으로 수행할 수 있게 하는 방법이다.
 
 
+무결성 : 데이터 값이 정확한 상태 
+정합성 : 어떤 데이터들의 값이 일치함. 
+
 데이터베이스 정규화 : 중복을 최소화하게 데이터를 구조화하는 프로세스
 
 정규화 특징
@@ -112,12 +115,12 @@ Non Repeatable Read :
 
 Phantom Read : 
     예를 들어 TX1에서 잔고가 1000원 이상인 사람을 불러오는 쿼리를 여러번한다고 가정했을때, 만약 누군가 다른 사람의 잔고를 업데이트하면, TX1에서는 똑같은 쿼리지만 
-    갑자기 다른 데이터 결과가 생기거나 있던 데이터가 없어지는 결과가 나올 수 있다.
+    갑자기 다른 데이터 결과가 생기거나 있던 데이터가 없어지는 결과가 나올 수 있다. 조회
 
 격리레벨 
 Read Uncommitted : 아직 commit되지 않은 데이터도 읽을 것이다. (위에 3문제 모두 발생)
 Read Committed : commit된 데이터만 읽을 것이다. (Dirty Read 발생하지 않음. 나머지 2문제 발생)
 Repeatable Read : commit된 데이터만 읽고, 나보다 나중에 시작된 TX의 커밋된 데이터는 읽지 않음.(Non Repeatable Read 발생하지 않음), mysql default 값
-Serializable Read : 모든 Isolation 문제 발생하지 않음.
+Serializable Read : 해당트랜잭션이 사용중인 모든 행들을 잠금. 모든 Isolation 문제 발생하지 않음.
 
 주로 실무에서는 Read Committed, Repeatable Read 격리레벨을 사용함 Read Committed를 제일 많이 사용. Serializable Read는 동시 처리량을 너무 낮추기때문에 성능 저하가 심하고 Read Uncommitted는 이상현상이 너무 많이 발생하기 때문.
