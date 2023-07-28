@@ -80,6 +80,12 @@ git log
 git fetch               // 원격 저장소의 소스를 내 로컬 저장소로 받아옴 (내 작업소스에는 반영 X)
 git pull                // pull = fetch + merge 
 
+git stash       // 현재 작업한 내용들 스태시 저장, 이후 브랜치 변경 
+git stash list  // 스태시 목록, 
+git stash apply   // 브랜치 이동후 가장 최근 스태시 내용 가져오기 
+git stash apply stash@{1}   // 스태시 인덱스에 따라서 가져오기 
+git stash clear // 스태시 비우기 
+
 /// pull request
 pull request는 내가 브랜치를 따서 작업을 하고 푸쉬까지 한 상황에서 특정 브랜치와의 병합을 요청할때 쓴다. 
 나만의 프로젝트면 이게 필요없지만 팀프로젝트일 경우 혹은 신입이 새로운 기능을 개발해서 사수에게 확인을 받아야 할 경우 쓴다.

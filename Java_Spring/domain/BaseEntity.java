@@ -47,6 +47,9 @@ public class BaseEntity {
 // @Table
 // @JoinColumn : FK 지정 관련
 // @OneToOne, OneToMany, ManyToOne, ManyToMany
+// @Builder.Default() : 필드의 디폴트값 설정시 필요. Builder로 객체를 생성해서 save하는 경우 이 어노테이션을 적용해줘야 디폴트값이 적용된다. 
+// @Fetch : FetchMode.EAGER, LAZY
+// @Valid : 유효성 검사
 
 // FK 연결 끊기
     // User Entity
@@ -59,12 +62,11 @@ public class BaseEntity {
     private User user;
 
 
-// @ElementCollection
+// @ElementCollection : 실무에서는 거의 안쓰인다. converter로 대체 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "partner_roles",joinColumns = @JoinColumn(name= "partner_id", referencedColumnName = "id"))
     private List<String> roles;
 
 
     
-// @Fetch : FetchMode.EAGER, LAZY
-// @Valid : 유효성 검사
+

@@ -1,6 +1,5 @@
 @WebMvcTest(TransactionController.class)
 class TransactionControllerTest {
-    ㄴ
     // 실제 transactionService를 주입하면 객체가 무거워지니까, 가짜로 주입받는 것임.
     // 그래서 실제 transactionService의 메소드가 실행되는 것이 아니기 때문에, 메소드의 리턴값을 우리가 임의로 설정해줘야함
     // given을 통해서 transactionService의 메소드가 실행됬을때 리턴값을 우리가 설정을 해줌.

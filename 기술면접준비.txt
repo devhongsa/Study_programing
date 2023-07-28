@@ -21,8 +21,9 @@ https://velog.io/@neptunes032/JPA-%EC%98%81%EC%86%8D%EC%84%B1-%EC%BB%A8%ED%85%8D
 6. ACID  Isolation level 
 
 
-7. N+1 문제 
+7. N+1 문제, 연관관계매핑을 지양하라 
 https://ttl-blog.tistory.com/1135
+https://velog.io/@ssuh0o0/BE-STUDY-%EC%97%B0%EA%B4%80%EB%A7%A4%ED%95%91%EC%9D%84-%EC%A7%80%EC%96%91%ED%95%98%EB%9D%BC
 연관관계 설정시 N+1 문제 발생 : fetch join 이나 @EntityGraph로 해결가능 
 
 
@@ -30,3 +31,10 @@ https://ttl-blog.tistory.com/1135
 직렬화는 자바객체를 json형태로 바꿔주는 것을 말한다. 역직렬화는 그반대
 Controller에서 객체를 반환해줄때 Dto객체를 주로 사용하는데 이때 Dto객체는 getter setter가 있어야 직렬화 역직렬화가 가능하다.
 
+
+9. BCryptPasswordEncoder 
+java에서 비밀번호 암호화로 사용한 BCryptPasswordEncoder는 단방향 해시함수 암호화 방법이다. 
+단방향은 비밀번호를 해시값으로 변환하면 다시 원본으로 복호화가 불가능 하다. 
+단지 비밀번호 확인 시 해시값을 대조하는 것으로 비밀번호가 맞는지 틀린지 판단하는 것. 
+BCryptPasswordEncoder는 비밀번호에 솔팅값을 포함해서 해시값으로 변환한다. 즉 같은 비밀번호라도 솔팅값이 다르면 해시값은 달라진다. 
+레인보우 테이블를 이용한 무차별 대입공격(Brute force attack)을 대비하기 위함이다. 

@@ -12,8 +12,6 @@ String json = mapper.writeValueAsString(mydto)
 
 
 
-
-
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
@@ -154,7 +152,20 @@ public class Java {
             sum += num;
             num++;
         }
-}
+
+        // stream 
+        List<String> lst = new ArrayList<>();
+
+        List<String> newlst = lst.stream().map(str -> {
+                            str = str+"/"
+                            return str 
+                        }).collect(Collectors.toList());
+        
+        // 객체::메소드
+        List<Integer> lengths = words.stream()
+                .map(String::length)
+                .collect(Collectors.toList());
+    }
 }
 
 /// 클래스 , 객체지향

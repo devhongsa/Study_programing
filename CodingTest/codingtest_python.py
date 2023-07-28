@@ -114,7 +114,9 @@ string1.startswith("hi") #문자열이 "hi"로 시작하는지 T/F
 string1.endswith("hi")
 string1.split('.')  #'.' 를 기준으로 문자열 나누기 리스트로 반환
 string1.isalpha()
-string1.isdigit() # 문자열이 숫자로만 이루어져 있는지 T/F 판별. 양수만 판별가능
+string1.isdecimal() # 문자가 숫자인지 아닌지 true false, isdigit도 있음.
+string1.isdigit() # 문자열이 숫자의 형태면 T 판별. 양수만 판별가능
+string1.isnumeric() # 숫자를 표현한 문자열이면 True반환 
 string1.replace('hi', 'hello') # 파이썬 replace는 모든 hi 를 다 바꿈 , javascript는 하나만 바꿈
 string1.replace('hi', 'hello', 1)
 # rstrip, lstrip  양쪽 or 오른쪾 or 왼쪽에 h문자열이 있으면 h문자열이 안나올때까지 h를 없앰.
@@ -124,7 +126,6 @@ string1.upper()
 string1.isupper()
 string1.lower()
 string1.islower()
-string1.isdecimal() # 문자가 숫자인지 아닌지 true false, isdigit도 있음.
 string1[::-1] # 문자열 뒤집기
 
 for char in string1:    #문자열 인덱스위치로 값리턴
@@ -143,6 +144,7 @@ valuelst = list(obj.values())
 keyValuelst = list(obj.items())  ## [(key,value),(key2,value2),...]
 value = obj.get('key') ## obj['key'] 와 동일하지만 get은 오류를 일으키지않고 none값을 리턴함.
 
+# 정렬 
 obj = dict(sorted(obj.items(),reverse=True))  # 딕셔너리 키 기준 정렬
 obj = dict(sorted(obj.items(), key= lambda x: x[1],reverse=True))  # value기준 정렬, 딕셔너리 정렬
 

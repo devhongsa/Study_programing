@@ -28,7 +28,7 @@ public class CacheConfig {
     public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
         RedisCacheConfiguration conf = RedisCacheConfiguration.defaultCacheConfig()
                 // .disableCachingNullvalues() // null값이 redis에 저장되는것을 방지
-                // .computePrefixWith(CacheKeyPrefix.simple())
+                // .computePrefixWith(CacheKeyPrefix.simple()) //Cache에 저장될때 key값앞에 Prefix에 대한 내용 
                 .serializeKeysWith(
                         RedisSerializationContext.SerializationPair.fromSerializer(new StringRedisSerializer()))
                 .serializeValuesWith(RedisSerializationContext.SerializationPair

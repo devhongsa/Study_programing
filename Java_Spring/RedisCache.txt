@@ -47,6 +47,11 @@ Evcition Policy : 캐시에 데이터 공간 확보를 위해 저장된 데이�
 implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 implementation 'org.springframework.session:spring-session-data-redis'  // Controller에서 HttpSession 사용할때 추가.
 
+
+
+** main Application에 @EnableCaching 붙이기 
+
+
 yml파일에서 
 spring:
     session:
@@ -56,12 +61,6 @@ spring:
     redis:
         host: localhost 
         prot: 6379
-
-main Application에 @EnableCaching 붙이기 
-
-
-
-
 
 
 ////// Cache Config//////
