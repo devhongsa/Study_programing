@@ -1,0 +1,43 @@
+
+회의 안건 
+- test 코드 작성시 service layer만 테스트 코드 작성?  x
+- name 중복허용 email 고유값 x
+- yml파일에 token-header, token-prefix 추가 x 
+- jwt 토큰 유효시간 설정 
+- Customer 포인트 사용 시점. 계약신청시? 계약수락시? x
+- PreAuthorize() 적용 
+- 서버 응답 객체 통일 필요? 
+- 결제 정책이 어떻게 되는지? (월별 결제, 개월수 한꺼번에 결제?) -> 포인트 충전 안해놓으면 어떻게 되는지 ? 
+- 로그아웃 기능 - 프론트에서 jwt를 저장해놓고 요청마다 헤더에 넣어서 요청을 하는데, 로그아웃시 저장해놓은 jwt를 삭제할 수 있는지 
+   삭제가 가능하다면 jwt가 없는채로 오면 filter에서 CustomException 일으키면 될듯 
+- 프론트에서는 로그인 상태를 어떻게 판단하는지? 
+
+
+질문 
+- Dto 클래스에서 중첩클래스 사용시 왜 static을 사용해야하는지? 
+- Builder를 생성자를 여러개 만들면 안돼는 이유 
+- Spring security Filter 단계에서 CustomException 구동이 안되는이유 
+- Jwt 로그아웃 기능 (redis를 사용해서 회원 상태관리, 프론트에서 Jwt 직접삭제?)
+
+
+Trouble 
+- @Builer가 붙은 생성자를 여러개 생성했을때 문제 발생
+- jwt 로그아웃 기능 
+
+
+리팩토링 
+- yml파일에 jwt secret, 구글로그인을 위한 client secret과 같은 정보들은 별도 저장소에 저장하는 것이 보안상 필요
+- Controller 응답 객체 Dto 자체 객체로 리턴 
+
+
+
+
+참고자료 
+- interceptor 
+https://adg0609.tistory.com/25
+- 구글로그인 
+https://darrenlog.tistory.com/38
+
+
+http://localhost:8080/oauth2/authorization/google
+http://localhost:8080/api/customers/login/oauth2/google

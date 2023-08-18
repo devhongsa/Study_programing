@@ -24,6 +24,10 @@ hex(123)
 # 2진수를 10진수로 
 int('0b10000', 2)   
 
+import math 
+round(3.12333,2) # 반올림 
+math.ceil(3.123) # 올림
+math.floor(3.222) # 내림
 
 # 리스트 list
 list1 = [1, 2, 3]
@@ -82,11 +86,6 @@ list(combinations(items,2))  # 리스트에서 요소2개를 뽑는 모든 경�
 for i in combinations(items,2):
     print(i)  # (1,2), (1,3), ...
 
-import math 
-round(3.12333,2) # 반올림 
-math.ceil(3.123) # 올림
-math.floor(3.222) # 내림
-
 union = (set(lst1) | set(lst2))  # 합집합, 두리스트 합집합
 inter = (set(lst1) & set(lst2))  # 교집합, 두리스트에서 교집합 요소추출
 complement = (set(lst1) - set(lst2))  # 차집합, lst1 기준 lst2와 다른 요소만 추출
@@ -138,6 +137,7 @@ if 'aaa' in a:          # 문자열에서 특정 문자열 찾기
 from collections import defaultdict
 obj = dict()
 graph = defaultdict(list)
+graph = defaultdict(int)
 del obj['key']  ## 딕셔너리 key,value 삭제하기 
 keylst = list(obj.keys())
 valuelst = list(obj.values())
@@ -734,38 +734,6 @@ def twoPointer(lst, target):
     
     return result
 
-## 최단경로?
-# 다익스트라 
-    # 출발점에서 목표점까지 최단경로를 구함
-    # 한노드에서 다른 모든 노드까지의 최단경로를 모두 구함
-    # 간선에 음의 가중치가 없어야함
-visit = [0] * N
-res = [float("inf")] * N
-obj = {
-    1 : [[2,2],[3,3]],  # 노드1에서 노드2, 3이 연결되어있고 그에따른 가중치 
-    2 : [[3,4],[4,5]],
-    3 : [[4,6]],
-    5 : [[1,1]]
-}
-res[1] = 0 # 노드1에서 1로 가는 비용은 0
-
-while True:
-    ## 아직 방분하지 않은 곳들 중에서 가장 res값이 낮은곳 선택
-    startNode = -1
-    minValue = float("inf")
-    for i,v in enumerate(res):
-        if visit[i] == 0:
-            if v<minValue:
-                startNode = i
-                minValue = v
-    if startNode == -1 :
-        break
-    visit[startNode] = 1
-    # startNode에서 연결된 노드들까지 가는데 드는 최소비용 
-    for l in obj[startNode]:
-        if visit[l[0]] == 0:
-            res[l[0]] = min(res[l[0]],res[startNode]+l[1])
-
 ## 동적계획법? : dfs로 모든 경우의 수를 파악하기에는 경우의 수가 너무 많고, 최대값 최소값과 관련된 얘기가 나오면 동적계획법을 생각해야한다.
     # 동적계획법에서 리스트 형태가 나온다면, 그 리스트사이즈인 d리스트를 생성해서 요소요소마다 값을 채우는법을 먼저 생각한다.
     # 동적계획법은 d[N] 값을 구하는 것이기 때문에 d[0]부터 d[N]까지 어떤식으로 채워서 넣어야할지 부터 생각해야한다.
@@ -901,41 +869,30 @@ import collections
 
 n = 7 # 정점개수
 lst = [(1,3,1), (1,2,9), (1,6,8), (2,4,13), (2,5,2) ,(2,6,7) ,(3,4,12) ,(4,7,17),(5,6,5),(5,7,20)] #(정점1, 정점2, 가중치)
-graph = collections.defaultdict(list)
-visited = [False] * (n+1)
 distance = [float("inf")] * (n+1)
+graph = defaultdict(list)
 
-for l in lst:
-  u, v, w = l                           # u: 출발노드, v: 도착노드, w: 연결된 간선의 가중치 
-  graph[u].append((v, w))              # 거리 정보와 도착노드를 같이 입력합니다.
-
-def get_smallest_node():
-  min_val = float("inf")
-  index = 0
-  for i in range(1, n+1): # 0노드는 없으니까 1번노드부터 시작
-    if distance[i] < min_val and not visited[i]: 
-      min_val = distance[i]
-      index = i
-  return index
+for r in lst:
+    graph[r[0]].append((r[1],1))
+    graph[r[1]].append((r[0],1))
 
 def dijkstra(start):
-  distance[start] = 0 # 시작 노드는 0으로 초기화
-  visited[start] = True
+    q = []
+    heapq.heappush(q, (0, start)) # 우선순위, 값 형태로 들어간다.
+    distance[start] = 0
 
-  for i in graph[start]:
-    distance[i[0]] = i[1] # 시작 노드와 연결된 노도들의 거리 입력
-  
-  for _ in range(n-1): 
-    now = get_smallest_node() # 거리가 구해진 노드 중 가장 짧은 거리인 것을 선택
-    visited[now] = True       # 방문 처리
+    while q:
+        dist, now = heapq.heappop(q) 
+        
+        if distance[now] < dist:    # 이미 입력되어있는 값이 현재노드까지의 거리보다 작다면 이미 방문한 노드이다.
+            continue               # 따라서 다음으로 넘어간다.
 
-    for j in graph[now]:
-      if distance[now] + j[1] < distance[j[0]]: # 기존에 입력된 값보다 더 작은 거리가 나온다면,
-        distance[j[0]]= distance[now] + j[1]    # 값을 갱신한다.
-
-dijkstra(1)
+        for i in graph[now]:     # 연결된 모든 노드 탐색
+            if dist+i[1] < distance[i[0]]: # 기존에 입력되어있는 값보다 크다면
+                distance[i[0]] = dist+i[1]   #
+                heapq.heappush(q, (dist+i[1], i[0]))
+dijkstra(3)
 print(distance)
-
 
 # 벨만포드
     # 음수 간선이 포함되어 있어도 가능
@@ -976,6 +933,7 @@ for i in range(1,n+1):
     
 for v in lst:
     dist[v[0]][v[1]] = v[2]  # 인접한 노드로 가는 비용 
+    dist[v[1]][v[0]] = v[2]  # 인접한 노드로 가는 비용 
 
 for k in range(1, n+1):
     for i in range(1, n+1):

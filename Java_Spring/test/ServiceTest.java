@@ -47,6 +47,7 @@ class TransactionServiceTest {
                         .balanceSnapshot(9000L)
                         .build());
 
+        // save() 검증할때 save의 인자로 들어갈 Transaction 객체를 captor로 설정, save 인자에 Transaction 객체가 들어가는지 검증함.
         ArgumentCaptor<Transaction> captor = ArgumentCaptor.forClass(Transaction.class);
 
         //when
@@ -57,8 +58,8 @@ class TransactionServiceTest {
         // times(1) : save() 함수가 1번 실행됬다는걸 검증 , atLeastOnce()랑 동일, never()는 한번도 실행 안됐다.
         // 여기서 transactionRepository는 Mock객체이다.
         // 만약 @Mock으로 객체주입을 안해줬으면, TransactionRepository mock = mock(TransactionRepository.class) 를 선언해주고 사용해야함
-        // captor.capture()은 우선 save의 argument로 Transaction객체가 들어갔는지를 검증을 하고, 위에 useBalance()에 파라미터로 들어간 값이 
-        // 로직을 거치면서 Transaction객체의 멤버변수의 값에 영향을 끼치기때문에, 그에 대한 Transaction 값의 결과를 검증하는 과정임.
+        // captor.capture()은 테스트를 진행하면서 save()에 어떤 실제 어떤 인자가 들어갔는지 capture함. 즉 위에 given으로 주어진 정보들을 토대로 메소드를 거치면서
+        // save() 안에 어떤 인자가 들어갔는지 검증하기 위한 작업임. 즉 인자 검증 테스트임.
         verify(transactionRepository, times(1)).save(captor.capture());
         assertEquals(200L,captor.getValue().getAmount());
         assertEquals(9800L,captor.getValue().getBalanceSnapshot());

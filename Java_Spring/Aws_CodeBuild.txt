@@ -1,0 +1,156 @@
+Source : 빌드 대상이 될 소스 코드 저장소 (github)
+Environment : 빌드할 환경 (VPC, compute type, Docker image)등을 선택 
+Buildspec : 빌드시점에 사용될 스크립트를 지정 
+Artifacts : 빌드 후 결과물을 어디에 저장할건지 
+Logs : 빌드과정을 cloudwatch 혹은 s3에 저장할지 결정 
+
+
+
+
+
+## buildspec.yml 
+
+version: 0.2 
+
+phases:
+  install:
+		runtime-versions:
+			java: corretto8
+	build:
+		commands:
+			- echo Build start on `date`
+			- chmod u+x gradlew 
+			- ./gradlew clean build 
+	post_build:
+		commands:
+			- echo Build completed `date`
+artifacts:
+	files:
+		- build/libs/projectname-0.0.1-SNAPSHOT.war
+        - appspec.yml
+        - startup.sh 
+	discard-paths: yes 
+
+
+## appspec.yml
+
+version: 0.0 
+os: linux
+files:
+    - source: /
+      destination: /home/ec2-user/build/     ## s3에서 가져온 zip파일을 unzip할 위치 
+permissions:
+    - object: /
+      pattern: "**"
+      owner: ec2-user 
+      group: ec2-user 
+
+hooks:
+    AfterInstall: 
+        - location: startup.sh
+          timeout: 60
+          runas: ec2-user 
+    
+
+## startup.sh 
+
+#!/bin/bash 
+
+WAR_NAME="projectname-0.0.1-SNAPSHOT.war" 
+echo "> build 파일명: $WAR_NAME" >> /home/ec2-user/deploy.log 
+
+echo "> build 파일 복사" >> /home/ec2-user/deploy.log
+DEPLOY_PATH=/home/ec2-user/
+cp /home/ec2-user/build/*.war $DEPLOY_PATH
+
+echo "> 현재 실행중인 어플리케이션 pid 확인" >> /home/ec2-user/deploy.log
+CURRENT_PID=${pgrep -f $WAR_NAME}
+
+JAVA_OPTS=""
+
+if [ -z $CURRENT_PID ]
+then
+    echo "> 현재 구동중인 어플리케이션이 없으므로 종료하지 않습니다." >> /home/ec2-user/deploy.log
+else 
+    echo "> kill -9 $CURRENT_PID"
+    kill -9 $CURRENT_PID
+    JAVA_OPTS="-Dspring.jap.hibernate.ddl-auto=none"
+    sleep 5
+fi 
+
+BUILD_WAR=$DEPLOY_PATH/$WAR_NAME
+echo "> BUILD_WAR 배포" >> /home/ec2-user/deploy.log
+nohup java $JAVA_OPTS -jar $BUILD_WAR >> /home/ec2-user/deploy.log 2>/home/ec2-user/deploy.log &
+
+
+
+
+
+
+
+- buildspec.yml, appspec.yml, startup.sh 파일을 github 레포지토리에 업로드 하기 / build.gradle 파일 있는 위치에 	
+
+- nat gateway 생성하기 
+    subnet 지정 
+    public Connectivity type 
+    elastic ip 할당 
+
+- route table 생성하기 
+    default vpc 선택 
+    edit으로 target은 위에 생성한 nat gateway선택 
+    destination은 모든 ip 0.0.0.0/0
+
+- private subnet 생성 
+    해당 서브넷의 라우트 테이블을 위에 생성한 라우트테이블로 지정 
+    
+- aws CodeBuild로 이동 
+    빌드 생성 
+    Source에서 github과 연결 Oauth 
+    레포지토리 url 입력 
+    webhook : 레포지토리에 변화가 감지되었을때 자동으로 빌드를 할 것인지 여부. 일단 선택 x 
+    Environment 
+        operation system : Amazon linux2 
+        runtime : standard 
+        image : amazonlinux2 x86_64 standard 3.0
+        privileged : check 
+        service role : new service role 
+
+        Additional config 
+            default vpc 선택 
+            위에서 만든 subnet 선택 
+            default 보안그룹 선택 
+    Buildspec 
+        buildspec.yml 적어넣기 
+    Artifacts
+        s3 
+        packaging : zip 파일로 선택 
+    Logs 
+        cloudwatch 체크 
+
+
+- AWS CodeDeploy 
+    create Application
+        compute platform: EC2 
+    create deployment group 
+        위에서 만든 service role 선택 
+        deployment type: in-place  이미 떠있는 ec2에 배포하는 옵션 
+        environment config : ec2 instance 선택, 어플리케이션을 배포할 ec2 지정 
+        agent config : now and schedule updates 기본 설정 
+        deploy settings : 기본값 
+        load balancer : 배포시 해당 ec2에 오는 트래픽을 막고 배포완료시 다시 트래픽허용하는 옵션
+
+- code build에서 build 시작 버튼 눌러서 빌드 -> s3에 .war, appspec.yml, startup.sh 파일이 저장됨
+
+- 생성한 application 선택 후 deploy applications 클릭
+    deployment group : 위에서 만든 그룹 선택 
+    s3경로 설정 : s3 url 붙여넣기 
+    revision file type : zip 
+
+- 여기까지 하면 지정한 ec2에 자동으로 배포되고 어플리케이션이 구동됨. 
+
+
+
+
+
+CodePipeline 
+

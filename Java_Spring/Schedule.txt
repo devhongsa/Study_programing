@@ -13,6 +13,7 @@ public class ScraperScheduler {
 
     @CacheEvict(value = CacheKey.KEY_FINANCE, allEntries = true) // finance에 해당하는 key값을 모두 지움, 하나만 삭제하고 싶으면 key 옵션을 추가 
     @Scheduled(cron = "${scheduler.scrap.yahoo}") // 0/5 * * * * * 매 5초마다 실행 , FixedDelay = 작업이 끝난후 5초뒤에 재실행, FixedRate = 5초마다 계속 실행 
+    초 분 시 일 월(1~12) 요일(0~6)
     public void yahooFinanceScheduling(){
         // 저장된 회사 목록 조회
         List<CompanyEntity> companies = companyRepository.findAll();
