@@ -3,31 +3,55 @@
 - test 코드 작성시 service layer만 테스트 코드 작성?  x
 - name 중복허용 email 고유값 x
 - yml파일에 token-header, token-prefix 추가 x 
-- jwt 토큰 유효시간 설정 
 - Customer 포인트 사용 시점. 계약신청시? 계약수락시? x
-- PreAuthorize() 적용 
-- 서버 응답 객체 통일 필요? 
-- 결제 정책이 어떻게 되는지? (월별 결제, 개월수 한꺼번에 결제?) -> 포인트 충전 안해놓으면 어떻게 되는지 ? 
 - 로그아웃 기능 - 프론트에서 jwt를 저장해놓고 요청마다 헤더에 넣어서 요청을 하는데, 로그아웃시 저장해놓은 jwt를 삭제할 수 있는지 
    삭제가 가능하다면 jwt가 없는채로 오면 filter에서 CustomException 일으키면 될듯 
+- jwt 토큰 유효시간 설정 x
+- 서버 응답 객체 통일 필요? x
+- 결제 정책이 어떻게 되는지? (월별 결제, 개월수 한꺼번에 결제?) -> 포인트 충전 안해놓으면 어떻게 되는지 ? x
+    월별 결제 
+- 임대 정책 x
+    maxCapacity, remainRoom  방단위로 계약 방마다 인원제한이 있음 월단위로 계약 
+- 가격 책정 정책 x
+    - 월 단위 가격 
+- 임대 취소 정책 x
+    환불과 관련? 임대취소가 가능한 기간이 언제인지 Accepted와 proceeding 상태에서도 취소가능? 
+
+
+- 매출확인시 기간에 걸쳐있을땐 매출계산 어떻게? 
 - 프론트에서는 로그인 상태를 어떻게 판단하는지? 
+- PreAuthorize() 적용 
+- isMonthly 자동결제 구현어떻게? 
 
 
 질문 
+- Builder를 생성자를 여러개 만들면 안돼는 이유 x
+- Spring security Filter 단계에서 CustomException 구동이 안되는이유 x 
+- Jwt 로그아웃 기능 (redis를 사용해서 회원 상태관리, 프론트에서 Jwt 직접삭제?) x
+- setter 사용 조심 ? x
+    setter역할을 하는 다른 메소드가 있으면 setter어노테이션을 굳이 붙여서 중복되는 기능을 만들지 말자
+- 복잡한 다중조건 쿼리로 DB에서 가져오는게 나을지 어느정도 추려서 서비스로직에서 마저추리는게 나은지 x 
+    상황마다 다르지만 연산이 필요한 쿼리가 아닌, 컬럼으로 찾을 수 있는 쿼리는 쿼리로 한번에 가져오는게 좋다
+- 복잡한 쿼리면 쿼리메소드로 하면 이름이 오지게 길어지는데 @Query를 사용하는지 ? 
+    너무 길어지면 Query DSL로 넘어간다. 
+- Service 메소드는 리턴값을 dto가 아닌 엔티티로 하는 것이 좋다. 왜냐면 메소드의 활용성이 높아지기 때문 
+- ManyToOne 연관관계를 주로 쓰고 OneToMany는 지양한다 
+- Dto <-> Entity 변환시 from 메소드로 구현하자. 
+
 - Dto 클래스에서 중첩클래스 사용시 왜 static을 사용해야하는지? 
-- Builder를 생성자를 여러개 만들면 안돼는 이유 
-- Spring security Filter 단계에서 CustomException 구동이 안되는이유 
-- Jwt 로그아웃 기능 (redis를 사용해서 회원 상태관리, 프론트에서 Jwt 직접삭제?)
+- DB에 테이블생성시 DB에서 직접 만드는지 Spring을 활용해서 엔티티를 생성하는지 
+- 성격이 다른 정보를 하나의 api로 리턴해도 되는지? getOfficeRevenue, lease-rate 
 
 
 Trouble 
-- @Builer가 붙은 생성자를 여러개 생성했을때 문제 발생
-- jwt 로그아웃 기능 
+- @Builer가 붙은 생성자를 여러개 생성했을때 문제 발생 
+- Filter 단계에서 CustomeException 
 
 
 리팩토링 
 - yml파일에 jwt secret, 구글로그인을 위한 client secret과 같은 정보들은 별도 저장소에 저장하는 것이 보안상 필요
 - Controller 응답 객체 Dto 자체 객체로 리턴 
+- Service layer에서 controller로 리턴할때 Entity를 리턴하는 것이 좋음 서비스 메소드의 활용성이 높아짐
 
 
 
@@ -37,6 +61,7 @@ Trouble
 https://adg0609.tistory.com/25
 - 구글로그인 
 https://darrenlog.tistory.com/38
+
 
 
 http://localhost:8080/oauth2/authorization/google

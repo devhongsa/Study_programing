@@ -203,3 +203,24 @@ https://ssungkang.tistory.com/entry/python-GIL-Global-interpreter-Lock%EC%9D%80-
 
 15. jpa 낙관적락 vs 비관적락 
 https://reiphiel.tistory.com/m/entry/understanding-jpa-lock
+
+
+
+
+
+내가 가장 열정적으로 참여했던 프로젝트 
+- mosa 
+어떤 프로젝트 
+누구와 함께 
+내 역할 
+기여한 파트 
+겪었던 어려운점 
+실력 향상 
+
+
+
+
+
+면접관에게 질문 
+- 개발자로 커리어를 쌓아오시면서 느끼셨던 개발자로서의 고충, 위기 
+- 우선 저는 개발공부를 시작한지도 얼마 안됐고, 우연히 전직장에서 개발에 대한 흥미가 생겨서 개발자신입으로 개발자를 시작했을때와 지금을 비교해봤을때, 
