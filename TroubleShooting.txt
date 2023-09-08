@@ -1,0 +1,12 @@
+Trouble 
+- @Builer가 붙은 생성자를 여러개 생성했을때 문제 발생 
+- Filter 단계에서 CustomeException 
+- JwtAuthenticationFilter 디폴트 필터로 지정하지 않고 생략가능한 필터로 지정하게 하기 
+    Component로 하면 디폴트 필터로 지정되어버림 
+- Cors 문제 
+    https://ahndding.tistory.com/17
+    https://kk-programming.tistory.com/63
+
+- Filter에서 CustomeException 적용 안되는 문제 
+
+- N+1 문제 
