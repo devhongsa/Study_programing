@@ -22,6 +22,7 @@
 - Redis
 
 #### 기타
+- Trouble Shooting 내용 정리
 - AWS
 - Heroku
 - Docker
