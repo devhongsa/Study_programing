@@ -51,6 +51,8 @@ Trouble
 - Cors 문제 
     https://ahndding.tistory.com/17
     https://kk-programming.tistory.com/63
+- 채팅 웹소켓 연결시 Jwt Filter 동작으로 비효율적 
+- 복잡한 쿼리는 쿼리메소드로 해결불가능 -> 일단 nativeQuery로 해결했지만 QueryDSL 사용해야할듯 
 
 
 리팩토링 
