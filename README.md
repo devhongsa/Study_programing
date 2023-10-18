@@ -21,6 +21,10 @@
 - MySQL
 - Redis
 
+### 데이터 분석
+- 데이터 분석 이론
+- 머신러닝 기본 지식
+
 #### 기타
 - Trouble Shooting 내용 정리
 - AWS
