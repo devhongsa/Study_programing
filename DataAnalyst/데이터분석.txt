@@ -1,0 +1,177 @@
+
+데이터 분석 프로세스 
+1. 문제정의 
+2. 데이터 확인 
+3. poc (proof of concept) 및 구현 : 프로젝트를 시작할 때, 실제로 실현 가능성이 있는지 효과와 효용, 기술적인 관점에서 검증 
+4. 검증
+5. 배포
+
+
+## 데이터의 중요성 
+머신러닝 알고리즘은 이미 좋은 알고리즘들이 많이 나와있다. 만약 모델 성능이 안좋다면 내가 사용한 데이터셋을 확인해봐야한다. 
+
+
+
+머신러닝으로 접근하는 문제들 
+1. Forecast 예측 
+    시간의 흐름에 따라 기록된 데이터를 이용하여 변수들간의 인과관계를 분석하여 미래를 예측하는 영역 
+    날씨, 주식, 상품 판매량 예측 
+    숫자가 존재하는 모든 영역에서 연구되고 구현되는 분야 
+    대표적인 알고리즘 - AR(I)MA : Auto Regression Moving Average , DeepAR 
+2. 추천 알고리즘 
+    Collaborative Filtering : 나랑 비슷한 취향의 사람을 찾아주는 방법
+    Content based Filtering : 가장 비슷한 컨텐츠를 찾아주는 방법 
+3. anomaly detection 이상탐지 
+    공정 프로세스 관리, 금융 사기 거래 탐지 
+    Outlier detection, out of distribution, one class classification 등 
+4. image processing 
+    Classification, localization, object detection, instance segmentation 
+    위의 순서대로 개인지 고양이인지 분류, 사진에서 고양이가 어디있는지, 사진에 있는 여러 물체들 중에서 뭐가 개이고 뭐가 고양이인지, 누끼까지 따는거 
+    제품의 양품/불량품 판정 모델 
+    자율주행에서 사람,사물,장애물,차로 등 식별 
+    OCR(Optical Character Recognition) : 아날로그 정보를 디지털 정보로 전환 (ex.신분증 사진에서 필요한 정보 자동 수집)
+5. NLP (Natural Language Processing)
+    컴퓨터가 인간의 언어를 처리하는 모든 기술을 의미 
+    챗봇, 제품 리뷰에서 부정적 비율 관리, 다양한 미디어 매체에서 부정적 의견을 모니터링하는, CS업무중 반복되는 질문, 복잡도가 높지않은 질문에 대한 자동응대 
+
+
+
+
+
+Data Cleaning 
+- N/A, null, 빈 문자열 등 missing value 처리 
+- 0의 비율이 95%이상일때 분석에 의미가 있는지 확인 후 drop 
+- 독립변수간 상관관계가 높은경우(다중 공선성) 하나만 써도 됨. 
+- class imbalance 체크 -> 비율이 1:9 이렇게 불균형일 경우 샘플링 고려 
+
+
+Feature Engineering 
+- 인코딩 : 문자로 된 데이터를 숫자로 바꿔주는 것 
+- 이산화 : 실무 데이터들의 분포는 왜도가 높거나 정규분포가 아닐 가능성이 높음
+    왜도에 따라서 동일 너비 분할, 동일 빈도 분할을 사용함 
+- scaling : 연산 결과가 발산하는 것을 방지하기 위해 사용 
+    MinMax Scaler, MaxABS Scaler, Standard Scaler, Robust Scaler 
+- transforming : 정규분포가 아닌 변수들을 정규분포 또는 정규분포에 가까운 데이터로 변환하는 것 
+    Box-Cox Transforming, YeoJohnson Transforming
+- Extracting 
+    시계열 데이터에서 특징 변수 추출 
+    구간별 평균, 합계, 기울기 등 구하기 
+- Feature Selection : 어떤 독립변수들을 투입시킬 건지 정하는 단계. 
+    적재하는 데이터양이 적어지므로 시스템 운영비용 감소
+    적은 변수를 사용할 경우 시스템의 속도가 빨라짐 
+    통계적 관점으로 데이터에 대한 해석력을 높여줌 
+
+    독립변수 선택 기준
+        상관계수 낮은 애들은 버리기 
+        p-value(x와 y값이 우연히 발생할 확률)가 높은 애들 버리기 
+
+        ** Feature Improtance 
+            Permutaion Improtance, SHAP : 어떤 하나의 독립변수가 종속변수에 미치는 기여도를 종합적으로 계산해서, 중요도 순으로 독립변수를 선택하는 방법 
+            이 방법이 현재 독립변수 선택기준에서 많이 쓰이고 있다. 
+- Data Sampling : 모집단에서 모집단과 유사한 분포를 가진 샘플집단을 추출하는 과정 
+    레이블이 불균형한 분포를 가진 데이터 세트를 학습 시 undersampling 혹은 oversampling 기법을 사용한다 
+    undersampling의 대표적 방법은 random, tomek links, ENN 이 있다
+    oversampling의 대표적 방법은 SMOTE로 존재하는 데이터들과 유사한 값들으로 임의로 만들어 데이터를 증식하는 방법이다. 
+    실무에서는 oversampling과 undersampling을 혼합해서 사용함 어떤걸 사용해야하는가에 대한 정답은 없음 
+    중요한 것은 모집단의 분포를 유지하는 것이 중요 
+- 지도학습(supervised learning), 비지도학습(unsupervised learning)
+    지도학습은 타겟Y(종속변수)가 명확하게 존재하는 경우 사용하는 학습 방법이다. 
+    실무에서 마주치는 거의 모든 문제가 지도학습인 경우가 많다. 
+    Regression(숫자를 예측하는 모든 문제, 매출), Classification(품질, 등급 예측 문제), Deep Learning
+
+    비지도학습은 타겟Y가 없고 독립변수만 있는 경우 
+    clustering (넷플릭스에서 취향이 같은 사람들끼리 그룹을 나누는 것)
+
+
+
+
+
+### Regression 회귀모형 ###
+장점 
+    직관적으로 해석 가능 
+    단순해서 학습시간이 빠름 
+단점 
+    다차원에서 신뢰도가 많이 떨어짐 
+
+Simple Linear Regression : 일직선 모형
+Polynomial Regression : 곡선 모형 
+Logistic Regression : 0과1의 문제에서 적용하는 모형 (이탈했는지 안했는지)
+
+
+
+### Classification 분류모형 ### 
+데이터를 가장 잘 나눌 수 있는 최적의 분류 경계를 찾는 방법 
+binary classification
+multi classification
+one class classification : 제조에서 양품의 데이터로만 학습을 시켜서, 해당 범주 밖으로 몇 이상 벗어나는 제품은 불량으로 취급하는 모형
+
+SVM(Support Vector Machine) : Binary classification 문제에 좋은 성능을 보이는 알고리즘 , 2개의 클래스의 데이터를 가장 잘 나눌 수 있는 최적 경계를 찾는 알고리즘 
+경계선의 너비가 가장 넓은 모델이 성능이 우수한 모델이다. 
+여기서 Support Vector란 경계선으로 부터 가장 가까운 위치에 있는 데이터를 말한다. 
+
+
+
+### Clustering 군집화 모형 ###
+비슷한 특성을 가진 데이터들을 하나의 그룹으로 묶는 작업 
+특성의 유사도를 판단하는 기준이 있어야함. (Distance, Connectivity, Distribution, Density 등)
+
+DBSCAN : 밀도 기준으로 군집화
+K-means : 거리 기준으로 군집화 
+Hierarchical clustering : 계층 기준으로 군집화 
+
+
+
+
+
+### Train / validation / Test ### 
+1. 전체 데이터를 학습 데이터셋과 검증 데이터셋, 그리고 실전 데이터셋으로 나눔 
+    겹치는 부분이 있으면 안됨 
+    둘은 최대한 독립적인 관계를 갖는 것이 좋음 
+    데이터를 나눌때 각 데이터셋의 분포가 유사하게 나올 수 있도록 나눠야함 
+2. Train 데이터를 이용해서 다양한 모델을 생성해봄 
+3. Test 데이터를 이용해서 생성한 모델들을 검증해봄 
+4. 가장 좋은 성능을 보인 모델을 선택함. 
+
+** Overfitting : 과적합은 모델이 학습 데이터에만 지나치게 최적화되어, 학습에 사용되지 않은 새로운 데이터에 대해서는 성능이 떨어지는 현상을 말한다.  
+학습과정에서 validation 데이터셋에 대한 검증을 할때 Overfitting문제가 발생하면 Early Stop하는 방법으로 방지 
+그런데 꼭 Overfitting이 나쁜 모델인 것은 아니다. 
+만약 주어진 데이터를 정확하게 맞춰야하는 Task라면 Overfitting 모델이 더 적합할 수 있다. (공정데이터를 통한 양품/불량품 예측)
+반대로 unknown 데이터를 최대한 맞춰야하는 Task에는 일반화된 모델이 더 적합할 것이다. 
+
+Underfitting 문제는 확실히 덜 학습된 모델이기 때문에, 더욱 학습시켜야 되는건 맞다. 
+
+cross validation : 결과에 대한 분산을 줄이기 위해 사용하는 기법 
+    k-fold corss validation : train test셋을 다양한 경우의 수로 나눠서 학습 및 테스트를 진행하고, 결과적으로 성능이 좋은 모델을 고르는 방법 
+    ** stratified k-fold : train test셋을 나눌때 데이터의 분포를 균등하게 나눠서 하는 방법, 실무에서 많이 쓰임 
+
+
+
+
+
+
+### Model metrics ###
+모델을 평가하는 척도 
+
+classification 모델 평가 척도 
+    Accuracy : 분류의 전체적인 정확도를 확인할 수 있는 지표 
+    Recall : 분류하고자 하는 클래스를 분류하였는지를 측정하는 지표 
+    Precision : 모델이 분류한 클래스가 제대로 분류하였는지를 측정하는 지표 
+    F1 : Recall과 Precision의 조화 평균 
+
+Regression 모델 평가 척도 
+    MAE : 실제 값과 예측 값의 차이 평균 (미분이 불가능하기 때문에 잘 사용하지 않음)
+    MAPE : 실제 값과 예측 값의 비율 차이의 평균 
+    MSE : 실제 값과 예측 값의 차이를 제곱하고 평균 
+    RMSE : MSE의 제곱근 
+
+
+
+
+
+
+### Visualization 시각화 ### 
+Line chart : 시계열 데이터 
+Bar chart : 데이터의 분포를 확인할 때 많이 쓰임 
+Pie chart : 타겟 비율 확인 
+Box plot : 변수 별 최대값 최소값 사분위수 비교 
+HeatMap : 독립변수들의 상관계수를 히트맵으로 나타내면 다중공선성을 보이는 독립변수들을 없앨 수 있고, 높은 상관계수를 나타내는 변수들만 뽑아낼 수 있음

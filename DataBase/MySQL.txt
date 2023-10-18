@@ -510,3 +510,14 @@ JSON parsing 함수
 SQL문을 실행할때 
 BEGIN과 END(또는 COMMIT) 명령어 사이에 SQL문을 넣어서 실행하면 트랜잭션 기능이 실행되서, 모든 sql 쿼리가 성공해야만 db에 적용되고 하나라도 실패하면 롤백한다.
 파이선의 psycopg2 에서는 autocommit=False로 설정 후에  , try catch문안에서 .commit() 과 rollback() 함수로 트랜잭션을 조절한다
+
+
+
+/// WITH : select로 불러온 테이블에 변수를 지정해줌 
+
+WITH tbl AS 
+(
+    select ...
+)
+
+select * from tbl 

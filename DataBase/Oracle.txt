@@ -1,0 +1,2 @@
+// row_number : 행에 번호를 붙이는 것 
+select *, row_number() over(partition by mem_id order by date) as seq
