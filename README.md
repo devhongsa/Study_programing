@@ -16,6 +16,7 @@
 - Django
 - Nodejs express
 - graphql
+- React
 
 #### DataBase
 - MySQL
