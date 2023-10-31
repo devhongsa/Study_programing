@@ -25,12 +25,14 @@
 - 데이터 분석 이론
 - 머신러닝 기본 지식
 
-#### 기타
-- Trouble Shooting 내용 정리
+#### DevOps
 - AWS
 - Heroku
 - Docker
 - Kafka
+
+#### 기타
+- Trouble Shooting 내용 정리
 - github
 - 자료구조 및 알고리즘
 - Coding Test
