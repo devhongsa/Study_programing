@@ -9,7 +9,8 @@ MyDto mydto = mapper.readValue(jsonString, MyDto.class)
 String json = mapper.writeValueAsString(mydto)
 
 
-
+제네릭 generic
+https://inpa.tistory.com/entry/JAVA-%E2%98%95-%EC%A0%9C%EB%84%A4%EB%A6%ADGenerics-%EA%B0%9C%EB%85%90-%EB%AC%B8%EB%B2%95-%EC%A0%95%EB%B3%B5%ED%95%98%EA%B8%B0
 
 
 import java.util.ArrayList;

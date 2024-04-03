@@ -1,5 +1,18 @@
+import java.util.*;
 public class JavaCondingTest{
     String str = "apple";
+
+    // String 비교는 .equals()로 
+    // char 비교는 == '' 이거로 비교
+
+    for (int i = 0; i < str.length(); i++) {
+        char c = s.charAt(i);
+        ...
+    }
+
+    for (char c : str.toCharArray()) {
+        ...
+    }
 
     //길이 반환
     str.length();
@@ -55,6 +68,9 @@ public class JavaCondingTest{
     Integer.parseInt("100")    //문자열 "100"을 숫자 100으로 변환
     Integer.toString(100)      //숫자 100을 문자열 "100"으로 변환
 
+    //문자열 곱하기 
+    str.repeat(3); // 문자열 3번반복
+
     StringBuilder sb = new StringBuilder();
 
     //문자열 추가
@@ -84,18 +100,47 @@ public class JavaCondingTest{
 
 
 
+    int[] lst = new int[3];
+    String[] lst2 = {"a","b","c"};
 
+    lst[0] = 3;
 
+    // 원시타입 배열을 리스트로 
+    int[] arr = {1, 2, 3};
+    List<Integer> list = Arrays.stream(arr).boxed().collect(Collectors.toList());
 
+    // 원시타입 배열 깊은 복사 
+    int[] copied = Arrays.copyOf(arr, arr.length);
 
+    // 원시타입 배열 출력 
+    System.out.println(Arrays.toString(arr));
+
+    // String 배열을 리스트로
+    List<String> list2 = new ArrayList<>(Arrays.asList(lst2));
+
+    // 리스트 선언 
     List<String> list = new ArrayList<>();
-    List<String> list2 = new ArrayList<>();
+
+    //깊은 복사
+    List<String> list3 = new ArrayList<>(list2);
+
+    //얕은 복사
+    List<String> list3 = list2;
+
+    //요소 가져오기 
+    list.get(0);
+
+    //인덱스 범위 
+    list.subList(1,3);  //원본 배열과 아직 연결되어 있음. 원본 배열이 바뀌면 더이상 사용못함. 깊은 복사로 사용하든가 해야됨. 
 
     //요소 삽입
     list.add("one");
 
     //특정 인덱스에 요소 삽입
     list.add(0, "zero");
+
+    //특정 인덱스 요소를 바꿈 
+    list.set(0, "zero");
 
     //리스트 병합 (추가되는 리스트가 뒤로 온다)
     list.addAll(list2);
@@ -106,10 +151,10 @@ public class JavaCondingTest{
     //특정 요소의 마지막 인덱스 반환
     list.lastIndexOf("zero");
 
-    //특정 인덱스의 값 삭제
+    //특정 인덱스의 값 삭제, 인자로 int 원시타입들어감
     list.remove(0);
 
-    //첫번째 값 삭제
+    //첫번째 값 삭제, 인자로 객체가 들어감
     list.remove("one");
 
     //리스트 차집합
@@ -145,8 +190,8 @@ public class JavaCondingTest{
     String[] temp = list.toArray(new String[list.size()]);
 
     //정수 배열을 List로 변환
-    int[] temp = {1, 2, 3, 4};
-    List<Integer> list = new ArrayList<>(Arrays.asList(temp));
+    int[] b = {1, 2, 3, 4};
+    List<Integer> a = Arrays.stream(b).boxed().collect(Collectors.toList());
 
     //List를 정수 배열로 변환
     List<Integer> list = new ArrayList<>();
@@ -204,7 +249,7 @@ public class JavaCondingTest{
     Queue<Integer> queue = new LinkedList<>();
 
     //큐에 요소 추가(enqueue)
-    queue.add(1);            // 문제 상황에서 예외 발생
+    queue.add(1);            // 추가성공시 true리턴, 문제 상황에서 예외 발생
     queue.offer(2);          // 문제 상황에서 false 리턴
 
     //큐에서 요소 제거(dequeue)
@@ -253,7 +298,7 @@ public class JavaCondingTest{
     //Iterator 사용
     Iterator tempIterator = hashSet.iterator();
     while (tempIterator.hasNext()){
-        System.out.pringln(tempIterator.next());
+        System.out.println(tempIterator.next());
     }
 
     //for-each문 사용
@@ -265,7 +310,7 @@ public class JavaCondingTest{
     // HashMap : <key, value>쌍, value의 중복 허용 O, 순서 X
     // LinkedHashMap : <key, value>쌍, value의 중복 허용 O, key 순서 O (삽입순)
     // TreeMap : <key, value>쌍, key 순서가 오름차순(알파벳순) 으로 정렬됨
-    
+
     HashMap<Integer, String> hashMap = new HashMap<>();
 
     //요소 추가
@@ -281,6 +326,9 @@ public class JavaCondingTest{
 
     //key 포함 여부 확인
     hashMap.containsKey(1);
+
+    //모든 value를 Collection에 담아 리턴
+    hashMap.values();
 
     //value 포함 여부 확인
     hashMap.containsValue("사과");

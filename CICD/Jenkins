@@ -1,0 +1,117 @@
+CI/CD : Continuous Integration, Continuous Deployment
+지속 통합은 여러 개발자들이 메인 브랜치를 계속 머지하면서 코드 동기화를 하는 것 
+
+
+jenkins_local 폴더를 만들고
+vi docker-compose.yml 
+
+version: '3.9'
+services:
+  jenkins:
+    image: jenkins/jenkins:latest
+    container_name: jenkins
+    environment:
+      - "TZ-Asia/Seoul"
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./data:/var/jenkins_home"
+
+
+이후 docker-compose up -d 로 jenkins 서버 실행 
+
+localhost:8080 접속 
+이후 jenkins_local/data/secrets 에서 cat initialAdminPassword   비밀번호 복사후 입력 
+젠킨스 suggested 설치 
+
+Jenkins관리 
+    System : github 연동 및 url 설정 등 
+    Plugins : 필요한 기능 설치 가능 docker 등등 
+    Credentials : jenkins가 aws api를 이용하거나 깃헙과 연동시 필요한 키들을 저장하는 곳 
+
+https://www.jenkins.io/doc/book/pipeline/syntax
+
+pipeline {
+    agent {
+        label 'docker'
+    }
+
+    parameters {
+        choice(name: 'DEPLOY_ENV', choices: ['dev', 'prod'], description: 'Select deployment environment')
+    }
+
+    environment {
+        AWS_DEFAULT_REGION = 'your-aws-region'
+        AWS_ACCESS_KEY_ID     = credentials('your-aws-access-key-id')
+        AWS_SECRET_ACCESS_KEY = credentials('your-aws-secret-access-key')
+        ECR_REPO = 'your-ecr-repository-url'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // 소스 코드 체크아웃
+                checkout scm
+            }
+        }
+
+        stage('Build and Package') {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                // Gradle을 사용하여 프로젝트 빌드
+                sh './gradlew clean build'
+            }
+        }
+
+        stage('Build Docker Image') {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                // Docker 이미지 빌드
+                script {
+                    def dockerImage = docker.build("your-docker-image-name:${env.BUILD_NUMBER}")
+                }
+            }
+        }
+
+        stage('Push to ECR') {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                // Docker 이미지를 AWS ECR에 푸시
+                script {
+                    withCredentials([string(credentialsId: 'your-ecr-credentials-id', variable: 'DOCKERHUB_USERNAME')]) {
+                        docker.withRegistry('https://$(ECR_REPO)', 'ecr:your-ecr-credentials-id') {
+                            def dockerImage = docker.image("your-docker-image-name:${env.BUILD_NUMBER}")
+                            dockerImage.push()
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Deploy to EC2') {
+            when {
+                expression { params.DEPLOY_ENV == 'prod' }
+            }
+            steps {
+                // EC2 서버에 Docker 컨테이너 배포
+                sh 'ssh -o StrictHostKeyChecking=no ec2-user@your-ec2-instance-ip "docker pull ${ECR_REPO}/your-docker-image-name:${env.BUILD_NUMBER} && docker run -d -p 8080:8080 ${ECR_REPO}/your-docker-image-name:${env.BUILD_NUMBER}"'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Build and Deployment Succeeded!'
+        }
+
+        failure {
+            echo 'Build or Deployment Failed! Notify the team.'
+        }
+    }
+}
