@@ -153,8 +153,10 @@ CREATE TABLE tableName(
     author VARCHAR(15) NULL,
     profile VARCHAR(200) NULL,
     PRIMARY KEY(id));                               
+    CONSTRAINT fk_user_id FOREIGN KEY(user_id) references USER(ID)
 
-    //PRIMARY KEY는 행을 구분하는 식별자 역할을 정해줌. 
+    // CONSTRAINT 제약조건이름(내가짓는거) FOREIGN KEY (자식컬럼이름) REFERENCES 부모테이블(부모컬럼이름름) ON DELETE CASCADE
+    // PRIMARY KEY는 행을 구분하는 식별자 역할을 정해줌. 
 
 DESC tablename;         //테이블 구조가 나옴.
 

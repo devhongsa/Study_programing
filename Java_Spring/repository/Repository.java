@@ -1,4 +1,6 @@
 // JDBC repository는 class로 만들고 JPA는 interface로 만든다
+// JpaRepository<어떤 Entity에 대한 repository냐, PK가 무슨 타입이냐>
+// Optional을 쓰는 이유는 값이 없을 수 있음을 코드적으로 방지하여 NullPointerException을 방지하기 위함. (코드에서서 orElseThrow 강제함.)
 @Repository
 public interface Repository extends JpaRepository<Account, Long> {
     Optional<Account> findFirstByOrderByIdDesc();
