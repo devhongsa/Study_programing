@@ -1,0 +1,68 @@
+
+📦 압축/아카이브 관련 명령어
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| tar    | 파일/디렉토리를 묶고 압축/해제 | tar -czf a.tar.gz dir/ |
+| gzip   | 단일 파일 압축 (tar보다 단순) | gzip file.txt → file.txt.gz |
+| gunzip | gzip 압축 해제 | gunzip file.txt.gz |
+| zip    | zip 포맷으로 압축 | zip -r archive.zip folder/ |
+| unzip  | zip 파일 해제 | unzip archive.zip |
+| xz     | 고압축 xz 포맷 | xz file.txt → file.txt.xz |
+| 7z     | 7zip 포맷 (설치 필요) | 7z a archive.7z dir/ |
+
+📂 파일 및 디렉토리 조작
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| cp     | 복사 | cp file.txt /tmp/ |
+| mv     | 이동 또는 이름 변경 | mv a.txt b.txt |
+| rm     | 삭제 | rm -rf /tmp/logs |
+| mkdir  | 디렉토리 생성 | mkdir new_folder |
+| ls     | 파일 목록 보기 | ls -l |
+| find   | 조건에 맞는 파일 찾기 | find . -name "*.log" |
+| touch  | 빈 파일 생성 또는 수정 시간 변경 | touch test.txt |
+| stat   | 파일 상태/정보 보기 | stat file.txt |
+
+🔍 파일 내용 보기
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| cat    | 파일 내용 출력 | cat file.txt |
+| less   | 페이지 단위로 보기 | less file.txt |
+| head   | 앞부분만 보기 | head -n 10 file.txt |
+| tail   | 뒷부분 보기 | tail -n 20 file.txt |
+| tail -f| 실시간 로그 보기 | tail -f /var/log/syslog |
+
+🔧 파일 내용 처리
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| grep   | 문자열 검색 | grep "error" log.txt |
+| awk    | 행 단위 텍스트 처리 | awk '{print $1}' file.txt |
+| sed    | 문자열 치환 | sed 's/old/new/g' file.txt |
+| cut    | 컬럼 자르기 | cut -d':' -f1 /etc/passwd |
+| sort   | 정렬 | sort file.txt |
+| uniq   | 중복 제거 | sort file.txt | uniq |
+
+🖥 시스템 정보 확인
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| top    | 실시간 시스템 상태 보기 | top |
+| df -h  | 디스크 용량 확인 | df -h |
+| du -sh | 디렉토리 크기 확인 | du -sh /var/log |
+| free -h| 메모리 사용량 확인 | free -h |
+| uptime | 시스템 부팅 시간 | uptime |
+| uname -a| 커널/OS 정보 | uname -a |
+
+🌐 네트워크 관련
+
+| 명령어 | 설명 | 예시 |
+|--------|------|------|
+| ping   | 연결 테스트 | ping google.com |
+| curl   | HTTP 요청 | curl https://naver.com |
+| wget   | 파일 다운로드 | wget http://example.com/file.txt |
+| netstat| 포트/연결 보기 | netstat -tuln |
+| ss     | socket 통계 보기 | ss -tuln |
+| ip a   | 네트워크 인터페이스 | ip a |
