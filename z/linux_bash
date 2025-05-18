@@ -66,3 +66,160 @@
 | netstat| 포트/연결 보기 | netstat -tuln |
 | ss     | socket 통계 보기 | ss -tuln |
 | ip a   | 네트워크 인터페이스 | ip a |
+
+
+✅ 자주 쓰는 apt 명령어
+
+| 명령어               | 설명                                 | 예시                         |
+|----------------------|--------------------------------------|------------------------------|
+| apt update           | 패키지 목록 최신화                   | sudo apt update              |
+| apt upgrade          | 설치된 패키지들을 최신으로 업그레이드| sudo apt upgrade             |
+| apt install          | 새 패키지 설치                       | sudo apt install nginx       |
+| apt remove           | 설치된 패키지 삭제                   | sudo apt remove nginx        |
+| apt purge            | 패키지 삭제 + 설정파일 삭제          | sudo apt purge nginx         |
+| apt autoremove       | 불필요한 패키지 자동 제거            | sudo apt autoremove          |
+| apt search           | 패키지 검색                          | apt search apache            |
+| apt show             | 패키지 정보 보기                     | apt show nginx               |
+| apt list             | 패키지 목록 보기                     | apt list --installed         |
+
+
+
+📘 systemctl, chown, chmod 명령어 설명
+
+🧩 1. systemctl — 시스템 서비스 관리 도구
+
+systemctl은 Systemd 기반의 시스템에서 서비스를 시작, 중지, 재시작, 상태 확인 등을 제어할 수 있는 명령어입니다.
+
+기본 형식:
+    systemctl [명령] [서비스이름]
+
+주요 명령어:
+    sudo systemctl start nginx         # 서비스 시작
+    sudo systemctl stop nginx          # 서비스 중지
+    sudo systemctl restart nginx       # 서비스 재시작
+    sudo systemctl status nginx        # 서비스 상태 확인
+    sudo systemctl enable nginx        # 부팅 시 자동 시작
+    sudo systemctl disable nginx       # 부팅 시 자동 시작 해제
+    sudo systemctl list-units --type=service  # 전체 서비스 목록 보기
+
+🧍‍♂️ 2. chown — 파일/디렉토리 소유자 변경
+
+chown은 파일이나 디렉토리의 소유자 또는 그룹을 변경하는 명령어입니다.
+
+기본 형식:
+    chown [옵션] [소유자][:그룹] 대상
+
+예시:
+    sudo chown user1 file.txt                # 소유자 변경
+    sudo chown user1:group1 file.txt         # 소유자와 그룹 변경
+    sudo chown -R user1:group1 dir/          # 디렉토리 전체 재귀 변경
+
+🛠️ 예:
+    sudo chown www-data:www-data /var/www/html -R
+
+🔒 3. chmod — 권한(Permission) 변경
+
+chmod는 파일이나 디렉토리의 읽기(r)/쓰기(w)/실행(x) 권한을 숫자 또는 기호로 설정하는 명령어입니다.
+
+기본 형식:
+    chmod [권한] 대상
+
+권한 숫자 표기:
+    r (4), w (2), x (1)
+
+조합 예:
+    7 = rwx, 6 = rw-, 5 = r-x, 0 = ---
+
+예시:
+    chmod 755 script.sh        # 소유자 rwx, 그룹/기타는 r-x
+    chmod 644 file.txt         # 소유자 rw-, 그룹/기타는 r--
+    chmod +x script.sh         # 실행 권한 추가
+    chmod -x script.sh         # 실행 권한 제거
+    chmod -R 755 /var/www/     # 디렉토리 전체 권한 재귀 적용
+
+🧠 요약 비교
+
+| 명령어     | 목적             | 주요 대상         | 예시                       |
+|------------|------------------|--------------------|----------------------------|
+| systemctl  | 시스템 서비스 제어 | nginx, ssh, apache | systemctl restart ssh     |
+| chown      | 소유자 변경       | 파일/폴더          | chown user:group file.txt |
+| chmod      | 권한 변경         | 읽기/쓰기/실행 권한 | chmod 755 script.sh       |
+
+
+
+
+📘 ps 명령어: 프로세스 상태 확인
+
+ps는 Process Status의 줄임말로, 현재 실행 중인 프로세스 정보를 출력하는 리눅스 명령어입니다.
+
+✅ 기본 사용법
+    ps
+- 현재 셸에서 실행 중인 프로세스만 표시
+
+📋 주요 옵션 정리
+
+| 명령어        | 설명                                           |
+|---------------|------------------------------------------------|
+| ps            | 현재 터미널에서 실행 중인 프로세스 표시       |
+| ps -e         | 시스템의 모든 프로세스 표시 (`-A`와 동일)     |
+| ps -f         | 자세한 정보 포맷으로 출력                     |
+| ps -ef        | 모든 프로세스를 전체 포맷으로 출력 (실무에서 가장 자주 사용) |
+| ps aux        | BSD 스타일로 전체 프로세스 표시               |
+| ps -u [user]  | 특정 사용자의 프로세스만 표시                 |
+| ps -p [pid]   | 특정 PID의 프로세스만 출력                    |
+
+🛠 자주 쓰는 예시
+
+1. 전체 프로세스 보기
+    ps -ef
+    또는
+    ps aux
+
+2. 특정 프로세스 검색
+    ps -ef | grep nginx
+
+3. 특정 사용자 프로세스 보기
+    ps -u devh
+
+4. 특정 PID 프로세스 보기
+    ps -p 1234
+
+📊 ps -ef 출력 필드 설명
+
+| 필드   | 설명                   |
+|--------|------------------------|
+| UID    | 실행한 사용자          |
+| PID    | 프로세스 ID            |
+| PPID   | 부모 프로세스 ID       |
+| C      | CPU 사용률             |
+| STIME  | 프로세스 시작 시간     |
+| TTY    | 연결된 터미널          |
+| TIME   | 누적 CPU 사용 시간     |
+| CMD    | 실행된 명령어          |
+
+💡 참고: 실시간 모니터링 원할 경우
+
+ps는 정적인 정보만 출력합니다.  
+실시간으로 확인하려면 다음 명령어를 사용하세요:
+
+    top
+    htop (설치 필요)
+
+🔗 ps와 자주 함께 쓰는 명령어
+
+| 명령어 | 설명                     |
+|--------|--------------------------|
+| grep   | ps 출력에서 필터링       |
+| kill   | 특정 PID 종료            |
+| top    | 실시간 프로세스 보기     |
+| htop   | 그래픽 기반 실시간 보기  |
+| pstree | 트리 형태로 보기         |
+
+
+💡 자주 쓰는 조합 예시
+명령어 조합	설명
+ps -ef | grep java	        java 프로세스만 찾기
+ls -l | grep ".txt"	        .txt 파일만 목록에서 보기
+cat access.log | grep 404	404 에러 로그만 보기
+netstat -tuln | grep 80	    80번 포트만 보기
+df -h | grep /dev/sda1	    특정 디스크 정보만 보기
