@@ -319,7 +319,7 @@ public class VipCustomer extends Customer {
     // 오류를 없애려면 부모클래스에서도 디폴트 생성자를 만들어주거나, 자식클래스 생성자를 부모클래스 생성자와 같은 구조로 만들어주고,
     // 생성자안에 super(customerID, customerName) 이렇게 부모클래스 생성자를 호출해주어야한다.
 
-    @Override // 이렇게 표시를 해주면 컴파일러가 알아듣게됨. 그래서 상위클래스의 메서드와 구조가 달라지면 컴파일 에러체크를 해줌.
+    @Override // 상위 클래스의 메소드를 구현할때 Override, 이렇게 표시를 해주면 컴파일러가 알아듣게됨. 그래서 상위클래스의 메서드와 구조가 달라지면 컴파일 에러체크를 해줌.
     public int calPrice() {
     }
 
