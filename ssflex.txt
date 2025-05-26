@@ -1,0 +1,6 @@
+상상플렉스 개발 작업 환경 세팅 
+
+Run Configuration -> VM Option 추가 -> -Dspring.profiles.active=dev
+
+Gradle build clean -> other compileQuerydsl -> build build 
+

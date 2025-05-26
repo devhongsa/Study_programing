@@ -16,6 +16,7 @@ shift + alt + 드래깅 : 박스 드래깅
 shift + del : 현재 있는 줄 삭제 
 ctrl + shift + ` : terminal 열기 
 ctrl + shift + P : 입력후 python interpreter 
+shift + alt + F : 자동 정렬렬
 
 
 
