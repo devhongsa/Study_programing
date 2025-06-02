@@ -89,6 +89,11 @@ git stash clear // 스태시 비우기
 
 git submodule update --remote --merge
 
+
+## 이미 깃에 올라간 파일들 깃이그노어시키기 
+git rm -r --cached src/main/resources/static/css/js  ## 폴더 전체 제거 
+git rm --cached src/main/.../파일명.js   or  *.js 
+
 /// pull request
 pull request는 내가 브랜치를 따서 작업을 하고 푸쉬까지 한 상황에서 특정 브랜치와의 병합을 요청할때 쓴다. 
 나만의 프로젝트면 이게 필요없지만 팀프로젝트일 경우 혹은 신입이 새로운 기능을 개발해서 사수에게 확인을 받아야 할 경우 쓴다.

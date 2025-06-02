@@ -1,6 +1,31 @@
 상상플렉스 개발 작업 환경 세팅 
 
+자바 11 설치 
+C: Program Files Java 에 script 폴더생성 
+script 폴더안에 
+
+@echo off
+set JAVA_HOME=JDK경로 
+set Path=%JAVA_HOME%\bin;%Path%
+echo Java 11 activated.
+java -version 
+
+해당 내용 java11.bat 으로 저장 
+
+환경변수 설정 
+시스템 변수에 
+JAVA_HOME 등록 후 기본 경로는 자바 11 설치 경로 : Java\jdk-11
+시스템 변수에 Path 편집 
+%JAVA_HOME%\bin 
+C:\Program Files\Java\script 
+
+Path에 Oracle\Java\javapath 있는경우 해당 경로 삭제해준다. 
+
+Windows 
+https://tomcat.apache.org 
+톰캣 zip파일 설치 
+cmd 로 톰캣 설치경로에 가서 bin -> service.bat install 
+
 Run Configuration -> VM Option 추가 -> -Dspring.profiles.active=dev
 
 Gradle build clean -> other compileQuerydsl -> build build 
-

@@ -586,3 +586,9 @@ from ONLINE_SALE S
 join USER_INFO I on S.USER_ID = I.USER_ID and YEAR(I.JOINED) = '2021'
 group by YEAR,MONTH
 order by YEAR,MONTH
+
+
+
+
+DB 백업 덤프 dump.sql 
+mysqldump --triggers --events --single-transaction --set-gtid-purged=OFF -h [DB엔드포인트] -u [username] -p [DB이름] > "로컬백업파일저장위치"
