@@ -73,3 +73,7 @@ del 삭제할파일명
 copy 복사할파일명 복사할위치경로 
 move 
 rename 
+mkdir 
+rmdir 
+hostname 
+tasklist 
