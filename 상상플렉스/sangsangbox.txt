@@ -1,0 +1,26 @@
+######### study 
+
+## ddl-auto
+create : 기존 테이블 삭제 후 다시 생성 
+create-drop : 종료시점에 테이블 모두 drop
+update : 변경분만 변경
+validate : 테이블과 엔티티가 정상 매핑되었는지만 확인 
+
+
+
+
+
+
+######### trouble shooting 
+
+1. data.sql 이 먼저 실행되서 오류나는 문제 
+프로퍼티에 옵션 추가 
+spring.jpa.defer-datasource-initialization=true
+
+2. 실행된 쿼리 로그로 보기 
+프로퍼티에 옵션 추가 
+spring.sql.init.mode=always   # data.sql 로딩 보장
+logging.level.org.springframework.jdbc.datasource.init.ScriptUtils=DEBUG
+logging.level.org.springframework.jdbc.datasource.init.DatabasePopulatorUtils=DEBUG
+
+
