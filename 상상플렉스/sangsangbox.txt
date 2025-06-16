@@ -6,6 +6,9 @@ create-drop : 종료시점에 테이블 모두 drop
 update : 변경분만 변경
 validate : 테이블과 엔티티가 정상 매핑되었는지만 확인 
 
+## @RequiredArgsConstructor 
+@Autowired 안붙이고도 의존성 자동 주입될 수 있게 만듬 (생성자 자동생성)
+
 
 
 
