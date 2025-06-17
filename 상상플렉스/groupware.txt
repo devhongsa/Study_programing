@@ -8,7 +8,7 @@ dayoff_.asp     src\approval
 
 
 ## 내용 변경 작업 
-e_document : 계약품의서, 계약견적서
+e_document : 계약품의서(div 1), 계약견적서(div 4) //
 e_document_2 : 지출결의서 등등 
 
 select * from e_document where title N'%찾을내용%';
@@ -38,6 +38,8 @@ e_path : 결재 진행 상황 및 결재 상태
     경영지원부로 결재할 문서 상태 만들기 : state 0, remake 0 // 
         sign_kind = 2 가 sign_permit 1, sign_kind != 1 이 sign_state = 0, sign_state = 0 이 sign_date null
 
+
+## 경영지원부 결재 대기 상태로 만들기, w_date 수정
 UPDATE e_path
 SET sign_permit = 1
 WHERE sign_kind = 2
@@ -55,3 +57,16 @@ INNER JOIN e_path AS s
 Where t.w_date = '2025-05-09 10:33:14.000';
 
 UPDATE e_document_2 SET state = '0', remake = '0' WHERE w_date = '2025-05-09 10:33:14.000';
+
+
+## 대표님 기각 상태로 만들기, w_date 수정 
+UPDATE e_path 
+SET sign_state = 3 
+WHERE emp_id = '0001'
+ AND w_date = '2025-06-12 13:49:22.000'
+
+UPDATE e_document 
+SET 
+    state = '0',
+    remake = '1'
+WHERE w_date = '2025-06-12 13:49:22.000'
