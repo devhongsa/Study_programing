@@ -1,0 +1,44 @@
+############################ 백엔드 ############################
+
+# 로그인 관련 
+상상플렉스 로그인 
+SessionRestController (front/apis) 
+    /doLogin
+상상플렉스 회원가입 
+CoAccountRestController (front/apis/company)
+
+
+# 게시판 관련 
+BoardRestController 
+게시판 관련 api
+
+
+
+
+
+# 테이블 관련 
+company_account : 회원정보 테이블 
+
+
+############################ 프론트 ############################
+
+commons/mixins/session.mixin.js : 세션에 관한 로직, 로그인한 상태인지 
+    isLogin
+
+components/boards/appBoard.vue : 게시판 관련 vue 
+    비회원 콘텐츠 접근 금지 로직 
+        게시판 컨텐츠 목록에서 한 컨텐츠를 클릭하면 goView가 실행이 되고 resetBoardOne에서 idx랑 boardVO 삭제 
+        idx를 내가 선택한 글의 idx로 바꾸고 boardKey도 바꿈 
+        이후 routerPush 에서 loginId jsessionid 삭제 
+        이후 router.push 실행  실행해서 이후 mounted가 실행되면서 getBoardOne 실행함 
+        이때 goView에서 파라미터값을 다 삭제처리하게 되고, param에 isLogin만 남겨짐, 나머지 boardkey 같은 정보들은 param에서 지워짐 
+        그래서 백엔드 단에 getBoardOne 컨트롤러가 실행될때 requestParam에서 boardKey가 넘어오지않았던거고 isLogin을 통해서 
+        비회원이 컨텐츠에 접근하려고 하면 데이터를 내려주지 않게 로직을 처리함 
+
+
+support-services/guide_install
+support-services/faq
+support-services/guide_function
+app/board/dynamo_factory
+community/secret 
+

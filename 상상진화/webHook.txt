@@ -1,0 +1,2 @@
+ngrok 사용해서 test 중 
+ngrok http 8080 명령어 실행시키면 임시 로컬 url 제공해줌 

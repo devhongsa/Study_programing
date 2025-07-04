@@ -1,22 +1,27 @@
 wirte_rpa.asp    src\approval
 write_ok_rpa.asp   src\approval
-configx.asp     src\config 
+configx.asp     src\config      ## 개발시 개발DB로 연결 필요
 main_sub1.asp    src\useradmin
 dayoff_.asp     src\approval 
 
 
+#### 파일 분석 
+src/approval/write.asp   :   문서작성시 문서불러오고 뿌려오는 작업 
+upload/approval_file : 승인 관련 첨부 파일 있는 곳
 
 
-## 내용 변경 작업 
+
+
+################ 내용 변경 작업 ################
 e_document : 계약품의서(div 1), 계약견적서(div 4) //
 e_document_2 : 지출결의서 등등 
 
-select * from e_document where title N'%찾을내용%';
+select * from e_document where title like '%찾을내용%';
 update e_document set content = '수정한컨텐츠내용' where id_no = '...' 
 
 
-## 결재 관련 로직 
-관련 테이블 : e_path, e_document, e_reference, e_divide
+################ 결재 관련 로직 ################
+관련 테이블 : e_path, e_document, e_reference, e_divide, ConsultationTeam_List
 e_path : 결재 진행 상황 및 결재 상태 
     sign_rank : 1은 본인, 2,3,4 쭉 결재 진행 순서 
     sign_kind : 2가 경영지원부 1이 나머지 
@@ -38,8 +43,16 @@ e_path : 결재 진행 상황 및 결재 상태
     경영지원부로 결재할 문서 상태 만들기 : state 0, remake 0 // 
         sign_kind = 2 가 sign_permit 1, sign_kind != 1 이 sign_state = 0, sign_state = 0 이 sign_date null
 
+ConsultationTeam_List : 계약 품의서 관련 테이블 
+    approval_flag :
+        0 문서 작성중
+        1 결재완료
+            purchaseTF = 'F' or taxTF = 'F' 이면 구매/세금계산서 미처리 
+        2 기각 
+        3 결재 진행중
+        
 
-## 경영지원부 결재 대기 상태로 만들기, w_date 수정
+## 경영지원부 결재 대기 상태로 만들기 (w_date 수정)
 UPDATE e_path
 SET sign_permit = 1
 WHERE sign_kind = 2
@@ -59,7 +72,7 @@ Where t.w_date = '2025-05-09 10:33:14.000';
 UPDATE e_document_2 SET state = '0', remake = '0' WHERE w_date = '2025-05-09 10:33:14.000';
 
 
-## 대표님 기각 상태로 만들기, w_date 수정 
+## 대표님 기각 상태로 만들기 (w_date 수정)
 UPDATE e_path 
 SET sign_state = 3 
 WHERE emp_id = '0001'
@@ -70,3 +83,26 @@ SET
     state = '0',
     remake = '1'
 WHERE w_date = '2025-06-12 13:49:22.000'
+
+
+
+
+## 결재된 계약 품의서 기각 상태로 만들기 (w_date 수정)
+UPDATE e_path 
+SET sign_state = 3
+WHERE emp_id = '0001'
+ AND w_date = '2025-05-09 11:27:07.000'
+
+UPDATE e_document 
+SET 
+    state = '0',
+    remake = '1'
+WHERE w_date = '2025-05-09 11:27:07.000'
+
+UPDATE consultation
+SET approval_flag = 2
+WHERE project_name = (
+    SELECT title
+    FROM e_document
+    WHERE w_date = '2025-05-09 11:27:07.000'
+);

@@ -97,6 +97,18 @@ public class JavaCondingTest{
     //문자열 절대길이 늘이기
     sb.setLength(4);       // "el  " -> 뒤가 공백으로 채워짐
 
+    // 대소문자 바꾸기
+    str.toLowerCase();
+    str.toUpperCase();
+
+    //삼항연산자
+    int max = (a > b) ? a : b;
+    System.out.println("더 큰 값: " + max); 
+
+
+
+
+
 
 
 
@@ -196,6 +208,30 @@ public class JavaCondingTest{
     //List를 정수 배열로 변환
     List<Integer> list = new ArrayList<>();
     int[] temp = list.stream().mapToInt(x -> x).toArray();
+
+
+    //reduce
+    T result = stream.reduce(초기값, (누적값, 현재값) -> 새로운값);
+    //누적곱 구하기 
+    int product = nums.stream().reduce(1, (a, b) -> a * b);
+    //누적합 구하기
+    int product = nums.stream().reduce(0, (a, b) -> a + b);
+
+    //map
+    List<Integer> result = list.stream()
+    .map(n -> n + 1)
+    .collect(Collectors.toList());
+
+    Arrays.stream(arr).map(num->{
+           
+        if(num>=50 && num%2 == 0){
+            return num/2;
+        } else if(num<50 && num%2 == 1){
+            return num*2;
+        } else{
+            return num;
+        }
+    }).toArray();
 
 
 
@@ -305,6 +341,13 @@ public class JavaCondingTest{
     for (String item : hashSet){
         System.out.println(item);
     }
+
+    list.forEach(item -> System.out.println(item));
+
+    // filter
+    list.stream()
+    .filter(item -> item.startsWith("a"))
+    .forEach(System.out::println);
 
 
     // HashMap : <key, value>쌍, value의 중복 허용 O, 순서 X

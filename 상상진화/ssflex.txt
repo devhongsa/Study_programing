@@ -29,3 +29,16 @@ cmd 로 톰캣 설치경로에 가서 bin -> service.bat install
 Run Configuration -> VM Option 추가 -> -Dspring.profiles.active=dev
 
 Gradle build clean -> other compileQuerydsl -> build build 
+
+
+
+
+## trouble shooting ## 
+1. EC2 keypair 재등록 
+aws에서 새로운 keypair 생성 
+ssh-keygen -y -f /c/Users/사용자명/Desktop/new-key.pem > /c/Users/사용자명/Desktop/new-key.pub   // pub파일 생성 
+cat new-key.pub // 해당 내용들 복사 
+aws에서 ec2 접속 
+echo "여기에 new-key.pub의 내용 붙여넣기" >> ~/.ssh/authorized_keys
+
+이후 로컬에서 ssh -i 로 접속 

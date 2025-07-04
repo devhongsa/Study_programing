@@ -26,4 +26,8 @@ spring.sql.init.mode=always   # data.sql 로딩 보장
 logging.level.org.springframework.jdbc.datasource.init.ScriptUtils=DEBUG
 logging.level.org.springframework.jdbc.datasource.init.DatabasePopulatorUtils=DEBUG
 
+3. serialUID 자동생성 인텔리제이 설정 
+설정에서 serialVersion 검색하면 
+JVM language설정에 Serializable class without serialVersion 이거 체크
+
 
